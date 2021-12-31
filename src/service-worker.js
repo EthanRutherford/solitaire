@@ -35,7 +35,7 @@ registerRoute(
 
 // cache the application code
 registerRoute(
-	(route) => console.log(route),
+	/(?:\.js|\.css|\/)$/,
 	new StaleWhileRevalidate({
 		cacheName: "solitaire-application-code",
 		plugins: [

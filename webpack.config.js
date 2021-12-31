@@ -42,17 +42,11 @@ module.exports = (env) => [{
 	},
 	resolve: {extensions: [".js", ".jsx", ".json", ".css", ".svg"]},
 	mode: env === "prod" ? "production" : "development",
-	devtool: env === "prod" ? "" : "eval-source-map",
+	devtool: env === "prod" ? "" : "cheap-module-source-map",
 	devServer: {
 		open: true,
 		port: 8085,
 		static: {directory: __dirname + "/"},
-		devMiddleware: {
-			index: true,
-			mimeTypes: {phtml: "text/html"},
-			publicPath: "/dist",
-			serverSideRender: true,
-		},
 	},
 }, {
 	entry: "./src/service-worker.js",
@@ -65,5 +59,5 @@ module.exports = (env) => [{
 		}],
 	},
 	mode: env === "prod" ? "production" : "development",
-	devtool: env === "prod" ? "" : "eval-source-map",
+	devtool: env === "prod" ? "" : "cheap-module-source-map",
 }];
