@@ -39,11 +39,11 @@ class Delta {
 			}
 		}
 
-		if (Object.keys(from ?? {}).length + Object.keys(to ?? {}).length > 0) {
-			return new Delta(from, to);
+		if (Object.keys(from ?? {}).length + Object.keys(to ?? {}).length === 0) {
+			return null;
 		}
 
-		return null;
+		return new Delta(from, to);
 	}
 }
 
@@ -63,32 +63,41 @@ export class UndoStack {
 		this.redoStack = [];
 	}
 	record(object) {
-		const start = object.serialize();
+		let start = object.serialize();
+		let deltas;
 		return () => {
 			const end = object.serialize();
 			const diff = Delta.compute(start, end);
 			if (diff != null) {
-				this.undoStack.push(diff);
-				this.redoStack = [];
+				if (deltas == null) {
+					deltas = [];
+					this.undoStack.push(deltas);
+					this.redoStack = [];
+				}
+
+				deltas.push(diff);
+				start = end;
 			}
 		};
 	}
 	undo() {
 		if (this.undoStack.length === 0) {
-			return null;
+			return [];
 		}
 
-		const delta = this.undoStack.pop();
-		this.redoStack.push(delta);
-		return delta.from;
+		const deltas = this.undoStack.pop();
+		const result = deltas.map((d) => d.from);
+		this.redoStack.push(deltas.reverse());
+		return result;
 	}
 	redo() {
 		if (this.redoStack.length === 0) {
-			return null;
+			return [];
 		}
 
-		const delta = this.redoStack.pop();
-		this.undoStack.push(delta);
-		return delta.to;
+		const deltas = this.redoStack.pop();
+		const result = deltas.map((d) => d.to);
+		this.undoStack.push(deltas.reverse());
+		return result;
 	}
 }

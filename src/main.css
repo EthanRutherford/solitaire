@@ -46,7 +46,7 @@ html, body, :global(.root) {
 
 .app {
 	background: var(--not-white);
-	min-height: 100%;
+	height: 100%;
 	overflow: hidden;
 }
 

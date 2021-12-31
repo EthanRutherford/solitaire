@@ -27,12 +27,6 @@ export class Game {
 		}
 	}
 	moveCards(cards, destination) {
-		// flip cards
-		const prevContext = cards[0].meta.context;
-		if (prevContext.length > 0 && this.tableau.includes(prevContext)) {
-			prevContext.fromTop().faceUp = true;
-		}
-
 		for (const card of cards) {
 			destination.push(card);
 			card.meta.context = destination;
@@ -87,6 +81,17 @@ export class Game {
 		const cards = context.draw(context.length - index);
 		this.moveCards(cards, destination);
 		return true;
+	}
+	tryFlipCard(deck) {
+		if (this.tableau.includes(deck)) {
+			const top = deck.fromTop();
+			if (!(top?.faceUp ?? true)) {
+				top.faceUp = true;
+				return true;
+			}
+		}
+
+		return false;
 	}
 	serialize() {
 		const state = {

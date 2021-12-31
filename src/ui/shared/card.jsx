@@ -1,6 +1,6 @@
 import {useMemo, useCallback, useState} from "react";
-import {useValueChanged} from "../../hooks/use-value-changed";
-import {useRerender} from "../../hooks/use-rerender";
+import {useValueChanged} from "../../util/use-value-changed";
+import {useRerender} from "../../util/use-rerender";
 import {suits} from "../../logic/deck";
 import styles from "./card.css";
 import {usePointers} from "./pointer-manager";

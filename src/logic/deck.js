@@ -71,9 +71,9 @@ export class Deck extends Array {
 	static deserialize = validatedDelta((input, deck) => {
 		const {length, ...rest} = input;
 		deck ??= new Deck();
-		deck.length = length;
+		deck.length = length ?? deck.length;
 		for (const [key, value] of Object.entries(rest)) {
-			if (key < length) {
+			if (key < deck.length) {
 				deck[key] = Card.deserialize(value, deck[key]);
 			}
 		}

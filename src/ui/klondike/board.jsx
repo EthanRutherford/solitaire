@@ -1,8 +1,9 @@
 import {useCallback, useMemo} from "react";
 import {suits} from "../../logic/deck";
 import {Game} from "../../logic/klondike/game";
-import {useRerender} from "../../hooks/use-rerender";
 import {UndoStack} from "../../logic/undo-stack";
+import {useRerender} from "../../util/use-rerender";
+import {performInterval} from "../../util/perform-interval";
 import {
 	CardRenderer,
 	renderPile,
@@ -19,17 +20,36 @@ function useGame() {
 	const rerender = useRerender();
 	const onDrop = useCallback((pointer, targetContext) => {
 		const cards = pointer.dragCards;
-		const commit = undoStack.record(game);
 		if (Object.values(game.foundations).includes(targetContext) && cards.length === 1) {
-			if (game.tryMoveToFoundation(cards[0].card, targetContext)) {
-				rerender();
-				commit();
-			}
+			performInterval(function*() {
+				const commit = undoStack.record(game);
+				const originDeck = cards[0].card.meta.context;
+				if (game.tryMoveToFoundation(cards[0].card, targetContext)) {
+					rerender();
+					commit();
+					yield;
+
+					if (game.tryFlipCard(originDeck)) {
+						rerender();
+						commit();
+					}
+				}
+			});
 		} else if (game.tableau.includes(targetContext)) {
-			if (game.tryTransferStack(cards[0].card, targetContext)) {
-				rerender();
-				commit();
-			}
+			performInterval(function*() {
+				const commit = undoStack.record(game);
+				const originDeck = cards[0].card.meta.context;
+				if (game.tryTransferStack(cards[0].card, targetContext)) {
+					rerender();
+					commit();
+					yield;
+
+					if (game.tryFlipCard(originDeck)) {
+						rerender();
+						commit();
+					}
+				}
+			});
 		}
 	}, []);
 
@@ -39,17 +59,14 @@ function useGame() {
 		}
 
 		const commit = undoStack.record(game);
-		function flipOne() {
-			game.undrawCards(1);
-			rerender();
-			if (game.discardPile.length > 0) {
-				setTimeout(flipOne, 20);
-			} else {
+		performInterval(function*() {
+			while (game.discardPile.length > 0) {
+				game.undrawCards(1);
+				rerender();
 				commit();
+				yield;
 			}
-		}
-
-		flipOne();
+		});
 	}, []);
 
 	const drawPileTap = useCallback((pointer) => {
@@ -63,26 +80,41 @@ function useGame() {
 
 	const playableDoubleTap = useCallback((pointer) => {
 		const commit = undoStack.record(game);
-		if (game.tryMoveToFoundation(pointer.card)) {
-			rerender();
-			commit();
-		}
+		const originDeck = pointer.card.meta.context;
+		performInterval(function*() {
+			if (game.tryMoveToFoundation(pointer.card)) {
+				rerender();
+				commit();
+				yield;
+
+				if (game.tryFlipCard(originDeck)) {
+					rerender();
+					commit();
+				}
+			}
+		});
 	}, []);
 
 	const undo = useCallback(() => {
-		const delta = undoStack.undo();
-		if (delta != null) {
-			Game.deserialize(delta, game);
-			rerender();
-		}
+		const deltas = undoStack.undo();
+		performInterval(function*() {
+			while (deltas.length > 0) {
+				Game.deserialize(deltas.pop(), game);
+				rerender();
+				yield;
+			}
+		});
 	}, []);
 
 	const redo = useCallback(() => {
-		const delta = undoStack.redo();
-		if (delta != null) {
-			Game.deserialize(delta, game);
-			rerender();
-		}
+		const deltas = undoStack.redo();
+		performInterval(function*() {
+			while (deltas.length > 0) {
+				Game.deserialize(deltas.pop(), game);
+				rerender();
+				yield;
+			}
+		});
 	}, []);
 
 	const discardGetCards = useCallback((card) => [card.meta.context.fromTop()]);
