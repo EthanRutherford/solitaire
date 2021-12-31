@@ -1,0 +1,92 @@
+@import url('https://fonts.googleapis.com/css2?family=K2D:wght@700&family=Roboto:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+* {
+	transition: box-shadow .2s;
+}
+html, body, div, span, p, a, img,
+h1, h2, h3, h4, h5, h6,
+b, u, i, center, ol, ul, li,
+label, button, input, select, textarea,
+canvas, footer, header,
+::before, ::after {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	vertical-align: baseline;
+	color: inherit;
+	font: inherit;
+}
+html {
+	font: var(--normal)/1.2 'Roboto';
+	color: var(--carbon);
+}
+:focus {
+	outline: 0;
+}
+:focus-visible {
+	box-shadow: 0 0 2px 2px var(--baby-dark);
+}
+button {
+	background: none;
+	cursor: pointer;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type=number] {
+    -moz-appearance:textfield;
+}
+
+html, body, :global(.root) {
+	height: 100%;
+}
+
+.app {
+	background: var(--not-white);
+	min-height: 100%;
+	overflow: hidden;
+}
+
+/* variables */
+:root {
+	/* font-sizes */
+	--tiny: 10px;
+	--small: 15px;
+	--normal: 20px;
+	--large: 25px;
+	--huge: 30px;
+
+	/* sizes */
+	--content-max-width: 1200px;
+	--content-width: calc(100vw - 40px);
+	--header-height: 40px;
+
+	/* greys */
+	--not-white: hsl(0, 0%, 90%);
+	--not-ash: hsl(0, 0%, 85%);
+	--ash-light: hsl(0, 0%, 80%);
+	--ash: hsl(0, 0%, 70%);
+	--ash-dark: hsl(0, 0%, 60%);
+	--grey: hsl(0, 0%, 50%);
+	--slate-light: hsl(0, 0%, 40%);
+	--slate: hsl(0, 0%, 30%);
+	--slate-dark: hsl(0, 0%, 20%);
+	--carbon: hsl(0, 0%, 12%);
+
+	/* reds */
+	--pink: hsl(0, 60%, 90%);
+	--pink-dark: hsl(0, 60%, 80%);
+	--red-light: hsl(0, 60%, 60%);
+	--red: hsl(0, 60%, 50%);
+	--red-dark: hsl(0, 60%, 40%);
+
+	/* blues */
+	--baby: hsl(210, 50%, 90%);
+	--baby-dark: hsl(210, 80%, 60%);
+
+	/* drop shadow color */
+	--shadow-color: rgba(0, 0, 0, .2);
+}

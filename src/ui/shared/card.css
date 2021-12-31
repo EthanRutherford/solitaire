@@ -1,0 +1,102 @@
+.card-front, .card-back {
+	position: absolute;
+	border-radius: 5px;
+	width: 100px;
+	height: 150px;
+	transition: left ease-in-out .2s, top ease-in-out .2s, filter linear .1s;
+}
+
+.card-front {
+	border: 1px solid var(--ash);
+	background-color: white;
+	font-family: 'K2D';
+	font-weight: bold;
+}
+
+.card-back {
+	border: 1px solid hsl(30, 20%, 60%);
+	padding: 9px;
+	background-color: hsl(30, 20%, 40%);
+}
+
+.card-back::before {
+	content: "";
+	display: block;
+	border: 5px solid hsl(30, 20%, 60%);
+	border-radius: 5px;
+	width: 80px;
+	height: 130px;
+}
+
+.card-back::after {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%) scaleX(.6) rotate(45deg);
+	width: 50px;
+	height: 50px;
+	background-color: hsl(30, 20%, 60%);
+}
+
+.drop-shadow, .flip-ltr-a, .flip-rtl-a {
+	filter: drop-shadow(2px 2px 2px var(--shadow-color));
+}
+
+.flip-ltr-a {
+	animation: flipUp .095s linear;
+}
+.flip-ltr-b {
+	animation: flipDown .095s linear;
+}
+.flip-rtl-a {
+	animation: flipDown .095s linear reverse;
+}
+.flip-rtl-b {
+	animation: flipUp .095s linear reverse;
+}
+
+.black {
+	color: black;
+}
+
+.red {
+	color: red;
+}
+
+.top-corner, .bottom-corner {
+	position: absolute;
+	text-align: center;
+	font-size: 15px;
+	line-height: 16px;
+}
+
+.top-corner {
+	top: 5px;
+	left: 5px;
+}
+
+.bottom-corner {
+	bottom: 5px;
+	right: 5px;
+	transform: rotate(180deg);
+}
+
+@keyframes flipUp {
+	from {
+		transform: perspective(800px) translateZ(0px) rotateY(0deg);
+	}
+	to {
+		transform: perspective(800px) translateZ(50px) rotateY(90deg);
+	}
+}
+
+@keyframes flipDown {
+	from {
+		transform: perspective(800px) translateZ(50px) rotateY(-90deg);
+	}
+	to {
+		transform: perspective(800px) translateZ(0px) rotateY(0deg);
+	}
+}
