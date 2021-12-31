@@ -70,7 +70,7 @@ export class Game {
 	tryTransferStack(card, destination) {
 		const topCard = destination.fromTop();
 		if (topCard == null ? card.value !== 13 :
-			card.suit + topCard.suit % 2 === 0 ||
+			(card.suit + topCard.suit) % 2 === 0 ||
 			card.value + 1 !== topCard.value
 		) {
 			return false;
