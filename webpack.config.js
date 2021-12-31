@@ -56,7 +56,7 @@ module.exports = (env) => [{
 	},
 }, {
 	entry: "./src/service-worker.js",
-	output: {filename: "service-worker.js"},
+	output: {path: __dirname + "/", filename: "service-worker.js"},
 	module: {
 		rules: [{
 			test: /\.jsx$/,

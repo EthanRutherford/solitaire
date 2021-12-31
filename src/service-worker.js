@@ -35,10 +35,11 @@ registerRoute(
 
 // cache the application code
 registerRoute(
-	/(?:\.js|\.css|\/)$/,
+	(route) => console.log(route),
 	new StaleWhileRevalidate({
 		cacheName: "solitaire-application-code",
 		plugins: [
+			new CacheableResponsePlugin({statuses: [200]}),
 			new BroadcastUpdatePlugin("code-updates"),
 		],
 	}),

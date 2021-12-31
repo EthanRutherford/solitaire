@@ -1,7 +1,7 @@
 {
-	"name": "Jigsaw",
-	"short_name": "Jigsaw",
-	"description": "Jigsaw puzzle game",
+	"name": "Solitaire",
+	"short_name": "Solitaire",
+	"description": "Solitaire collection",
 	"icons": [{
 		"src": "images/icons/128.png",
 		"sizes": "128x128",
