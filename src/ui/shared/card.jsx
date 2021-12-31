@@ -1,15 +1,19 @@
 import {useMemo, useCallback, useState} from "react";
+import Spade from "../../../images/spade";
+import Diamond from "../../../images/diamond";
+import Club from "../../../images/club";
+import Heart from "../../../images/heart";
 import {useValueChanged} from "../../util/use-value-changed";
 import {useRerender} from "../../util/use-rerender";
 import {suits} from "../../logic/deck";
-import styles from "./card.css";
 import {usePointers} from "./pointer-manager";
+import styles from "./card.css";
 
-const suitChars = {
-	[suits.spades]: "♠️",
-	[suits.diamonds]: "♦️",
-	[suits.clubs]: "♣️",
-	[suits.hearts]: "♥️",
+const suitSvgs = {
+	[suits.spades]: Spade,
+	[suits.diamonds]: Diamond,
+	[suits.clubs]: Club,
+	[suits.hearts]: Heart,
 };
 
 const suitColors = {
@@ -105,6 +109,7 @@ export function Card({card, pos, onTap, onDoubleTap, getDragCards}) {
 	}
 
 	const className = cns(styles.cardFront, suitColors[card.suit], flipClass, shadowClass);
+	const SuitSvg = suitSvgs[card.suit];
 	return (
 		<div
 			className={className}
@@ -115,16 +120,12 @@ export function Card({card, pos, onTap, onDoubleTap, getDragCards}) {
 			ref={(elem) => card.meta.elem = elem}
 		>
 			<div className={styles.topCorner}>
-				{card.label}
-				<div className={styles.suit}>
-					{suitChars[card.suit]}
-				</div>
+				{card.label}<br />
+				<SuitSvg className={styles.suit} />
 			</div>
 			<div className={styles.bottomCorner}>
-				{card.label}
-				<div className={styles.suit}>
-					{suitChars[card.suit]}
-				</div>
+				{card.label}<br />
+				<SuitSvg className={styles.suit} />
 			</div>
 		</div>
 	);
