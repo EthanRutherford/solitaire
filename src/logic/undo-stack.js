@@ -61,6 +61,7 @@ export class UndoStack {
 	constructor(undo = []) {
 		this.undoStack = undo;
 		this.redoStack = [];
+		this.lock = false;
 	}
 	record(object) {
 		let start = object.serialize();
@@ -81,8 +82,8 @@ export class UndoStack {
 		};
 	}
 	undo() {
-		if (this.undoStack.length === 0) {
-			return [];
+		if (this.undoStack.length === 0 || this.lock) {
+			return null;
 		}
 
 		const deltas = this.undoStack.pop();
@@ -91,8 +92,8 @@ export class UndoStack {
 		return result;
 	}
 	redo() {
-		if (this.redoStack.length === 0) {
-			return [];
+		if (this.redoStack.length === 0 || this.lock) {
+			return null;
 		}
 
 		const deltas = this.redoStack.pop();

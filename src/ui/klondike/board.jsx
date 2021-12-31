@@ -95,27 +95,39 @@ function useGame() {
 		});
 	}, []);
 
-	// TODO: trying to undo while an undo/redo sequence is already in progress causes
-	// a crash. Need to make sure that only one undo sequence happens at a time
 	const undo = useCallback(() => {
 		const deltas = undoStack.undo();
+		if (deltas == null) {
+			return;
+		}
+
 		performInterval(function*() {
+			undoStack.lock = true;
 			while (deltas.length > 0) {
 				Game.deserialize(deltas.pop(), game);
 				rerender();
 				yield;
 			}
+
+			undoStack.lock = false;
 		});
 	}, []);
 
 	const redo = useCallback(() => {
 		const deltas = undoStack.redo();
+		if (deltas == null) {
+			return;
+		}
+
 		performInterval(function*() {
+			undoStack.lock = true;
 			while (deltas.length > 0) {
 				Game.deserialize(deltas.pop(), game);
 				rerender();
 				yield;
 			}
+
+			undoStack.lock = false;
 		});
 	}, []);
 
