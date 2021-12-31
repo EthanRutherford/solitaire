@@ -47,7 +47,7 @@ export function renderStack(pos, cards, handlers) {
 			pos={{x: pos.x, y: posY, z: i}}
 			{...handlers}
 			key={c.id}
-			_={posY += c.faceUp ? 38 : 10}
+			_={posY += c.faceUp ? 36 : 10}
 		/>
 	));
 }

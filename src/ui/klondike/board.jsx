@@ -95,6 +95,8 @@ function useGame() {
 		});
 	}, []);
 
+	// TODO: trying to undo while an undo/redo sequence is already in progress causes
+	// a crash. Need to make sure that only one undo sequence happens at a time
 	const undo = useCallback(() => {
 		const deltas = undoStack.undo();
 		performInterval(function*() {

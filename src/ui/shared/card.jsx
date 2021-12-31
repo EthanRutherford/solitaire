@@ -115,12 +115,16 @@ export function Card({card, pos, onTap, onDoubleTap, getDragCards}) {
 			ref={(elem) => card.meta.elem = elem}
 		>
 			<div className={styles.topCorner}>
-				{card.label}<br />
-				{suitChars[card.suit]}
+				{card.label}
+				<div className={styles.suit}>
+					{suitChars[card.suit]}
+				</div>
 			</div>
 			<div className={styles.bottomCorner}>
-				{card.label}<br />
-				{suitChars[card.suit]}
+				{card.label}
+				<div className={styles.suit}>
+					{suitChars[card.suit]}
+				</div>
 			</div>
 		</div>
 	);
