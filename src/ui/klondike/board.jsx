@@ -20,10 +20,9 @@ function useGame() {
 
 	const rerender = useRerender();
 	const tryAutoComplete = enqueueAction(function*() {
-		let movedFromDeck = {};
-		while (movedFromDeck != null) {
+		while (true) {
 			const commit = undoStack.record(game);
-			movedFromDeck = game.tryAutoCompleteOne();
+			const movedFromDeck = game.tryAutoCompleteOne();
 			if (movedFromDeck != null) {
 				rerender();
 				commit();
@@ -34,6 +33,8 @@ function useGame() {
 				}
 
 				yield 100;
+			} else {
+				return;
 			}
 		}
 	});
@@ -46,13 +47,15 @@ function useGame() {
 			if (game.tryMoveToFoundation(cards[0].card, targetContext)) {
 				rerender();
 				commit();
-				yield 10;
 
-				tryAutoComplete();
 				if (game.tryFlipCard(originDeck)) {
+					yield 10;
 					rerender();
 					commit();
 				}
+
+				yield 100;
+				tryAutoComplete();
 			}
 		} else if (game.tableau.includes(targetContext)) {
 			const commit = undoStack.record(game);
@@ -60,13 +63,15 @@ function useGame() {
 			if (game.tryTransferStack(cards[0].card, targetContext)) {
 				rerender();
 				commit();
-				yield 10;
 
-				tryAutoComplete();
 				if (game.tryFlipCard(originDeck)) {
+					yield 10;
 					rerender();
 					commit();
 				}
+
+				yield 100;
+				tryAutoComplete();
 			}
 		}
 	});
@@ -93,8 +98,9 @@ function useGame() {
 			game.drawCards(1);
 			rerender();
 			commit();
+
+			yield 100;
 			tryAutoComplete();
-			yield 10;
 		}
 	});
 
@@ -105,13 +111,15 @@ function useGame() {
 		if (game.tryMoveToFoundation(pointer.card)) {
 			rerender();
 			commit();
-			yield 10;
 
-			tryAutoComplete();
 			if (game.tryFlipCard(originDeck)) {
+				yield 10;
 				rerender();
 				commit();
 			}
+
+			yield 100;
+			tryAutoComplete();
 		}
 	});
 
