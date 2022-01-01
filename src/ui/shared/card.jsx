@@ -1,4 +1,4 @@
-import {useMemo, useCallback, useState} from "react";
+import {useMemo, useCallback, useState, useEffect} from "react";
 import Spade from "../../../images/spade";
 import Diamond from "../../../images/diamond";
 import Club from "../../../images/club";
@@ -24,7 +24,8 @@ const suitColors = {
 };
 
 function usePosition(card, pos) {
-	const [moving, endMoving] = useValueChanged(pos.x, pos.y, pos.z);
+	const moved = useValueChanged(pos.x, pos.y, pos.z);
+	const [moving, setMoving] = useState(false);
 	const style = useMemo(() => {
 		const styles = {};
 		if (card.meta.dragPos != null) {
@@ -39,39 +40,51 @@ function usePosition(card, pos) {
 			styles.zIndex = pos.z;
 		}
 
-		if (moving) {
+		if (moving || moved) {
 			styles.pointerEvents = "none";
 			styles.zIndex += 300;
 		}
 
 		return styles;
-	}, [card.meta.dragPos, moving]);
+	}, [card.meta.dragPos, moving, moved, pos.x, pos.y, pos.z]);
+
+	useEffect(() => {
+		card.meta.elem.addEventListener("transitionstart", (event) => {
+			if (event.propertyName === "left" || event.propertyName === "top") {
+				setMoving(true);
+			}
+		});
+	}, []);
+
 	const onTransitionEnd = useCallback((event) => {
 		if (event.propertyName === "left" || event.propertyName === "top") {
-			endMoving();
-			card.meta.rerender();
+			setMoving(false);
 		}
 	}, []);
+
 	return {style, onTransitionEnd};
 }
 
 function useFlip(card, pos) {
-	const [flipped, resetFlipped] = useValueChanged(card.faceUp);
+	const flipped = useValueChanged(card.faceUp);
 	const [state, setState] = useState({faceUp: card.faceUp});
 
 	if (flipped) {
-		resetFlipped();
-		setState({
-			flipClass: state.faceUp ? styles.flipRtlA : styles.flipLtrA,
-			faceUp: state.faceUp,
-			zIndex: 200 - pos.z,
-			animationEnd: () => setState({
-				flipClass: card.faceUp ? styles.flipLtrB : styles.flipRtlB,
-				faceUp: card.faceUp,
-				zIndex: 200 + pos.z,
-				animationEnd: () => setState({faceUp: card.faceUp}),
-			}),
-		});
+		if (card.faceUp === state.faceUp) {
+			setState({faceUp: card.faceUp});
+		} else {
+			setState({
+				flipClass: state.faceUp ? styles.flipRtlA : styles.flipLtrA,
+				faceUp: state.faceUp,
+				zIndex: 200 - pos.z,
+				animationEnd: () => setState({
+					flipClass: card.faceUp ? styles.flipLtrB : styles.flipRtlB,
+					faceUp: card.faceUp,
+					zIndex: 200 + pos.z,
+					animationEnd: () => setState({faceUp: card.faceUp}),
+				}),
+			});
+		}
 	}
 
 	return state;

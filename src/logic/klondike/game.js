@@ -93,6 +93,26 @@ export class Game {
 
 		return false;
 	}
+	tryAutoCompleteOne() {
+		let maxValue = 15;
+		for (const deck of Object.values(this.foundations)) {
+			if (deck.length > 0) {
+				maxValue = Math.min(deck.fromTop().value + 1, maxValue);
+			} else {
+				maxValue = 0;
+			}
+		}
+
+		const usableDecks = this.tableau.concat([this.discardPile]);
+		for (const deck of usableDecks) {
+			const top = deck.fromTop();
+			if (top?.value <= maxValue && this.tryMoveToFoundation(top)) {
+				return deck;
+			}
+		}
+
+		return null;
+	}
 	serialize() {
 		const state = {
 			dr: this.drawPile.serialize(),
