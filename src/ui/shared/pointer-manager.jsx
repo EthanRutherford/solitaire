@@ -2,7 +2,10 @@ import {createContext, useCallback, useContext, useLayoutEffect, useMemo} from "
 import {Card} from "./card";
 import {EmptyZone} from "./empty-zone";
 
-function getCard(elem) {
+function getContextAtPoint(pointer) {
+	const {left, top, width, height} = pointer.card.meta.elem.getBoundingClientRect();
+	const elem = document.elementFromPoint(left + width / 2, top + height / 2);
+
 	let fiber = Object.entries(elem).find(([k]) => k.startsWith("__reactFiber$"))?.[1];
 	while (fiber != null) {
 		if (fiber.type === Card) {
@@ -60,7 +63,7 @@ export function PointerManager({onDrag, onDrop, children}) {
 			}
 
 			if (pointers.current.dragging) {
-				const target = getCard(event.target);
+				const target = getContextAtPoint(pointers.current, event);
 				onDrop(pointers.current, target);
 
 				for (const dragCard of pointers.current.dragCards) {
