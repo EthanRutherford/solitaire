@@ -1,5 +1,8 @@
 .empty-zone {
 	position: absolute;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 	border: 1px solid var(--carbon);
 	border-radius: 5px;
 	width: 100px;

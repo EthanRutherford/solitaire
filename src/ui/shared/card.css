@@ -13,6 +13,10 @@
 	font-weight: bold;
 }
 
+.card-front:focus {
+	box-shadow: 0 0 2px 2px var(--baby-dark);
+}
+
 .card-back {
 	border: 1px solid hsl(30, 20%, 60%);
 	padding: 9px;

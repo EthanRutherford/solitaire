@@ -1,25 +1,10 @@
 import {createContext, useCallback, useContext, useLayoutEffect, useMemo} from "react";
-import {Card} from "./card";
-import {EmptyZone} from "./empty-zone";
+import {getContext} from "./get-context";
 
 function getContextAtPoint(pointer) {
 	const {left, top, width, height} = pointer.card.meta.elem.getBoundingClientRect();
 	const elem = document.elementFromPoint(left + width / 2, top + height / 2);
-
-	let fiber = Object.entries(elem).find(([k]) => k.startsWith("__reactFiber$"))?.[1];
-	while (fiber != null) {
-		if (fiber.type === Card) {
-			return fiber.memoizedProps.card.meta.context;
-		}
-
-		if (fiber.type === EmptyZone) {
-			return fiber.memoizedProps.context;
-		}
-
-		fiber = fiber.return;
-	}
-
-	return null;
+	return getContext(elem);
 }
 
 const pointerContext = createContext([]);
@@ -113,7 +98,7 @@ export function usePointers(card, onTap, onDoubleTap, getDragCards) {
 				card,
 				onTap,
 				onDoubleTap,
-				dragCards: getDragCards?.(card).map((card) => ({
+				dragCards: getDragCards?.(card)?.map((card) => ({
 					card,
 					origin: {
 						x: card.meta.elem.offsetLeft,

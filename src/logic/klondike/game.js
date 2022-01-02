@@ -26,10 +26,10 @@ export class Game {
 			card.meta.context = context;
 		}
 	}
-	moveCards(cards, destination) {
+	moveCards(cards, target) {
 		for (const card of cards) {
-			destination.push(card);
-			card.meta.context = destination;
+			target.push(card);
+			card.meta.context = target;
 		}
 	}
 	drawCards(count) {
@@ -46,7 +46,20 @@ export class Game {
 			card.faceUp = false;
 		}
 	}
-	tryMoveToFoundation(card, destination = this.foundations[card.suit]) {
+	getMovableCards(card) {
+		if (card.meta.context === this.discardPile) {
+			return [this.discardPile.fromTop()];
+		}
+
+		if (card.faceUp) {
+			const context = card.meta.context;
+			const index = context.indexOf(card);
+			return context.slice(index);
+		}
+
+		return null;
+	}
+	canMoveToFoundation(card, target) {
 		const context = card.meta.context;
 
 		// only cards on top can be sent to foundation
@@ -55,20 +68,19 @@ export class Game {
 		}
 
 		// cards can only be sent to matching foundation
-		if (destination !== this.foundations[card.suit]) {
+		if (target !== this.foundations[card.suit]) {
 			return false;
 		}
 
 		// card must be the next card for the foundation
-		if ((destination.fromTop()?.value ?? 0) !== card.value - 1) {
+		if ((target.fromTop()?.value ?? 0) !== card.value - 1) {
 			return false;
 		}
 
-		this.moveCards(context.draw(1), destination);
 		return true;
 	}
-	tryTransferStack(card, destination) {
-		const topCard = destination.fromTop();
+	canMoveStack(card, target) {
+		const topCard = target.fromTop();
 		if (topCard == null ? card.value !== 13 :
 			(card.suit + topCard.suit) % 2 === 0 ||
 			card.value + 1 !== topCard.value
@@ -76,11 +88,42 @@ export class Game {
 			return false;
 		}
 
-		const context = card.meta.context;
-		const index = context.indexOf(card);
-		const cards = context.draw(context.length - index);
-		this.moveCards(cards, destination);
 		return true;
+	}
+	canMoveCards(card, target) {
+		if (Object.values(this.foundations).includes(target)) {
+			return this.canMoveToFoundation(card, target);
+		} else if (this.tableau.includes(target)) {
+			return this.canMoveStack(card, target);
+		}
+
+		return false;
+	}
+	transferCards(card, target) {
+		if (Object.values(this.foundations).includes(target)) {
+			const originDeck = card.meta.context;
+			this.moveCards(originDeck.draw(1), target);
+		} else if (this.tableau.includes(target)) {
+			const context = card.meta.context;
+			const index = context.indexOf(card);
+			this.moveCards(context.draw(context.length - index), target);
+		}
+	}
+	tryGetMoveTarget(card) {
+		if (card === card.meta.context.fromTop()) {
+			const foundation = this.foundations[card.suit];
+			if (this.canMoveToFoundation(card, foundation)) {
+				return foundation;
+			}
+		}
+
+		for (const deck of this.tableau) {
+			if (this.canMoveStack(card, deck)) {
+				return deck;
+			}
+		}
+
+		return null;
 	}
 	tryFlipCard(deck) {
 		if (this.tableau.includes(deck)) {
@@ -106,7 +149,9 @@ export class Game {
 		const usableDecks = this.tableau.concat([this.discardPile]);
 		for (const deck of usableDecks) {
 			const top = deck.fromTop();
-			if (top?.value <= maxValue && this.tryMoveToFoundation(top)) {
+			const foundation = this.foundations[top?.suit];
+			if (top?.value <= maxValue && this.canMoveToFoundation(top, foundation)) {
+				this.transferCards(top, foundation);
 				return deck;
 			}
 		}

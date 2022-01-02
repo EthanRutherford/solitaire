@@ -130,6 +130,7 @@ export function Card({card, pos, onTap, onDoubleTap, getDragCards}) {
 			onAnimationEnd={animationEnd}
 			{...positionProps}
 			style={{...style, zIndex: zIndex ?? style.zIndex}}
+			tabIndex={-1}
 			ref={(elem) => card.meta.elem = elem}
 		>
 			<div className={styles.topCorner}>
