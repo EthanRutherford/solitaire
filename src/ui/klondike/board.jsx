@@ -17,6 +17,7 @@ import {
 } from "../shared/card-renderer";
 import {EmptyZone} from "../shared/empty-zone";
 import {getCard} from "../shared/get-context";
+import {ControlBar} from "../shared/control-bar";
 import styles from "./board.css";
 
 function useGame() {
@@ -196,77 +197,76 @@ export function Board() {
 	} = useGame();
 
 	return (
-		<div className={styles.board}>
-			<EmptyZone pos={{x: 10, y: 10}} context={game.drawPile} onTap={flipDiscard}>
-				<Undo width="50px" color="hsla(0, 0%, 0%, .1)" />
-			</EmptyZone>
-			<EmptyZone
-				pos={{x: 340, y: 10}}
-				context={game.foundations[suits.spades]}
-				onTap={targetTap}
-			>
-				<Spade width="50px" color="hsla(0, 0%, 0%, .1)" />
-			</EmptyZone>
-			<EmptyZone
-				pos={{x: 450, y: 10}}
-				context={game.foundations[suits.diamonds]}
-				onTap={targetTap}
-			>
-				<Diamond width="50px" color="hsla(0, 0%, 0%, .1)" />
-			</EmptyZone>
-			<EmptyZone
-				pos={{x: 560, y: 10}}
-				context={game.foundations[suits.clubs]}
-				onTap={targetTap}
-			>
-				<Club width="50px" color="hsla(0, 0%, 0%, .1)" />
-			</EmptyZone>
-			<EmptyZone
-				pos={{x: 670, y: 10}}
-				context={game.foundations[suits.hearts]}
-				onTap={targetTap}
-			>
-				<Heart width="50px" color="hsla(0, 0%, 0%, .1)" />
-			</EmptyZone>
-			{game.tableau.map((stack, i) => (
+		<>
+			<div className={styles.board}>
+				<EmptyZone pos={{x: 10, y: 10}} context={game.drawPile} onTap={flipDiscard}>
+					<Undo width="50px" color="hsla(0, 0%, 0%, .1)" />
+				</EmptyZone>
 				<EmptyZone
-					pos={{x: 10 + i * 110, y: 170}}
-					context={stack}
+					pos={{x: 340, y: 10}}
+					context={game.foundations[suits.spades]}
 					onTap={targetTap}
-					key={i}
-				/>
-			))}
-			<CardRenderer onDrop={onDrop}>
-				{renderPile({x: 10, y: 10}, game.drawPile, {
-					onTap: drawPileTap,
-				})}
-				{renderPile({x: 120, y: 10}, game.discardPile, {
-					onTap: playableTap,
-					onDoubleTap: playableDoubleTap,
-					getDragCards: playableGetCards,
-				})}
-				{renderFoundation({x: 340, y: 10}, game.foundations[suits.spades], {
-					onTap: foundationTap,
-				})}
-				{renderFoundation({x: 450, y: 10}, game.foundations[suits.diamonds], {
-					onTap: foundationTap,
-				})}
-				{renderFoundation({x: 560, y: 10}, game.foundations[suits.clubs], {
-					onTap: foundationTap,
-				})}
-				{renderFoundation({x: 670, y: 10}, game.foundations[suits.hearts], {
-					onTap: foundationTap,
-				})}
-				{game.tableau.map((stack, i) => renderStack({x: 10 + i * 110, y: 170}, stack, {
-					onTap: playableTap,
-					onDoubleTap: playableDoubleTap,
-					getDragCards: playableGetCards,
-				}))}
-			</CardRenderer>
-			<div style={{position: "absolute", left: 1000}}>
-				<button onClick={undo}>undo</button>
-				<button onClick={redo}>redo</button>
+				>
+					<Spade width="50px" color="hsla(0, 0%, 0%, .1)" />
+				</EmptyZone>
+				<EmptyZone
+					pos={{x: 450, y: 10}}
+					context={game.foundations[suits.diamonds]}
+					onTap={targetTap}
+				>
+					<Diamond width="50px" color="hsla(0, 0%, 0%, .1)" />
+				</EmptyZone>
+				<EmptyZone
+					pos={{x: 560, y: 10}}
+					context={game.foundations[suits.clubs]}
+					onTap={targetTap}
+				>
+					<Club width="50px" color="hsla(0, 0%, 0%, .1)" />
+				</EmptyZone>
+				<EmptyZone
+					pos={{x: 670, y: 10}}
+					context={game.foundations[suits.hearts]}
+					onTap={targetTap}
+				>
+					<Heart width="50px" color="hsla(0, 0%, 0%, .1)" />
+				</EmptyZone>
+				{game.tableau.map((stack, i) => (
+					<EmptyZone
+						pos={{x: 10 + i * 110, y: 170}}
+						context={stack}
+						onTap={targetTap}
+						key={i}
+					/>
+				))}
+				<CardRenderer onDrop={onDrop}>
+					{renderPile({x: 10, y: 10}, game.drawPile, {
+						onTap: drawPileTap,
+					})}
+					{renderPile({x: 120, y: 10}, game.discardPile, {
+						onTap: playableTap,
+						onDoubleTap: playableDoubleTap,
+						getDragCards: playableGetCards,
+					})}
+					{renderFoundation({x: 340, y: 10}, game.foundations[suits.spades], {
+						onTap: foundationTap,
+					})}
+					{renderFoundation({x: 450, y: 10}, game.foundations[suits.diamonds], {
+						onTap: foundationTap,
+					})}
+					{renderFoundation({x: 560, y: 10}, game.foundations[suits.clubs], {
+						onTap: foundationTap,
+					})}
+					{renderFoundation({x: 670, y: 10}, game.foundations[suits.hearts], {
+						onTap: foundationTap,
+					})}
+					{game.tableau.map((stack, i) => renderStack({x: 10 + i * 110, y: 170}, stack, {
+						onTap: playableTap,
+						onDoubleTap: playableDoubleTap,
+						getDragCards: playableGetCards,
+					}))}
+				</CardRenderer>
 			</div>
-		</div>
+			<ControlBar contentClassName={styles.barContent} undo={undo} redo={redo} />
+		</>
 	);
 }
