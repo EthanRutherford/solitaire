@@ -4,12 +4,7 @@ import {Game} from "../../logic/spider/game";
 import {UndoStack} from "../../logic/undo-stack";
 import {useRerender} from "../../util/use-rerender";
 import {useActionQueue} from "../../util/use-action-queue";
-import {
-	CardRenderer,
-	renderPile,
-	renderFoundation,
-	renderStack,
-} from "../shared/card-renderer";
+import {CardRenderer, renderPile, renderStack} from "../shared/card-renderer";
 import {EmptyZone} from "../shared/empty-zone";
 import {getCard} from "../shared/get-context";
 import {ControlBar} from "../shared/control-bar";
