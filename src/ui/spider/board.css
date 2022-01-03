@@ -1,7 +1,7 @@
 .board {
 	position: relative;
 	margin: auto;
-	width: 780px;
+	width: 1110px;
 	height: 100%;
 	user-select: none;
 	filter: drop-shadow(2px 2px 2px var(--shadow-color));
@@ -10,5 +10,5 @@
 .bar-content {
 	margin: auto;
 	padding: 0 10px;
-	width: 780px;
+	width: 1110px;
 }

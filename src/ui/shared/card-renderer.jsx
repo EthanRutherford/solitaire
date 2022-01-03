@@ -18,21 +18,11 @@ export function CardRenderer({onDrop, children}) {
 // common board layout components
 
 export function renderPile(pos, cards, handlers) {
+	pos.z ??= 0;
 	return cards.map((c, i) => (
 		<Card
 			card={c}
-			pos={{x: pos.x + Math.floor(i * .1) * 2, y: pos.y, z: i}}
-			{...handlers}
-			key={c.id}
-		/>
-	));
-}
-
-export function renderFoundation(pos, cards, handlers) {
-	return cards.map((c, i) => (
-		<Card
-			card={c}
-			pos={{x: pos.x, y: pos.y, z: i}}
+			pos={{x: pos.x + Math.floor(i * .1) * 2, y: pos.y, z: pos.z + i}}
 			{...handlers}
 			key={c.id}
 		/>
@@ -40,11 +30,12 @@ export function renderFoundation(pos, cards, handlers) {
 }
 
 export function renderStack(pos, cards, handlers) {
+	pos.z ??= 0;
 	let posY = pos.y;
 	return cards.map((c, i) => (
 		<Card
 			card={c}
-			pos={{x: pos.x, y: posY, z: i}}
+			pos={{x: pos.x, y: posY, z: pos.z + i}}
 			{...handlers}
 			key={c.id}
 			_={posY += c.faceUp ? 32 : 10}

@@ -159,20 +159,14 @@ export class Game {
 		return null;
 	}
 	serialize() {
-		const state = {
+		return {
 			dr: this.drawPile.serialize(),
 			di: this.discardPile.serialize(),
+			t: this.tableau.map((d) => d.serialize()),
+			f: Object.fromEntries(Object.entries(this.foundations).map(
+				([k, v]) => [k, v.serialize()],
+			)),
 		};
-
-		for (let i = 0; i < this.tableau.length; i++) {
-			state[`t${i}`] = this.tableau[i].serialize();
-		}
-
-		for (const [k, v] of Object.entries(this.foundations)) {
-			state[`f${k}`] = v.serialize();
-		}
-
-		return state;
 	}
 	static deserialize = validatedDelta((input, game) => {
 		game ??= new Game();
@@ -181,12 +175,12 @@ export class Game {
 		game.discardPile = Deck.deserialize(input.di, game.discardPile);
 		const tableau = game.tableau;
 		for (let i = 0; i < 7; i++) {
-			tableau[i] = Deck.deserialize(input[`t${i}`], tableau[i]);
+			tableau[i] = Deck.deserialize(input.t?.[i], tableau[i]);
 		}
 
 		const foundations = game.foundations;
 		for (const k of Object.values(suits)) {
-			foundations[k] = Deck.deserialize(input[`f${k}`], foundations[k]);
+			foundations[k] = Deck.deserialize(input.f?.[k], foundations[k]);
 		}
 
 		return game.setContexts();

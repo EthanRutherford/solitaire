@@ -1,11 +1,6 @@
 import {useCallback, useMemo} from "react";
-import Undo from "../../../images/undo";
-import Spade from "../../../images/spade";
-import Diamond from "../../../images/diamond";
-import Club from "../../../images/club";
-import Heart from "../../../images/heart";
-import {suits} from "../../logic/deck";
-import {Game} from "../../logic/klondike/game";
+import {Deck} from "../../logic/deck";
+import {Game} from "../../logic/spider/game";
 import {UndoStack} from "../../logic/undo-stack";
 import {useRerender} from "../../util/use-rerender";
 import {useActionQueue} from "../../util/use-action-queue";
@@ -21,28 +16,28 @@ import {ControlBar} from "../shared/control-bar";
 import styles from "./board.css";
 
 function useGame() {
-	const game = useMemo(() => Game.fromScratch(), []);
+	const game = useMemo(() => Game.fromScratch(1), []);
 	const undoStack = useMemo(() => new UndoStack());
 	const enqueueAction = useActionQueue();
-
 	const rerender = useRerender();
-	const tryAutoComplete = enqueueAction(function*() {
-		while (true) {
-			const commit = undoStack.record(game);
-			const movedFromDeck = game.tryAutoCompleteOne();
-			if (movedFromDeck != null) {
+
+	const tryCompleteStack = enqueueAction(function*(deck, commit) {
+		if (game.canCompleteStack(deck)) {
+			const foundation = new Deck();
+			game.foundation.push(foundation);
+			for (let i = 0; i < 13; i++) {
+				game.moveCards(deck.draw(1), foundation);
 				rerender();
 				commit();
-				if (game.tryFlipCard(movedFromDeck)) {
-					yield 10;
-					rerender();
-					commit();
-				}
-
-				yield 100;
-			} else {
-				return;
+				yield 10;
 			}
+
+			if (game.tryFlipCard(deck)) {
+				rerender();
+				commit();
+			}
+
+			yield 100;
 		}
 	});
 
@@ -60,8 +55,9 @@ function useGame() {
 			commit();
 		}
 
+		tryCompleteStack(targetContext, commit);
+
 		yield 100;
-		tryAutoComplete();
 	});
 
 	const onDrop = useCallback((pointer, targetContext) => {
@@ -70,31 +66,20 @@ function useGame() {
 		}
 	}, []);
 
-	const flipDiscard = enqueueAction(function*() {
-		if (game.drawPile.length > 0) {
-			return;
-		}
-
+	const drawPileTap = enqueueAction(function*() {
+		document.activeElement.blur();
 		const commit = undoStack.record(game);
-		while (game.discardPile.length > 0) {
-			game.undrawCards(1);
+		for (let i = 0; i < 10; i++) {
+			game.moveCards(game.drawPile.draw(1), game.tableau[i]);
+			game.tableau[i].fromTop().faceUp = true;
 			rerender();
 			commit();
 			yield 10;
-		}
-	});
 
-	const drawPileTap = enqueueAction(function*(pointer) {
-		document.activeElement.blur();
-		if (pointer.card === pointer.card.meta.context.fromTop()) {
-			const commit = undoStack.record(game);
-			game.drawCards(1);
-			rerender();
-			commit();
-
-			yield 100;
-			tryAutoComplete();
+			tryCompleteStack(game.tableau[i], commit);
 		}
+
+		yield 100;
 	});
 
 	const playableGetCards = useCallback((card) => game.getMovableCards(card), []);
@@ -129,10 +114,6 @@ function useGame() {
 			}
 		}
 	});
-
-	const foundationTap = useCallback((pointer) => {
-		targetTap(pointer.elem.meta.context);
-	}, []);
 
 	const undo = enqueueAction(function*() {
 		const deltas = undoStack.undo();
@@ -169,13 +150,11 @@ function useGame() {
 	return {
 		game,
 		onDrop,
-		flipDiscard,
 		drawPileTap,
 		playableGetCards,
 		targetTap,
 		playableTap,
 		playableDoubleTap,
-		foundationTap,
 		undo,
 		redo,
 	};
@@ -185,13 +164,11 @@ export function Board() {
 	const {
 		game,
 		onDrop,
-		flipDiscard,
 		drawPileTap,
 		playableGetCards,
 		targetTap,
 		playableTap,
 		playableDoubleTap,
-		foundationTap,
 		undo,
 		redo,
 	} = useGame();
@@ -199,71 +176,26 @@ export function Board() {
 	return (
 		<>
 			<div className={styles.board}>
-				<EmptyZone pos={{x: 10, y: 10}} context={game.drawPile} onTap={flipDiscard}>
-					<Undo width="50px" color="hsla(0, 0%, 0%, .1)" />
-				</EmptyZone>
-				<EmptyZone
-					pos={{x: 340, y: 10}}
-					context={game.foundations[suits.spades]}
-					onTap={targetTap}
-				>
-					<Spade width="50px" color="hsla(0, 0%, 0%, .1)" />
-				</EmptyZone>
-				<EmptyZone
-					pos={{x: 450, y: 10}}
-					context={game.foundations[suits.diamonds]}
-					onTap={targetTap}
-				>
-					<Diamond width="50px" color="hsla(0, 0%, 0%, .1)" />
-				</EmptyZone>
-				<EmptyZone
-					pos={{x: 560, y: 10}}
-					context={game.foundations[suits.clubs]}
-					onTap={targetTap}
-				>
-					<Club width="50px" color="hsla(0, 0%, 0%, .1)" />
-				</EmptyZone>
-				<EmptyZone
-					pos={{x: 670, y: 10}}
-					context={game.foundations[suits.hearts]}
-					onTap={targetTap}
-				>
-					<Heart width="50px" color="hsla(0, 0%, 0%, .1)" />
-				</EmptyZone>
 				{game.tableau.map((stack, i) => (
 					<EmptyZone
-						pos={{x: 10 + i * 110, y: 170}}
+						pos={{x: 10 + i * 110, y: 10}}
 						context={stack}
 						onTap={targetTap}
 						key={i}
 					/>
 				))}
 				<CardRenderer onDrop={onDrop}>
-					{renderPile({x: 10, y: 10}, game.drawPile, {
+					{renderPile({x: 1000, y: 600}, game.drawPile, {
 						onTap: drawPileTap,
 					})}
-					{renderPile({x: 120, y: 10}, game.discardPile, {
-						onTap: playableTap,
-						onDoubleTap: playableDoubleTap,
-						getDragCards: playableGetCards,
-					})}
-					{renderPile({x: 340, y: 10}, game.foundations[suits.spades], {
-						onTap: foundationTap,
-					})}
-					{renderPile({x: 450, y: 10}, game.foundations[suits.diamonds], {
-						onTap: foundationTap,
-					})}
-					{renderPile({x: 560, y: 10}, game.foundations[suits.clubs], {
-						onTap: foundationTap,
-					})}
-					{renderPile({x: 670, y: 10}, game.foundations[suits.hearts], {
-						onTap: foundationTap,
-					})}
-					{game.tableau.map((deck, i) => renderStack({x: 10 + i * 110, y: 170}, deck, {
+					{game.tableau.map((deck, i) => renderStack({x: 10 + i * 110, y: 10}, deck, {
 						onTap: playableTap,
 						onDoubleTap: playableDoubleTap,
 						getDragCards: playableGetCards,
 					}))}
+					{game.foundation.map((deck, i) => renderPile({
+						x: 10 + i * 10, y: 600, z: -1000 + i * 100,
+					}, deck, {}))}
 				</CardRenderer>
 			</div>
 			<ControlBar contentClassName={styles.barContent} undo={undo} redo={redo} />

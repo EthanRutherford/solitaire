@@ -1,5 +1,5 @@
 import {render} from "react-dom";
-import {Board} from "./ui/klondike/board";
+import {Board} from "./ui/spider/board";
 import styles from "./main.css";
 
 // register service worker

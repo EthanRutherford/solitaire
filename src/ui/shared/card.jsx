@@ -33,7 +33,7 @@ function usePosition(card, pos) {
 			styles.top = card.meta.dragPos.y;
 			styles.pointerEvents = "none";
 			styles.transition = "unset";
-			styles.zIndex = 400 + pos.z;
+			styles.zIndex = 400 + pos.z % 100;
 		} else {
 			styles.left = pos.x;
 			styles.top = pos.y;
@@ -42,7 +42,7 @@ function usePosition(card, pos) {
 
 		if (moving || moved) {
 			styles.pointerEvents = "none";
-			styles.zIndex += 300;
+			styles.zIndex += 300 % 100;
 		}
 
 		return styles;
@@ -76,11 +76,11 @@ function useFlip(card, pos) {
 			setState({
 				flipClass: state.faceUp ? styles.flipRtlA : styles.flipLtrA,
 				faceUp: state.faceUp,
-				zIndex: 200 - pos.z,
+				zIndex: 200 - pos.z % 100,
 				animationEnd: () => setState({
 					flipClass: card.faceUp ? styles.flipLtrB : styles.flipRtlB,
 					faceUp: card.faceUp,
-					zIndex: 200 + pos.z,
+					zIndex: 200 + pos.z % 100,
 					animationEnd: () => setState({faceUp: card.faceUp}),
 				}),
 			});

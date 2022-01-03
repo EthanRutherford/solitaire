@@ -24,8 +24,10 @@ const faces = [
 	"K",
 ];
 
+let nextId = 0;
 export class Card {
 	constructor(suit, value, faceUp = false) {
+		this.id = nextId++;
 		this.suit = suit;
 		this.value = value;
 		this.faceUp = faceUp;
@@ -34,17 +36,15 @@ export class Card {
 	get label() {
 		return faces[this.value];
 	}
-	get id() {
-		return `${this.suit}-${this.value}`;
-	}
 	serialize() {
-		return {s: this.suit, v: this.value, f: this.faceUp};
+		return {s: this.suit, v: this.value, f: this.faceUp, i: this.id};
 	}
 	static deserialize = validatedDelta((input, card) => {
 		card ??= new Card();
 		card.suit = input.s ?? card.suit;
 		card.value = input.v ?? card.value;
 		card.faceUp = input.f ?? card.faceUp;
+		card.id = input.i ?? card.id;
 		return card;
 	});
 }
