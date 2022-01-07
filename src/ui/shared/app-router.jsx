@@ -5,14 +5,12 @@ import {useRerender} from "../../util/use-rerender";
 
 function useHistory() {
 	const routes = useMemo(() => new Set(), []);
-
 	const rerender = useCallback(() => routes.forEach((r) => r()), []);
+	if (history.state == null) {
+		history.replaceState({crumb: ["/"]}, null, "/");
+	}
 
 	useEffect(() => {
-		if (history.state == null) {
-			history.replaceState({crumb: ["/"]}, null, "/");
-		}
-
 		window.onpopstate = rerender;
 	}, []);
 
