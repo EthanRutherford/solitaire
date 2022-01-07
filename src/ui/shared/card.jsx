@@ -33,7 +33,7 @@ function usePosition(card, pos) {
 			styles.top = card.meta.dragPos.y;
 			styles.pointerEvents = "none";
 			styles.transition = "unset";
-			styles.zIndex = 400 + pos.z % 100;
+			styles.zIndex = 400 + Math.abs(pos.z % 100);
 		} else {
 			styles.left = pos.x;
 			styles.top = pos.y;
@@ -42,7 +42,7 @@ function usePosition(card, pos) {
 
 		if (moving || moved) {
 			styles.pointerEvents = "none";
-			styles.zIndex += 300 % 100;
+			styles.zIndex = 300 + Math.abs(styles.zIndex % 100);
 		}
 
 		return styles;
