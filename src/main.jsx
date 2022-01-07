@@ -1,6 +1,9 @@
 import {render} from "react-dom";
-import {Board} from "./ui/spider/board";
+import {AppRouter, Route} from "./ui/shared/app-router";
+import {Board as Klondike} from "./ui/klondike/board";
+import {Board as Spider} from "./ui/spider/board";
 import styles from "./main.css";
+import {Menu} from "./ui/menu";
 
 // register service worker
 if ("serviceWorker" in navigator) {
@@ -12,7 +15,11 @@ if ("serviceWorker" in navigator) {
 function App() {
 	return (
 		<div className={styles.app}>
-			<Board />
+			<AppRouter>
+				<Route path="/" exact Component={Menu} />
+				<Route path="/klondike" Component={Klondike} />
+				<Route path="/spider" Component={Spider} />
+			</AppRouter>
 		</div>
 	);
 }

@@ -1,0 +1,12 @@
+.menu {
+	margin: 10px auto;
+	width: 800px;
+}
+
+.button {
+	display: block;
+	margin: 10px 0;
+	border: 1px solid var(--carbon);
+	border-radius: 5px;
+	width: 100px;
+}
