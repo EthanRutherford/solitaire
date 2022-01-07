@@ -76,11 +76,11 @@ function useFlip(card, pos) {
 			setState({
 				flipClass: state.faceUp ? styles.flipRtlA : styles.flipLtrA,
 				faceUp: state.faceUp,
-				zIndex: 200 - pos.z % 100,
+				zIndex: 200 - Math.abs(pos.z % 100),
 				animationEnd: () => setState({
 					flipClass: card.faceUp ? styles.flipLtrB : styles.flipRtlB,
 					faceUp: card.faceUp,
-					zIndex: 200 + pos.z % 100,
+					zIndex: 200 + Math.abs(pos.z % 100),
 					animationEnd: () => setState({faceUp: card.faceUp}),
 				}),
 			});
