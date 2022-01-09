@@ -8,6 +8,7 @@ import {CardRenderer, renderPile, renderStack} from "../shared/card-renderer";
 import {EmptyZone} from "../shared/empty-zone";
 import {getCard} from "../shared/get-context";
 import {ControlBar} from "../shared/control-bar";
+import {Sizerator} from "../shared/sizerator";
 import styles from "./board.css";
 
 function useGame() {
@@ -169,31 +170,31 @@ export function Board() {
 	} = useGame();
 
 	return (
-		<>
+		<Sizerator cardsAcross={10} cardsTall={5}>
 			<div className={styles.board}>
 				{game.tableau.map((stack, i) => (
 					<EmptyZone
-						pos={{x: 10 + i * 110, y: 10}}
+						slot={{x: i, y: 0}}
 						context={stack}
 						onTap={targetTap}
 						key={i}
 					/>
 				))}
 				<CardRenderer onDrop={onDrop}>
-					{renderPile({x: 1000, y: 600}, game.drawPile, {
+					{renderPile({x: 9, y: 4}, game.drawPile, {
 						onTap: drawPileTap,
 					})}
-					{game.tableau.map((deck, i) => renderStack({x: 10 + i * 110, y: 10}, deck, {
+					{game.tableau.map((deck, i) => renderStack({x: i, y: 0}, deck, {
 						onTap: playableTap,
 						onDoubleTap: playableDoubleTap,
 						getDragCards: playableGetCards,
 					}))}
 					{game.foundation.map((deck, i) => renderPile({
-						x: 10 + i * 10, y: 600, z: -1000 + i * 100,
+						x: i * .1, y: 4, z: -1000 + i * 100,
 					}, deck, {}))}
 				</CardRenderer>
 			</div>
 			<ControlBar contentClassName={styles.barContent} undo={undo} redo={redo} />
-		</>
+		</Sizerator>
 	);
 }

@@ -4,7 +4,7 @@
 	justify-content: center;
 	align-items: center;
 	border: 1px solid var(--carbon);
-	border-radius: 5px;
-	width: 100px;
-	height: 150px;
+	border-radius: calc(var(--card-width) * .05);
+	width: var(--card-width);
+	height: var(--card-height);
 }
