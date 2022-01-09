@@ -107,10 +107,29 @@ export class Game {
 			return partitions;
 		}, [[], []]);
 
+		let bestDeck = null;
+		let bestSize = -1;
 		for (const deck of nonEmpty) {
 			if (this.canMoveCards(card, deck)) {
-				return deck;
+				let size = 0;
+				let value = card.value + 1;
+				while (
+					deck.fromTop(size)?.suit === card.suit &&
+					deck.fromTop(size)?.value === value
+				) {
+					size++;
+					value++;
+				}
+
+				if (size > bestSize) {
+					bestDeck = deck;
+					bestSize = size;
+				}
 			}
+		}
+
+		if (bestDeck != null) {
+			return bestDeck;
 		}
 
 		for (const deck of empty) {
