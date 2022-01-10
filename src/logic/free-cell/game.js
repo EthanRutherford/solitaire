@@ -120,9 +120,26 @@ export class Game {
 			}
 		}
 
-		for (const deck of this.tableau) {
-			if (this.canMoveStack(card, deck)) {
+		const [empty, nonEmpty] = this.tableau.reduce((partitions, deck) => {
+			partitions[deck.length === 0 ? 0 : 1].push(deck);
+			return partitions;
+		}, [[], []]);
+
+		for (const deck of nonEmpty) {
+			if (this.canMoveCards(card, deck)) {
 				return deck;
+			}
+		}
+
+		for (const deck of empty) {
+			if (this.canMoveCards(card, deck)) {
+				return deck;
+			}
+		}
+
+		for (const cell of this.freeCells) {
+			if (cell.length === 0) {
+				return cell;
 			}
 		}
 
