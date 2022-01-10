@@ -3,9 +3,14 @@ import {validatedDelta} from "../undo-stack";
 
 export class Game {
 	constructor() {
-		this.tableau = [];
-		this.freeCells = [];
-		this.foundations = {};
+		this.tableau = new Array(8).fill(0).map(() => new Deck());
+		this.freeCells = new Array(4).fill(0).map(() => new Deck());
+		this.foundations = {
+			[suits.spades]: new Deck(),
+			[suits.diamonds]: new Deck(),
+			[suits.clubs]: new Deck(),
+			[suits.hearts]: new Deck(),
+		};
 	}
 	setContexts() {
 		const contexts = [
@@ -196,9 +201,10 @@ export class Game {
 
 		return game.setContexts();
 	});
-	static fromScratch() {
+	static fromScratch(game) {
 		const deck = Deck.full().shuffle();
-		const game = new Game();
+		game.tableau.splice(0, game.tableau.length);
+		game.freeCells.splice(0, game.freeCells.length);
 		for (let i = 0; i < 8; i++) {
 			game.tableau.push(new Deck());
 		}

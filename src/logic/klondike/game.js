@@ -3,10 +3,15 @@ import {validatedDelta} from "../undo-stack";
 
 export class Game {
 	constructor() {
-		this.drawPile = null;
-		this.discardPile = null;
-		this.tableau = [];
-		this.foundations = {};
+		this.drawPile = new Deck();
+		this.discardPile = new Deck();
+		this.tableau = new Array(7).fill(0).map(() => new Deck());
+		this.foundations = {
+			[suits.spades]: new Deck(),
+			[suits.diamonds]: new Deck(),
+			[suits.clubs]: new Deck(),
+			[suits.hearts]: new Deck(),
+		};
 	}
 	setContexts() {
 		const contexts = [
@@ -185,13 +190,12 @@ export class Game {
 
 		return game.setContexts();
 	});
-	static fromScratch() {
-		const deck = Deck.full().shuffle();
-		const game = new Game();
-		game.drawPile = deck;
-		game.discardPile = new Deck();
+	static fromScratch(game) {
+		game.drawPile.splice(0, game.drawPile.length, ...Deck.full().shuffle());
+		game.discardPile.splice(0, game.discardPile.length);
+		game.tableau.splice(0, game.tableau.length);
 		for (let i = 0; i < 7; i++) {
-			game.tableau.push(deck.draw(i + 1));
+			game.tableau.push(game.drawPile.draw(i + 1));
 		}
 		for (const k of Object.values(suits)) {
 			game.foundations[k] = new Deck();

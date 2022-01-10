@@ -1,4 +1,4 @@
-import {useCallback, useMemo} from "react";
+import {useCallback, useEffect, useMemo} from "react";
 import Undo from "../../../images/undo";
 import Spade from "../../../images/spade";
 import Diamond from "../../../images/diamond";
@@ -17,11 +17,21 @@ import {Sizerator} from "../shared/sizerator";
 import styles from "./board.css";
 
 function useGame() {
-	const game = useMemo(() => Game.fromScratch(), []);
+	const game = useMemo(() => new Game(), []);
 	const undoStack = useMemo(() => new UndoStack());
 	const enqueueAction = useActionQueue();
-
 	const rerender = useRerender();
+	const newGame = useCallback(() => {
+		Game.fromScratch(game);
+		undoStack.reset();
+		enqueueAction.reset();
+		rerender();
+	}, []);
+
+	useEffect(() => {
+		newGame();
+	}, []);
+
 	const tryAutoComplete = enqueueAction(function*() {
 		while (true) {
 			const commit = undoStack.record(game);
@@ -164,6 +174,7 @@ function useGame() {
 
 	return {
 		game,
+		newGame,
 		onDrop,
 		flipDiscard,
 		drawPileTap,
@@ -180,6 +191,7 @@ function useGame() {
 export function Board() {
 	const {
 		game,
+		newGame,
 		onDrop,
 		flipDiscard,
 		drawPileTap,
@@ -262,7 +274,7 @@ export function Board() {
 					}))}
 				</CardRenderer>
 			</div>
-			<ControlBar undo={undo} redo={redo} />
+			<ControlBar newGame={newGame} undo={undo} redo={redo} />
 		</Sizerator>
 	);
 }

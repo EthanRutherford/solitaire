@@ -24,10 +24,26 @@ function getFourSuitDeck() {
 	return Deck.full().concat(Deck.full());
 }
 
+function getDeck(suitCount) {
+	if (suitCount === 1) {
+		return getOneSuitDeck();
+	}
+
+	if (suitCount === 2) {
+		return getTwoSuitDeck();
+	}
+
+	if (suitCount === 4) {
+		return getFourSuitDeck();
+	}
+
+	throw new Error("invalid suitCount");
+}
+
 export class Game {
 	constructor() {
-		this.drawPile = null;
-		this.tableau = [];
+		this.drawPile = new Deck();
+		this.tableau = new Array(10).fill(0).map(() => new Deck());
 		this.foundation = [];
 	}
 	setContexts() {
@@ -180,30 +196,15 @@ export class Game {
 
 		return game.setContexts();
 	});
-	static fromScratch(suitCount) {
-		const deck = (() => {
-			if (suitCount === 1) {
-				return getOneSuitDeck();
-			}
-
-			if (suitCount === 2) {
-				return getTwoSuitDeck();
-			}
-
-			if (suitCount === 4) {
-				return getFourSuitDeck();
-			}
-
-			throw new Error("invalid suitCount");
-		})();
-
-		const game = new Game();
-		game.drawPile = deck.shuffle();
+	static fromScratch(game, suitCount) {
+		game.drawPile.splice(0, game.drawPile.length, ...getDeck(suitCount).shuffle());
+		game.foundation.splice(0, game.foundation.length);
+		game.tableau.splice(0, game.tableau.length);
 		for (let i = 0; i < 4; i++) {
-			game.tableau.push(deck.draw(5));
+			game.tableau.push(game.drawPile.draw(5));
 		}
 		for (let i = 0; i < 6; i++) {
-			game.tableau.push(deck.draw(4));
+			game.tableau.push(game.drawPile.draw(4));
 		}
 		for (const deck of game.tableau) {
 			deck.fromTop().faceUp = true;

@@ -1,4 +1,4 @@
-import {useCallback, useMemo} from "react";
+import {useCallback, useEffect, useMemo} from "react";
 import {Deck} from "../../logic/deck";
 import {Game} from "../../logic/spider/game";
 import {UndoStack} from "../../logic/undo-stack";
@@ -12,10 +12,20 @@ import {Sizerator} from "../shared/sizerator";
 import styles from "./board.css";
 
 function useGame() {
-	const game = useMemo(() => Game.fromScratch(1), []);
+	const game = useMemo(() => new Game(), []);
 	const undoStack = useMemo(() => new UndoStack());
 	const enqueueAction = useActionQueue();
 	const rerender = useRerender();
+	const newGame = useCallback(() => {
+		Game.fromScratch(game, 1);
+		undoStack.reset();
+		enqueueAction.reset();
+		rerender();
+	}, []);
+
+	useEffect(() => {
+		newGame();
+	}, []);
 
 	const tryCompleteStack = enqueueAction(function*(deck, commit) {
 		if (game.canCompleteStack(deck)) {
@@ -145,6 +155,7 @@ function useGame() {
 
 	return {
 		game,
+		newGame,
 		onDrop,
 		drawPileTap,
 		playableGetCards,
@@ -159,6 +170,7 @@ function useGame() {
 export function Board() {
 	const {
 		game,
+		newGame,
 		onDrop,
 		drawPileTap,
 		playableGetCards,
@@ -194,7 +206,7 @@ export function Board() {
 					}, deck, {}))}
 				</CardRenderer>
 			</div>
-			<ControlBar contentClassName={styles.barContent} undo={undo} redo={redo} />
+			<ControlBar newGame={newGame} undo={undo} redo={redo} />
 		</Sizerator>
 	);
 }

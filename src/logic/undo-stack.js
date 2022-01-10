@@ -58,10 +58,8 @@ export function validatedDelta(action) {
 }
 
 export class UndoStack {
-	constructor(undo = []) {
-		this.undoStack = undo;
-		this.redoStack = [];
-		this.lock = false;
+	constructor(undo = [], redo = []) {
+		this.reset(undo, redo);
 	}
 	record(object) {
 		let start = object.serialize();
@@ -100,5 +98,10 @@ export class UndoStack {
 		const result = deltas.map((d) => d.to);
 		this.undoStack.push(deltas.reverse());
 		return result;
+	}
+	reset(undo = [], redo = []) {
+		this.undoStack = undo;
+		this.redoStack = redo;
+		this.lock = false;
 	}
 }
