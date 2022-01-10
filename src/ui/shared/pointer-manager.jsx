@@ -47,28 +47,39 @@ export function PointerManager({onDrag, onDrop, children}) {
 				return;
 			}
 
-			if (pointers.current.dragging) {
-				const target = getContextAtPoint(pointers.current, event);
-				onDrop(pointers.current, target);
+			const {current, previous} = pointers;
+			pointers.current = null;
+			pointers.previous = null;
 
-				for (const dragCard of pointers.current.dragCards) {
+			if (current.dragging) {
+				const target = getContextAtPoint(current, event);
+				onDrop(current, target);
+
+				for (const dragCard of current.dragCards) {
 					dragCard.card.meta.dragPos = null;
 					dragCard.card.meta.rerender();
 				}
-			} else if (event.timeStamp - pointers.current.timeStamp < 250) {
-				if (
-					event.pointerId === pointers.previous?.id &&
-					pointers.current.timeStamp - pointers.previous.timeStamp < 500 &&
-					pointers.current.onDoubleTap != null
-				) {
-					pointers.current.onDoubleTap(pointers.current);
-				} else if (pointers.current.onTap != null) {
-					pointers.current.onTap(pointers.current);
-				}
+
+				return;
 			}
 
-			pointers.previous = pointers.current;
-			pointers.current = null;
+			if (event.timeStamp - current.timeStamp < 250) {
+				if (current.onDoubleTap != null) {
+					if (
+						current.card === previous?.card &&
+						current.timeStamp - previous.timeStamp < 500
+					) {
+						current.onDoubleTap(current);
+						return;
+					}
+
+					pointers.previous = current;
+				}
+
+				if (current.onTap != null) {
+					current.onTap(current);
+				}
+			}
 		};
 
 		document.addEventListener("pointerup", pointerUp);
