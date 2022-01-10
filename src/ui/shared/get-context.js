@@ -1,10 +1,10 @@
 import {Card} from "./card";
 import {EmptyZone} from "./empty-zone";
 
-function getComponentFiber(elem) {
+function getComponentFiber(elem, acceptTypes) {
 	let fiber = Object.entries(elem).find(([k]) => k.startsWith("__reactFiber$"))?.[1];
 	while (fiber != null) {
-		if (typeof fiber.type !== "string") {
+		if (acceptTypes.includes(fiber.type)) {
 			return fiber;
 		}
 
@@ -15,8 +15,8 @@ function getComponentFiber(elem) {
 }
 
 export function getCard(elem) {
-	const fiber = getComponentFiber(elem);
-	if (fiber?.type === Card) {
+	const fiber = getComponentFiber(elem, [Card]);
+	if (fiber != null) {
 		return fiber.memoizedProps.card;
 	}
 
@@ -24,7 +24,7 @@ export function getCard(elem) {
 }
 
 export function getContext(elem) {
-	const fiber = getComponentFiber(elem);
+	const fiber = getComponentFiber(elem, [Card, EmptyZone]);
 	if (fiber?.type === Card) {
 		return fiber.memoizedProps.card.meta.context;
 	}

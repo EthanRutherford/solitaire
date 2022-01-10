@@ -2,6 +2,7 @@ import {render} from "react-dom";
 import {AppRouter, Route} from "./ui/shared/app-router";
 import {Board as Klondike} from "./ui/klondike/board";
 import {Board as Spider} from "./ui/spider/board";
+import {Board as FreeCell} from "./ui/free-cell/board";
 import styles from "./main.css";
 import {Menu} from "./ui/menu";
 
@@ -19,6 +20,7 @@ function App() {
 				<Route path="/" exact Component={Menu} />
 				<Route path="/klondike" Component={Klondike} />
 				<Route path="/spider" Component={Spider} />
+				<Route path="/free-cell" Component={FreeCell} />
 			</AppRouter>
 		</div>
 	);
