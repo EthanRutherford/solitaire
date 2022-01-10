@@ -76,24 +76,23 @@
 .top-corner, .bottom-corner {
 	position: absolute;
 	text-align: center;
-	font-size: 15px;
+	font-size: max(calc(var(--card-width) * .15), 12px);
 	line-height: 1;
 }
 
 .top-corner {
-	top: 2px;
-	left: 5px;
+	top: calc(var(--card-width) * .02);
+	left: calc(var(--card-width) * .05);
 }
 
 .bottom-corner {
-	bottom: 2px;
-	right: 5px;
+	bottom: calc(var(--card-width) * .02);
+	right: calc(var(--card-width) * .05);
 	transform: rotate(180deg);
 }
 
 .suit {
-	width: 12px;
-	height: 12px;
+	width: max(calc(var(--card-width) * .12), 8px);
 }
 
 @keyframes flipUp {

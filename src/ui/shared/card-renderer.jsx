@@ -9,8 +9,9 @@ import {useSizes} from "./sizerator.jsx";
 // we render the various parts of the board, using "subcomponents", aka functions
 // which return arrays of elements, which we concat together and render.
 export function CardRenderer({onDrop, children}) {
-	const {margins, cardOffsetX, cardOffsetY} = useSizes();
-	const defs = children.flat(2).sort((a, b) => a.card.id - b.card.id);
+	const {margins, cardWidth, cardOffsetX, cardOffsetY} = useSizes();
+	const functions = children.flat(2);
+	const defs = functions.flatMap((f) => f(cardWidth)).sort((a, b) => a.card.id - b.card.id);
 
 	return (
 		<PointerManager onDrop={onDrop}>
@@ -32,7 +33,7 @@ export function CardRenderer({onDrop, children}) {
 
 // common board layout components
 
-export function renderPile(slot, cards, handlers) {
+export const renderPile = (slot, cards, handlers) => () => {
 	return cards.map((card, i) => ({
 		card,
 		slot,
@@ -41,13 +42,13 @@ export function renderPile(slot, cards, handlers) {
 		offsetZ: (slot.z ?? 0) + i,
 		handlers,
 	}));
-}
+};
 
-export function renderStack(slot, cards, handlers) {
+export const renderStack = (slot, cards, handlers) => (cardWidth) => {
 	let acc = 0;
 	return cards.map((card, i) => {
 		const offsetY = acc;
-		acc += card.faceUp ? 32 : 10;
+		acc += card.faceUp ? Math.max(26, cardWidth * .34) : cardWidth * .1;
 
 		return {
 			card,
@@ -58,4 +59,4 @@ export function renderStack(slot, cards, handlers) {
 			handlers,
 		};
 	});
-}
+};
