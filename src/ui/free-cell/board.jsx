@@ -160,28 +160,28 @@ export function Board() {
 					context={game.foundations[suits.spades]}
 					onTap={targetTap}
 				>
-					<Spade width="50px" color="hsla(0, 0%, 0%, .1)" />
+					<Spade />
 				</EmptyZone>
 				<EmptyZone
 					slot={{x: 5, y: 0}}
 					context={game.foundations[suits.diamonds]}
 					onTap={targetTap}
 				>
-					<Diamond width="50px" color="hsla(0, 0%, 0%, .1)" />
+					<Diamond />
 				</EmptyZone>
 				<EmptyZone
 					slot={{x: 6, y: 0}}
 					context={game.foundations[suits.clubs]}
 					onTap={targetTap}
 				>
-					<Club width="50px" color="hsla(0, 0%, 0%, .1)" />
+					<Club />
 				</EmptyZone>
 				<EmptyZone
 					slot={{x: 7, y: 0}}
 					context={game.foundations[suits.hearts]}
 					onTap={targetTap}
 				>
-					<Heart width="50px" color="hsla(0, 0%, 0%, .1)" />
+					<Heart />
 				</EmptyZone>
 				{game.tableau.map((stack, i) => (
 					<EmptyZone

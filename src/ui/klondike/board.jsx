@@ -196,35 +196,35 @@ export function Board() {
 		<Sizerator cardsAcross={7} cardsTall={5}>
 			<div className={styles.board}>
 				<EmptyZone slot={{x: 0, y: 0}} context={game.drawPile} onTap={flipDiscard}>
-					<Undo width="50px" color="hsla(0, 0%, 0%, .1)" />
+					<Undo />
 				</EmptyZone>
 				<EmptyZone
 					slot={{x: 3, y: 0}}
 					context={game.foundations[suits.spades]}
 					onTap={targetTap}
 				>
-					<Spade width="50px" color="hsla(0, 0%, 0%, .1)" />
+					<Spade />
 				</EmptyZone>
 				<EmptyZone
 					slot={{x: 4, y: 0}}
 					context={game.foundations[suits.diamonds]}
 					onTap={targetTap}
 				>
-					<Diamond width="50px" color="hsla(0, 0%, 0%, .1)" />
+					<Diamond />
 				</EmptyZone>
 				<EmptyZone
 					slot={{x: 5, y: 0}}
 					context={game.foundations[suits.clubs]}
 					onTap={targetTap}
 				>
-					<Club width="50px" color="hsla(0, 0%, 0%, .1)" />
+					<Club />
 				</EmptyZone>
 				<EmptyZone
 					slot={{x: 6, y: 0}}
 					context={game.foundations[suits.hearts]}
 					onTap={targetTap}
 				>
-					<Heart width="50px" color="hsla(0, 0%, 0%, .1)" />
+					<Heart />
 				</EmptyZone>
 				{game.tableau.map((stack, i) => (
 					<EmptyZone
