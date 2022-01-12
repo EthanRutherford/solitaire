@@ -2,6 +2,7 @@ import {useCallback, useEffect, useMemo} from "react";
 import {Deck} from "../../logic/deck";
 import {Game} from "../../logic/spider/game";
 import {UndoStack} from "../../logic/undo-stack";
+import {get, put, saveGameTable} from "../../logic/game-db";
 import {useRerender} from "../../util/use-rerender";
 import {useActionQueue} from "../../util/use-action-queue";
 import {CardRenderer, renderPile, renderStack} from "../shared/card-renderer";
@@ -22,9 +23,23 @@ function useGame() {
 		enqueueAction.reset();
 		rerender();
 	}, []);
+	const saveGame = useCallback(() => put(saveGameTable, {
+		key: "spider",
+		game: game.serialize(),
+		undoStack: undoStack.serialize(),
+	}), []);
 
 	useEffect(() => {
-		newGame();
+		(async () => {
+			const save = await get(saveGameTable, "spider");
+			if (save != null) {
+				Game.deserialize(save.game, game);
+				UndoStack.deserialize(save.undoStack, undoStack);
+				rerender();
+			} else {
+				newGame();
+			}
+		})();
 	}, []);
 
 	const tryCompleteStack = enqueueAction(function*(deck, commit) {
@@ -43,6 +58,7 @@ function useGame() {
 				commit();
 			}
 
+			saveGame();
 			yield 100;
 		}
 	});
@@ -61,8 +77,8 @@ function useGame() {
 			commit();
 		}
 
+		saveGame();
 		tryCompleteStack(targetContext, commit);
-
 		yield 100;
 	});
 
@@ -134,6 +150,7 @@ function useGame() {
 			yield 10;
 		}
 
+		saveGame();
 		undoStack.lock = false;
 	});
 
@@ -150,6 +167,7 @@ function useGame() {
 			yield 10;
 		}
 
+		saveGame();
 		undoStack.lock = false;
 	});
 

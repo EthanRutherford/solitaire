@@ -4,7 +4,7 @@ class Delta {
 		this.to = to;
 	}
 	serialize() {
-		return {f: this.f, t: this.t};
+		return {f: this.from, t: this.to};
 	}
 	static deserialize(input) {
 		return new Delta(input.f, input.t);
@@ -104,4 +104,37 @@ export class UndoStack {
 		this.redoStack = redo;
 		this.lock = false;
 	}
+	serialize() {
+		return {
+			u: this.undoStack.map((ds) => ds.map((d) => d.serialize())),
+			r: this.redoStack.map((ds) => ds.map((d) => d.serialize())),
+		};
+	}
+	static deserialize = validatedDelta((input, undoStack) => {
+		undoStack ??= new UndoStack();
+
+		if (input.u != null) {
+			const {length, ...rest} = input.u;
+			const stack = undoStack.undoStack;
+			stack.length = length ?? stack.length;
+			for (const [key, value] of Object.entries(rest)) {
+				if (key < stack.length) {
+					stack[key] = value.map((d) => Delta.deserialize(d));
+				}
+			}
+		}
+
+		if (input.r != null) {
+			const {length, ...rest} = input.r;
+			const stack = undoStack.redoStack;
+			stack.length = length ?? stack.length;
+			for (const [key, value] of Object.entries(rest)) {
+				if (key < stack.length) {
+					stack[key] = value.map((d) => Delta.deserialize(d));
+				}
+			}
+		}
+
+		return undoStack;
+	});
 }

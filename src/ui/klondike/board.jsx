@@ -7,6 +7,7 @@ import Heart from "../../../images/heart";
 import {suits} from "../../logic/deck";
 import {Game} from "../../logic/klondike/game";
 import {UndoStack} from "../../logic/undo-stack";
+import {get, put, saveGameTable} from "../../logic/game-db";
 import {useRerender} from "../../util/use-rerender";
 import {useActionQueue} from "../../util/use-action-queue";
 import {CardRenderer, renderPile, renderStack} from "../shared/card-renderer";
@@ -27,9 +28,23 @@ function useGame() {
 		enqueueAction.reset();
 		rerender();
 	}, []);
+	const saveGame = useCallback(() => put(saveGameTable, {
+		key: "klondike",
+		game: game.serialize(),
+		undoStack: undoStack.serialize(),
+	}), []);
 
 	useEffect(() => {
-		newGame();
+		(async () => {
+			const save = await get(saveGameTable, "klondike");
+			if (save != null) {
+				Game.deserialize(save.game, game);
+				UndoStack.deserialize(save.undoStack, undoStack);
+				rerender();
+			} else {
+				newGame();
+			}
+		})();
 	}, []);
 
 	const tryAutoComplete = enqueueAction(function*() {
@@ -47,6 +62,7 @@ function useGame() {
 
 				yield 100;
 			} else {
+				saveGame();
 				return;
 			}
 		}
@@ -59,6 +75,7 @@ function useGame() {
 		game.transferCards(card, targetContext);
 		rerender();
 		commit();
+		saveGame();
 
 		if (game.tryFlipCard(originDeck)) {
 			yield 10;
@@ -153,6 +170,7 @@ function useGame() {
 			yield 10;
 		}
 
+		saveGame();
 		undoStack.lock = false;
 	});
 
@@ -169,6 +187,7 @@ function useGame() {
 			yield 10;
 		}
 
+		saveGame();
 		undoStack.lock = false;
 	});
 
