@@ -2,7 +2,7 @@ import {useCallback, useEffect, useMemo} from "react";
 import {Deck} from "../../logic/deck";
 import {Game} from "../../logic/spider/game";
 import {UndoStack} from "../../logic/undo-stack";
-import {get, put, saveGameTable} from "../../logic/game-db";
+import {get, put, remove, saveGameTable} from "../../logic/game-db";
 import {useRerender} from "../../util/use-rerender";
 import {useActionQueue} from "../../util/use-action-queue";
 import {CardRenderer, renderPile, renderStack} from "../shared/card-renderer";
@@ -42,6 +42,17 @@ function useGame() {
 		})();
 	}, []);
 
+	const tryFinish = useCallback(() => {
+		if (game.hasWon()) {
+			undoStack.reset();
+			enqueueAction.reset();
+			remove(saveGameTable, "spider");
+			return true;
+		}
+
+		return false;
+	});
+
 	const tryCompleteStack = enqueueAction(function*(deck, commit) {
 		if (game.canCompleteStack(deck)) {
 			const foundation = new Deck();
@@ -58,7 +69,10 @@ function useGame() {
 				commit();
 			}
 
-			saveGame();
+			if (!tryFinish()) {
+				saveGame();
+			}
+
 			yield 100;
 		}
 	});
@@ -90,18 +104,21 @@ function useGame() {
 
 	const drawPileTap = enqueueAction(function*() {
 		document.activeElement.blur();
-		const commit = undoStack.record(game);
-		for (let i = 0; i < 10; i++) {
-			game.moveCards(game.drawPile.draw(1), game.tableau[i]);
-			game.tableau[i].fromTop().faceUp = true;
-			rerender();
-			commit();
-			yield 10;
 
-			tryCompleteStack(game.tableau[i], commit);
+		if (game.tableau.every((d) => d.length > 0)) {
+			const commit = undoStack.record(game);
+			for (let i = 0; i < 10; i++) {
+				game.moveCards(game.drawPile.draw(1), game.tableau[i]);
+				game.tableau[i].fromTop().faceUp = true;
+				rerender();
+				commit();
+				yield 10;
+
+				tryCompleteStack(game.tableau[i], commit);
+			}
+
+			yield 100;
 		}
-
-		yield 100;
 	});
 
 	const playableGetCards = useCallback((card) => game.getMovableCards(card), []);

@@ -167,6 +167,9 @@ export class Game {
 
 		return false;
 	}
+	hasWon() {
+		return this.foundation.length === 8;
+	}
 	serialize() {
 		return {
 			d: this.drawPile.serialize(),

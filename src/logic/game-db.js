@@ -99,5 +99,5 @@ export async function put(tableName, object, id) {
 	return await putCore(await getStore(tableName, true), object, id);
 }
 export async function remove(tableName, id) {
-	return await deleteCore(await getStore(tableName, false), id);
+	return await deleteCore(await getStore(tableName, true), id);
 }

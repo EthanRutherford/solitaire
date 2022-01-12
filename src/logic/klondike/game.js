@@ -173,6 +173,9 @@ export class Game {
 			)),
 		};
 	}
+	hasWon() {
+		return Object.values(this.foundations).every((d) => d.length === 13);
+	}
 	static deserialize = validatedDelta((input, game) => {
 		game ??= new Game();
 

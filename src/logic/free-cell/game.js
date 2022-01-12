@@ -172,6 +172,9 @@ export class Game {
 
 		return null;
 	}
+	hasWon() {
+		return Object.values(this.foundations).every((d) => d.length === 13);
+	}
 	serialize() {
 		return {
 			t: this.tableau.map((d) => d.serialize()),

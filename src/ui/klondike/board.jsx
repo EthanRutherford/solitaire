@@ -7,7 +7,7 @@ import Heart from "../../../images/heart";
 import {suits} from "../../logic/deck";
 import {Game} from "../../logic/klondike/game";
 import {UndoStack} from "../../logic/undo-stack";
-import {get, put, saveGameTable} from "../../logic/game-db";
+import {get, put, remove, saveGameTable} from "../../logic/game-db";
 import {useRerender} from "../../util/use-rerender";
 import {useActionQueue} from "../../util/use-action-queue";
 import {CardRenderer, renderPile, renderStack} from "../shared/card-renderer";
@@ -47,6 +47,17 @@ function useGame() {
 		})();
 	}, []);
 
+	const tryFinish = useCallback(() => {
+		if (game.hasWon()) {
+			undoStack.reset();
+			enqueueAction.reset();
+			remove(saveGameTable, "klondike");
+			return true;
+		}
+
+		return false;
+	});
+
 	const tryAutoComplete = enqueueAction(function*() {
 		while (true) {
 			const commit = undoStack.record(game);
@@ -62,7 +73,10 @@ function useGame() {
 
 				yield 100;
 			} else {
-				saveGame();
+				if (!tryFinish()) {
+					saveGame();
+				}
+
 				return;
 			}
 		}
