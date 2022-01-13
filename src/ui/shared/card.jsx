@@ -1,4 +1,5 @@
 import {useMemo, useCallback, useState, useEffect} from "react";
+import Brown from "../../../images/backs/brown";
 import Spade from "../../../images/spade";
 import Diamond from "../../../images/diamond";
 import Club from "../../../images/club";
@@ -117,7 +118,9 @@ export function Card({card, pos, onTap, onDoubleTap, getDragCards}) {
 				{...positionProps}
 				style={{...style, zIndex: zIndex ?? style.zIndex}}
 				ref={(elem) => card.meta.elem = elem}
-			/>
+			>
+				<Brown />
+			</div>
 		);
 	}
 
