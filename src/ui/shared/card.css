@@ -41,11 +41,11 @@
 }
 
 .black {
-	color: black;
+	color: var(--carbon);
 }
 
 .red {
-	color: red;
+	color: var(--scarlet);
 }
 
 .top-corner, .bottom-corner {

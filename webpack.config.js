@@ -16,7 +16,7 @@ module.exports = (env) => [{
 				test: /\.css$/,
 				use: [
 					MiniCssExtractPlugin.loader,
-					{loader: "css-loader", options: {modules: {
+					{loader: "css-loader", options: {url: false, modules: {
 						localIdentName: "[name]__[local]--[hash:base64:5]",
 						exportLocalsConvention: "camelCase",
 					}}},

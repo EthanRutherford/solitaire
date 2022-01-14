@@ -1,10 +1,10 @@
 .control-bar {
 	position: absolute;
 	bottom: 0;
-	border-top: 1px solid var(--ash);
+	box-shadow: 0 0 4px rgba(0, 0, 0, .5);
 	width: 100%;
 	height: var(--bar-height);
-	background-color: hsla(0, 0%, 0%, .5);
+	background-color: rgba(0, 0, 0, .5);
 }
 
 .content {

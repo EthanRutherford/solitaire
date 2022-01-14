@@ -8,5 +8,7 @@
 	margin: 10px 0;
 	border: 1px solid var(--carbon);
 	border-radius: 5px;
-	width: 100px;
+	padding: 5px;
+	width: 120px;
+	background: rgba(255, 255, 255, .5);
 }

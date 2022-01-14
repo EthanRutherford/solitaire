@@ -45,7 +45,9 @@ html, body, :global(.root) {
 }
 
 .app {
-	background: var(--not-white);
+	box-shadow: inset 0 0 60px rgba(0, 0, 0, .4);
+	background-image: url("/images/tables/blue-velvet.svg");
+	background-size: 50px 50px;
 	height: 100%;
 	overflow: hidden;
 }
@@ -80,6 +82,7 @@ html, body, :global(.root) {
 	--pink: hsl(0, 60%, 90%);
 	--pink-dark: hsl(0, 60%, 80%);
 	--red-light: hsl(0, 60%, 60%);
+	--scarlet: hsl(0, 80%, 50%);
 	--red: hsl(0, 60%, 50%);
 	--red-dark: hsl(0, 60%, 40%);
 

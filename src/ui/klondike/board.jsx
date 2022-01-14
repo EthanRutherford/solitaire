@@ -168,7 +168,7 @@ function useGame() {
 	});
 
 	const foundationTap = useCallback((pointer) => {
-		targetTap(pointer.elem.meta.context);
+		targetTap(pointer.card.meta.context);
 	}, []);
 
 	const undo = enqueueAction(function*() {

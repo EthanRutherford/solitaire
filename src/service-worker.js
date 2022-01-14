@@ -35,7 +35,7 @@ registerRoute(
 
 // cache the application code
 registerRoute(
-	/(?:\.js|\.css|\/)$/,
+	/(?:\.js|\.css|\.svg|\/)$/,
 	new StaleWhileRevalidate({
 		cacheName: "solitaire-application-code",
 		plugins: [

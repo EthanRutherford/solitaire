@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <filter id="a" x="-.12" y="-.05" width="1.24" height="1.11" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity=".26" flood-color="#000" result="flood"/>
+      <feComposite in="flood" in2="SourceGraphic" operator="in" result="composite1"/>
+      <feGaussianBlur in="composite1" stdDeviation="2" result="blur"/>
+      <feOffset result="offset"/>
+      <feComposite in="SourceGraphic" in2="offset" result="fbSourceGraphic"/>
+      <feColorMatrix result="fbSourceGraphicAlpha" in="fbSourceGraphic" values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0"/>
+      <feFlood flood-opacity=".26" flood-color="#000" result="flood"/>
+      <feComposite in2="fbSourceGraphic" in="flood" operator="out" result="composite1"/>
+      <feGaussianBlur in="composite1" stdDeviation="2" result="blur"/>
+      <feOffset result="offset"/>
+      <feComposite in2="fbSourceGraphic" in="offset" operator="atop" result="composite2"/>
+    </filter>
+    <filter id="b" x="-.12" y="-.05" width="1.24" height="1.11" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity=".26" flood-color="#000" result="flood"/>
+      <feComposite in="flood" in2="SourceGraphic" operator="in" result="composite1"/>
+      <feGaussianBlur in="composite1" stdDeviation="2" result="blur"/>
+      <feOffset result="offset"/>
+      <feComposite in="SourceGraphic" in2="offset" result="fbSourceGraphic"/>
+      <feColorMatrix result="fbSourceGraphicAlpha" in="fbSourceGraphic" values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0"/>
+      <feFlood flood-opacity=".26" flood-color="#000" result="flood"/>
+      <feComposite in2="fbSourceGraphic" in="flood" operator="out" result="composite1"/>
+      <feGaussianBlur in="composite1" stdDeviation="2" result="blur"/>
+      <feOffset result="offset"/>
+      <feComposite in2="fbSourceGraphic" in="offset" operator="atop" result="composite2"/>
+    </filter>
+    <filter id="c" x="-.12" y="-.05" width="1.24" height="1.11" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity=".26" flood-color="#000" result="flood"/>
+      <feComposite in="flood" in2="SourceGraphic" operator="in" result="composite1"/>
+      <feGaussianBlur in="composite1" stdDeviation="2" result="blur"/>
+      <feOffset result="offset"/>
+      <feComposite in="SourceGraphic" in2="offset" result="fbSourceGraphic"/>
+      <feColorMatrix result="fbSourceGraphicAlpha" in="fbSourceGraphic" values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0"/>
+      <feFlood flood-opacity=".26" flood-color="#000" result="flood"/>
+      <feComposite in2="fbSourceGraphic" in="flood" operator="out" result="composite1"/>
+      <feGaussianBlur in="composite1" stdDeviation="2" result="blur"/>
+      <feOffset result="offset"/>
+      <feComposite in2="fbSourceGraphic" in="offset" operator="atop" result="composite2"/>
+    </filter>
+    <filter id="d" x="-.12" y="-.05" width="1.24" height="1.11" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity=".26" flood-color="#000" result="flood"/>
+      <feComposite in="flood" in2="SourceGraphic" operator="in" result="composite1"/>
+      <feGaussianBlur in="composite1" stdDeviation="2" result="blur"/>
+      <feOffset result="offset"/>
+      <feComposite in="SourceGraphic" in2="offset" result="fbSourceGraphic"/>
+      <feColorMatrix result="fbSourceGraphicAlpha" in="fbSourceGraphic" values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0"/>
+      <feFlood flood-opacity=".26" flood-color="#000" result="flood"/>
+      <feComposite in2="fbSourceGraphic" in="flood" operator="out" result="composite1"/>
+      <feGaussianBlur in="composite1" stdDeviation="2" result="blur"/>
+      <feOffset result="offset"/>
+      <feComposite in2="fbSourceGraphic" in="offset" operator="atop" result="composite2"/>
+    </filter>
+    <filter id="e" x="-.12" y="-.05" width="1.24" height="1.11" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity=".26" flood-color="#000" result="flood"/>
+      <feComposite in="flood" in2="SourceGraphic" operator="in" result="composite1"/>
+      <feGaussianBlur in="composite1" stdDeviation="2" result="blur"/>
+      <feOffset result="offset"/>
+      <feComposite in="SourceGraphic" in2="offset" result="fbSourceGraphic"/>
+      <feColorMatrix result="fbSourceGraphicAlpha" in="fbSourceGraphic" values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0"/>
+      <feFlood flood-opacity=".26" flood-color="#000" result="flood"/>
+      <feComposite in2="fbSourceGraphic" in="flood" operator="out" result="composite1"/>
+      <feGaussianBlur in="composite1" stdDeviation="2" result="blur"/>
+      <feOffset result="offset"/>
+      <feComposite in2="fbSourceGraphic" in="offset" operator="atop" result="composite2"/>
+    </filter>
+    <filter id="f" x="-.12" y="-.05" width="1.24" height="1.11" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity=".26" flood-color="#000" result="flood"/>
+      <feComposite in="flood" in2="SourceGraphic" operator="in" result="composite1"/>
+      <feGaussianBlur in="composite1" stdDeviation="2" result="blur"/>
+      <feOffset result="offset"/>
+      <feComposite in="SourceGraphic" in2="offset" result="fbSourceGraphic"/>
+      <feColorMatrix result="fbSourceGraphicAlpha" in="fbSourceGraphic" values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0"/>
+      <feFlood flood-opacity=".26" flood-color="#000" result="flood"/>
+      <feComposite in2="fbSourceGraphic" in="flood" operator="out" result="composite1"/>
+      <feGaussianBlur in="composite1" stdDeviation="2" result="blur"/>
+      <feOffset result="offset"/>
+      <feComposite in2="fbSourceGraphic" in="offset" operator="atop" result="composite2"/>
+    </filter>
+    <filter id="g" x="-.12" y="-.05" width="1.24" height="1.11" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity=".26" flood-color="#000" result="flood"/>
+      <feComposite in="flood" in2="SourceGraphic" operator="in" result="composite1"/>
+      <feGaussianBlur in="composite1" stdDeviation="2" result="blur"/>
+      <feOffset result="offset"/>
+      <feComposite in="SourceGraphic" in2="offset" result="fbSourceGraphic"/>
+      <feColorMatrix result="fbSourceGraphicAlpha" in="fbSourceGraphic" values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0"/>
+      <feFlood flood-opacity=".26" flood-color="#000" result="flood"/>
+      <feComposite in2="fbSourceGraphic" in="flood" operator="out" result="composite1"/>
+      <feGaussianBlur in="composite1" stdDeviation="2" result="blur"/>
+      <feOffset result="offset"/>
+      <feComposite in2="fbSourceGraphic" in="offset" operator="atop" result="composite2"/>
+    </filter>
+    <filter id="h" x="-.12" y="-.05" width="1.24" height="1.11" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity=".26" flood-color="#000" result="flood"/>
+      <feComposite in="flood" in2="SourceGraphic" operator="in" result="composite1"/>
+      <feGaussianBlur in="composite1" stdDeviation="2" result="blur"/>
+      <feOffset result="offset"/>
+      <feComposite in="SourceGraphic" in2="offset" result="fbSourceGraphic"/>
+      <feColorMatrix result="fbSourceGraphicAlpha" in="fbSourceGraphic" values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0"/>
+      <feFlood flood-opacity=".26" flood-color="#000" result="flood"/>
+      <feComposite in2="fbSourceGraphic" in="flood" operator="out" result="composite1"/>
+      <feGaussianBlur in="composite1" stdDeviation="2" result="blur"/>
+      <feOffset result="offset"/>
+      <feComposite in2="fbSourceGraphic" in="offset" operator="atop" result="composite2"/>
+    </filter>
+  </defs>
+  <path fill="#104793" paint-order="markers stroke fill" d="M0 0h200v200H0z"/>
+  <path d="M50 10c0 30 40 60 40 90s-40 60-40 90c0-30-40-60-40-90s40-60 40-90Z" fill="#0f428a" filter="url(#a)"/>
+  <path d="M150 10c0 30 40 60 40 90s-40 60-40 90c0-30-40-60-40-90s40-60 40-90z" fill="#0f428a" filter="url(#b)"/>
+  <path d="M100-90c0 30 40 60 40 90s-40 60-40 90c0-30-40-60-40-90s40-60 40-90Z" fill="#0f428a" filter="url(#c)"/>
+  <path d="M100 110c0 30 40 60 40 90s-40 60-40 90c0-30-40-60-40-90s40-60 40-90z" fill="#0f428a" filter="url(#d)"/>
+  <path d="M0-90C0-60 40-30 40 0S0 60 0 90C0 60-40 30-40 0S0-60 0-90Z" fill="#0f428a" filter="url(#e)"/>
+  <path d="M200-90c0 30 40 60 40 90s-40 60-40 90c0-30-40-60-40-90s40-60 40-90z" fill="#0f428a" filter="url(#f)"/>
+  <path d="M200 110c0 30 40 60 40 90s-40 60-40 90c0-30-40-60-40-90s40-60 40-90z" fill="#0f428a" filter="url(#g)"/>
+  <path d="M0 110c0 30 40 60 40 90S0 260 0 290c0-30-40-60-40-90s40-60 40-90z" fill="#0f428a" filter="url(#h)"/>
+</svg>
