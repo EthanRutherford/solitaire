@@ -1,0 +1,23 @@
+name: Build and Publish
+
+on:
+  push:
+    branches: 
+      - master
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: checkout
+      uses: actions/checkout@v2.4.0
+    - name: NPM install
+      run: npm install
+    - name: build
+      run: npm run build
+    - name: publish
+      uses: JamesIves/github-pages-deploy-action@v4.2.2
+      with:
+        FOLDER: .
+        BRANCH: gh-pages
