@@ -28,7 +28,7 @@ function useGame() {
 		game: game.serialize(),
 		undoStack: undoStack.serialize(),
 	}), []);
-	const newGame = useNewGame((settings) => {
+	const newGame = useNewGame("klondike", (settings) => {
 		Game.fromScratch(game, settings.drawCount);
 		undoStack.reset();
 		enqueueAction.reset();
