@@ -9,9 +9,10 @@ import {useSizes} from "./sizerator.jsx";
 // we render the various parts of the board, using "subcomponents", aka functions
 // which return arrays of elements, which we concat together and render.
 export function CardRenderer({onDrop, children}) {
-	const {margins, cardWidth, cardOffsetX, cardOffsetY} = useSizes();
+	const sizes = useSizes();
+	const {margins, cardOffsetX, cardOffsetY} = sizes;
 	const functions = children.flat(2);
-	const defs = functions.flatMap((f) => f(cardWidth)).sort((a, b) => a.card.id - b.card.id);
+	const defs = functions.flatMap((f) => f(sizes)).sort((a, b) => a.card.id - b.card.id);
 
 	return (
 		<PointerManager onDrop={onDrop}>
@@ -44,9 +45,11 @@ export const renderPile = (slot, cards, handlers) => () => {
 	}));
 };
 
-export const renderStack = (slot, cards, handlers) => (cardWidth) => {
+export const renderStack = (slot, cards, handlers) => (sizes) => {
+	const {margins, cardWidth, cardHeight} = sizes;
+
 	let acc = 0;
-	return cards.map((card, i) => {
+	const result = cards.map((card, i) => {
 		const offsetY = acc;
 		acc += card.faceUp ? Math.max(26, cardWidth * .34) : cardWidth * .1;
 
@@ -59,4 +62,16 @@ export const renderStack = (slot, cards, handlers) => (cardWidth) => {
 			handlers,
 		};
 	});
+
+	const maxHeight = (cardHeight + margins) * 3;
+	const endHeight = result[result.length - 1]?.offsetY;
+
+	if (endHeight > maxHeight) {
+		const factor = maxHeight / endHeight;
+		for (const def of result) {
+			def.offsetY *= factor;
+		}
+	}
+
+	return result;
 };
