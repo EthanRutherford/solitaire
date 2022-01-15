@@ -1,0 +1,89 @@
+.card-front, .card-back {
+	position: absolute;
+	width: var(--card-width);
+	height: var(--card-height);
+	cursor: pointer;
+	transition: left ease-in-out .2s, top ease-in-out .2s, filter linear .1s;
+}
+
+.card-front {
+	border: 1px solid var(--ash);
+	border-radius: calc(var(--card-width) * .05);
+	background-color: white;
+	font-family: 'K2D';
+	font-weight: bold;
+}
+
+.card-front:focus {
+	box-shadow: 0 0 2px 2px var(--baby-dark);
+}
+
+.card-back > svg {
+	width: 100%;
+	height: 100%;
+}
+
+.drop-shadow, .flip-ltr-a, .flip-rtl-a {
+	filter: drop-shadow(2px 2px 2px var(--shadow-color));
+}
+
+.flip-ltr-a {
+	animation: flipUp .1s linear;
+}
+.flip-ltr-b {
+	animation: flipDown .1s linear;
+}
+.flip-rtl-a {
+	animation: flipDown .1s linear reverse;
+}
+.flip-rtl-b {
+	animation: flipUp .1s linear reverse;
+}
+
+.black {
+	color: var(--carbon);
+}
+
+.red {
+	color: var(--scarlet);
+}
+
+.top-corner, .bottom-corner {
+	position: absolute;
+	text-align: center;
+	font-size: max(calc(var(--card-width) * .15), 12px);
+	line-height: 1;
+}
+
+.top-corner {
+	top: calc(var(--card-width) * .02);
+	left: calc(var(--card-width) * .05);
+}
+
+.bottom-corner {
+	bottom: calc(var(--card-width) * .02);
+	right: calc(var(--card-width) * .05);
+	transform: rotate(180deg);
+}
+
+.suit {
+	width: max(calc(var(--card-width) * .12), 8px);
+}
+
+@keyframes flipUp {
+	from {
+		transform: perspective(800px) translateZ(0px) rotateY(0deg);
+	}
+	to {
+		transform: perspective(800px) translateZ(50px) rotateY(90deg);
+	}
+}
+
+@keyframes flipDown {
+	from {
+		transform: perspective(800px) translateZ(50px) rotateY(-90deg);
+	}
+	to {
+		transform: perspective(800px) translateZ(0px) rotateY(0deg);
+	}
+}

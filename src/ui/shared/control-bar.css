@@ -1,0 +1,37 @@
+.control-bar {
+	position: absolute;
+	bottom: 0;
+	box-shadow: 0 0 4px rgba(0, 0, 0, .5);
+	width: 100%;
+	height: var(--bar-height);
+	background-color: rgba(0, 0, 0, .5);
+}
+
+.content {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin: auto;
+	padding: 0 var(--margin);
+	height: 100%;
+	width: var(--board-width);
+}
+
+.buttons {
+	display: flex;
+}
+
+.button {
+	display: block;
+	color: white;
+	filter: drop-shadow(2px 2px 2px var(--shadow-color));
+}
+
+.button:active {
+	color: var(--not-white);
+}
+
+.button > svg {
+	display: block;
+	width: calc(var(--bar-height)  * .8);
+}

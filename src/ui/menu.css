@@ -1,0 +1,33 @@
+.menu {
+	position: relative;
+	margin: 0 auto;
+	padding: 20px 0;
+	width: 800px;
+	height: 100%;
+}
+
+.title {
+	margin-bottom: 20px;
+	color: white;
+	font: bold var(--mega) 'K2D';
+	text-shadow: 2px 2px rgba(0, 0, 0, .8);
+}
+
+.button {
+	display: block;
+	margin: 10px 0;
+	border: 2px solid var(--carbon);
+	border-radius: 5px;
+	padding: 5px;
+	width: 120px;
+	background: rgba(255, 255, 255, .5);
+}
+
+.version {
+	position: absolute;
+	bottom: 20px;
+	right: 0;
+	color: white;
+	font: bold var(--huge) 'K2D';
+	text-shadow: 2px 2px rgba(0, 0, 0, .8);
+}
