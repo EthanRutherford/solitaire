@@ -1,20 +1,26 @@
 import {useCallback, useState} from "react";
+import {get, put, settingsTable} from "../../logic/game-db";
 import {Modal, ModalButton, ModalFooter, ModalHeader, ModalLabel, ModalRadio} from "../shared/modal";
 
-export function useNewGame(onStart) {
+export function useNewGame(key, onStart) {
 	const [showModal, setShowModal] = useState(false);
-	const openModal = useCallback(() => setShowModal(true), []);
+	const [initialSettings, setSettings] = useState(null);
+	const openModal = useCallback(async () => {
+		setSettings(await get(settingsTable, key));
+		setShowModal(true);
+	}, []);
 	const cancel = useCallback(() => setShowModal(false), []);
 	const start = useCallback((data) => {
 		onStart(data);
 		setShowModal(false);
+		put(settingsTable, {key, ...data});
 	}, []);
 
-	return {showModal, openModal, onStart: start, onCancel: cancel};
+	return {showModal, openModal, initialSettings, onStart: start, onCancel: cancel};
 }
 
-export function NewgameModal({onStart, onCancel}) {
-	const [drawCount, setDrawCount] = useState(1);
+export function NewgameModal({initialSettings, onStart, onCancel}) {
+	const [drawCount, setDrawCount] = useState(initialSettings?.drawCount ?? 1);
 
 	return (
 		<Modal>

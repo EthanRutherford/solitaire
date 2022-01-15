@@ -634,7 +634,7 @@ function useGame() {
     game: game.serialize(),
     undoStack: undoStack.serialize()
   }), []);
-  const newGame = (0,_newgame_modal__WEBPACK_IMPORTED_MODULE_17__.useNewGame)(settings => {
+  const newGame = (0,_newgame_modal__WEBPACK_IMPORTED_MODULE_17__.useNewGame)("klondike", settings => {
     _logic_klondike_game__WEBPACK_IMPORTED_MODULE_7__.Game.fromScratch(game, settings.drawCount);
     undoStack.reset();
     enqueueAction.reset();
@@ -964,38 +964,50 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "NewgameModal": () => (/* binding */ NewgameModal)
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var _shared_modal__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../shared/modal */ "./src/ui/shared/modal.jsx");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var _logic_game_db__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../logic/game-db */ "./src/logic/game-db.js");
+/* harmony import */ var _shared_modal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../shared/modal */ "./src/ui/shared/modal.jsx");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 
 
 
 
-function useNewGame(onStart) {
+
+function useNewGame(key, onStart) {
   const [showModal, setShowModal] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
-  const openModal = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(() => setShowModal(true), []);
+  const [initialSettings, setSettings] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+  const openModal = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(async () => {
+    setSettings(await (0,_logic_game_db__WEBPACK_IMPORTED_MODULE_1__.get)(_logic_game_db__WEBPACK_IMPORTED_MODULE_1__.settingsTable, key));
+    setShowModal(true);
+  }, []);
   const cancel = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(() => setShowModal(false), []);
   const start = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(data => {
     onStart(data);
     setShowModal(false);
+    (0,_logic_game_db__WEBPACK_IMPORTED_MODULE_1__.put)(_logic_game_db__WEBPACK_IMPORTED_MODULE_1__.settingsTable, {
+      key,
+      ...data
+    });
   }, []);
   return {
     showModal,
     openModal,
+    initialSettings,
     onStart: start,
     onCancel: cancel
   };
 }
 function NewgameModal({
+  initialSettings,
   onStart,
   onCancel
 }) {
-  const [drawCount, setDrawCount] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(1);
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)(_shared_modal__WEBPACK_IMPORTED_MODULE_1__.Modal, {
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_shared_modal__WEBPACK_IMPORTED_MODULE_1__.ModalHeader, {
+  const [drawCount, setDrawCount] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(initialSettings?.drawCount ?? 1);
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)(_shared_modal__WEBPACK_IMPORTED_MODULE_2__.Modal, {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_shared_modal__WEBPACK_IMPORTED_MODULE_2__.ModalHeader, {
       children: "Klondike Solitaire"
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_shared_modal__WEBPACK_IMPORTED_MODULE_1__.ModalLabel, {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_shared_modal__WEBPACK_IMPORTED_MODULE_2__.ModalLabel, {
       children: "Draw count"
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_shared_modal__WEBPACK_IMPORTED_MODULE_1__.ModalRadio, {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_shared_modal__WEBPACK_IMPORTED_MODULE_2__.ModalRadio, {
       options: [{
         label: "draw 1",
         key: 1
@@ -1005,11 +1017,11 @@ function NewgameModal({
       }],
       selected: drawCount,
       onSelection: setDrawCount
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)(_shared_modal__WEBPACK_IMPORTED_MODULE_1__.ModalFooter, {
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_shared_modal__WEBPACK_IMPORTED_MODULE_1__.ModalButton, {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)(_shared_modal__WEBPACK_IMPORTED_MODULE_2__.ModalFooter, {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_shared_modal__WEBPACK_IMPORTED_MODULE_2__.ModalButton, {
         onClick: onCancel,
         children: "Cancel"
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_shared_modal__WEBPACK_IMPORTED_MODULE_1__.ModalButton, {
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_shared_modal__WEBPACK_IMPORTED_MODULE_2__.ModalButton, {
         onClick: () => onStart({
           drawCount
         }),
@@ -2002,7 +2014,7 @@ function useGame() {
     game: game.serialize(),
     undoStack: undoStack.serialize()
   }), []);
-  const newGame = (0,_newgame_modal__WEBPACK_IMPORTED_MODULE_12__.useNewGame)(settings => {
+  const newGame = (0,_newgame_modal__WEBPACK_IMPORTED_MODULE_12__.useNewGame)("spider", settings => {
     _logic_spider_game__WEBPACK_IMPORTED_MODULE_2__.Game.fromScratch(game, settings.suitCount);
     undoStack.reset();
     enqueueAction.reset();
@@ -2248,38 +2260,50 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "NewgameModal": () => (/* binding */ NewgameModal)
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var _shared_modal__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../shared/modal */ "./src/ui/shared/modal.jsx");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var _logic_game_db__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../logic/game-db */ "./src/logic/game-db.js");
+/* harmony import */ var _shared_modal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../shared/modal */ "./src/ui/shared/modal.jsx");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 
 
 
 
-function useNewGame(onStart) {
+
+function useNewGame(key, onStart) {
   const [showModal, setShowModal] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
-  const openModal = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(() => setShowModal(true), []);
+  const [initialSettings, setSettings] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+  const openModal = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(async () => {
+    setSettings(await (0,_logic_game_db__WEBPACK_IMPORTED_MODULE_1__.get)(_logic_game_db__WEBPACK_IMPORTED_MODULE_1__.settingsTable, key));
+    setShowModal(true);
+  }, []);
   const cancel = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(() => setShowModal(false), []);
   const start = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(data => {
     onStart(data);
     setShowModal(false);
+    (0,_logic_game_db__WEBPACK_IMPORTED_MODULE_1__.put)(_logic_game_db__WEBPACK_IMPORTED_MODULE_1__.settingsTable, {
+      key,
+      ...data
+    });
   }, []);
   return {
     showModal,
     openModal,
+    initialSettings,
     onStart: start,
     onCancel: cancel
   };
 }
 function NewgameModal({
+  initialSettings,
   onStart,
   onCancel
 }) {
-  const [suitCount, setSuitCount] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(1);
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)(_shared_modal__WEBPACK_IMPORTED_MODULE_1__.Modal, {
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_shared_modal__WEBPACK_IMPORTED_MODULE_1__.ModalHeader, {
+  const [suitCount, setSuitCount] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(initialSettings?.suitCount ?? 1);
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)(_shared_modal__WEBPACK_IMPORTED_MODULE_2__.Modal, {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_shared_modal__WEBPACK_IMPORTED_MODULE_2__.ModalHeader, {
       children: "Spider Solitaire"
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_shared_modal__WEBPACK_IMPORTED_MODULE_1__.ModalLabel, {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_shared_modal__WEBPACK_IMPORTED_MODULE_2__.ModalLabel, {
       children: "Suits"
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_shared_modal__WEBPACK_IMPORTED_MODULE_1__.ModalRadio, {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_shared_modal__WEBPACK_IMPORTED_MODULE_2__.ModalRadio, {
       options: [{
         label: "1 suit",
         key: 1
@@ -2292,11 +2316,11 @@ function NewgameModal({
       }],
       selected: suitCount,
       onSelection: setSuitCount
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)(_shared_modal__WEBPACK_IMPORTED_MODULE_1__.ModalFooter, {
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_shared_modal__WEBPACK_IMPORTED_MODULE_1__.ModalButton, {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)(_shared_modal__WEBPACK_IMPORTED_MODULE_2__.ModalFooter, {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_shared_modal__WEBPACK_IMPORTED_MODULE_2__.ModalButton, {
         onClick: onCancel,
         children: "Cancel"
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_shared_modal__WEBPACK_IMPORTED_MODULE_1__.ModalButton, {
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_shared_modal__WEBPACK_IMPORTED_MODULE_2__.ModalButton, {
         onClick: () => onStart({
           suitCount
         }),

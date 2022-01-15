@@ -23,7 +23,7 @@ function useGame() {
 		game: game.serialize(),
 		undoStack: undoStack.serialize(),
 	}), []);
-	const newGame = useNewGame((settings) => {
+	const newGame = useNewGame("spider", (settings) => {
 		Game.fromScratch(game, settings.suitCount);
 		undoStack.reset();
 		enqueueAction.reset();
