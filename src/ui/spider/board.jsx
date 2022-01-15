@@ -10,6 +10,7 @@ import {EmptyZone} from "../shared/empty-zone";
 import {getCard} from "../shared/get-context";
 import {ControlBar} from "../shared/control-bar";
 import {Sizerator} from "../shared/sizerator";
+import {NewgameModal, useNewGame} from "./newgame-modal";
 import styles from "./board.css";
 
 function useGame() {
@@ -17,17 +18,18 @@ function useGame() {
 	const undoStack = useMemo(() => new UndoStack());
 	const enqueueAction = useActionQueue();
 	const rerender = useRerender();
-	const newGame = useCallback(() => {
-		Game.fromScratch(game, 1);
-		undoStack.reset();
-		enqueueAction.reset();
-		rerender();
-	}, []);
 	const saveGame = useCallback(() => put(saveGameTable, {
 		key: "spider",
 		game: game.serialize(),
 		undoStack: undoStack.serialize(),
 	}), []);
+	const newGame = useNewGame((settings) => {
+		Game.fromScratch(game, settings.suitCount);
+		undoStack.reset();
+		enqueueAction.reset();
+		saveGame();
+		rerender();
+	});
 
 	useEffect(() => {
 		(async () => {
@@ -37,7 +39,7 @@ function useGame() {
 				UndoStack.deserialize(save.undoStack, undoStack);
 				rerender();
 			} else {
-				newGame();
+				newGame.openModal();
 			}
 		})();
 	}, []);
@@ -241,7 +243,10 @@ export function Board() {
 					}, deck, {}))}
 				</CardRenderer>
 			</div>
-			<ControlBar newGame={newGame} undo={undo} redo={redo} />
+			<ControlBar newGame={newGame.openModal} undo={undo} redo={redo} />
+			{newGame.showModal && (
+				<NewgameModal {...newGame} />
+			)}
 		</Sizerator>
 	);
 }

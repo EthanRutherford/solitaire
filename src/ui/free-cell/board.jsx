@@ -42,6 +42,7 @@ function useGame() {
 				rerender();
 			} else {
 				newGame();
+				saveGame();
 			}
 		})();
 	}, []);

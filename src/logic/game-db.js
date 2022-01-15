@@ -1,4 +1,5 @@
 export const saveGameTable = "saves";
+export const settingsTable = "settings";
 
 // opens the database, initializing it if necessary
 function openDatabase() {
@@ -13,8 +14,9 @@ function openDatabase() {
 				database.deleteObjectStore(name);
 			}
 
-			// create table for saved games
+			// create tables
 			database.createObjectStore(saveGameTable, {keyPath: "key"});
+			database.createObjectStore(settingsTable, {keyPath: "key"});
 		};
 
 		navigator.storage.persist();

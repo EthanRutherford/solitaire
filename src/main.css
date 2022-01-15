@@ -30,6 +30,7 @@ html {
 button {
 	background: none;
 	cursor: pointer;
+	user-select: none;
 }
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
@@ -60,6 +61,7 @@ html, body, :global(.root) {
 	--normal: 20px;
 	--large: 25px;
 	--huge: 30px;
+	--mega: 40px;
 
 	/* sizes */
 	--content-max-width: 1200px;

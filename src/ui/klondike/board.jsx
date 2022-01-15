@@ -15,6 +15,7 @@ import {EmptyZone} from "../shared/empty-zone";
 import {getCard} from "../shared/get-context";
 import {ControlBar} from "../shared/control-bar";
 import {Sizerator} from "../shared/sizerator";
+import {NewgameModal, useNewGame} from "./newgame-modal";
 import styles from "./board.css";
 
 function useGame() {
@@ -22,17 +23,18 @@ function useGame() {
 	const undoStack = useMemo(() => new UndoStack());
 	const enqueueAction = useActionQueue();
 	const rerender = useRerender();
-	const newGame = useCallback(() => {
-		Game.fromScratch(game);
-		undoStack.reset();
-		enqueueAction.reset();
-		rerender();
-	}, []);
 	const saveGame = useCallback(() => put(saveGameTable, {
 		key: "klondike",
 		game: game.serialize(),
 		undoStack: undoStack.serialize(),
 	}), []);
+	const newGame = useNewGame((settings) => {
+		Game.fromScratch(game, settings.drawCount);
+		undoStack.reset();
+		enqueueAction.reset();
+		saveGame();
+		rerender();
+	});
 
 	useEffect(() => {
 		(async () => {
@@ -42,7 +44,7 @@ function useGame() {
 				UndoStack.deserialize(save.undoStack, undoStack);
 				rerender();
 			} else {
-				newGame();
+				newGame.openModal();
 			}
 		})();
 	}, []);
@@ -125,9 +127,12 @@ function useGame() {
 		document.activeElement.blur();
 		if (pointer.card === pointer.card.meta.context.fromTop()) {
 			const commit = undoStack.record(game);
-			game.drawCards(1);
-			rerender();
-			commit();
+			for (let i = 0; i < game.drawCount; i++) {
+				game.drawCards(1);
+				rerender();
+				commit();
+				yield 10;
+			}
 
 			yield 100;
 			tryAutoComplete();
@@ -160,9 +165,9 @@ function useGame() {
 
 	const playableDoubleTap = useCallback((pointer) => {
 		if (pointer.dragCards != null) {
-			const target = game.tryGetMoveTarget(pointer.card);
-			if (game.canMoveCards(pointer.card, target)) {
-				doMoveCards(pointer.card, target);
+			const target = game.tryGetMoveTarget(pointer.dragCards[0].card);
+			if (game.canMoveCards(pointer.dragCards[0].card, target)) {
+				doMoveCards(pointer.dragCards[0].card, target);
 			}
 		}
 	});
@@ -287,7 +292,7 @@ export function Board() {
 						onTap: playableTap,
 						onDoubleTap: playableDoubleTap,
 						getDragCards: playableGetCards,
-					})}
+					}, game.drawCount)}
 					{renderPile({x: 3, y: 0}, game.foundations[suits.spades], {
 						onTap: foundationTap,
 					})}
@@ -307,7 +312,10 @@ export function Board() {
 					}))}
 				</CardRenderer>
 			</div>
-			<ControlBar newGame={newGame} undo={undo} redo={redo} />
+			<ControlBar newGame={newGame.openModal} undo={undo} redo={redo} />
+			{newGame.showModal && (
+				<NewgameModal {...newGame} />
+			)}
 		</Sizerator>
 	);
 }

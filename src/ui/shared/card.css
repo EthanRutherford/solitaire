@@ -28,16 +28,16 @@
 }
 
 .flip-ltr-a {
-	animation: flipUp .095s linear;
+	animation: flipUp .1s linear;
 }
 .flip-ltr-b {
-	animation: flipDown .095s linear;
+	animation: flipDown .1s linear;
 }
 .flip-rtl-a {
-	animation: flipDown .095s linear reverse;
+	animation: flipDown .1s linear reverse;
 }
 .flip-rtl-b {
-	animation: flipUp .095s linear reverse;
+	animation: flipUp .1s linear reverse;
 }
 
 .black {

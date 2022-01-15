@@ -1,4 +1,4 @@
-import {useMemo, useCallback, useState, useEffect} from "react";
+import {useMemo, useCallback, useState} from "react";
 import Brown from "../../../images/backs/brown";
 import Spade from "../../../images/spade";
 import Diamond from "../../../images/diamond";
@@ -24,9 +24,15 @@ const suitColors = {
 	[suits.hearts]: styles.red,
 };
 
+const trueMod = (v, m) => ((v % m) + m) % m;
 function usePosition(card, pos) {
-	const moved = useValueChanged(pos.x, pos.y, pos.z);
+	const moved = useValueChanged(card.meta.context);
 	const [moving, setMoving] = useState(false);
+
+	if (moved) {
+		setMoving(true);
+	}
+
 	const style = useMemo(() => {
 		const styles = {};
 		if (card.meta.dragPos != null) {
@@ -34,28 +40,14 @@ function usePosition(card, pos) {
 			styles.top = card.meta.dragPos.y;
 			styles.pointerEvents = "none";
 			styles.transition = "unset";
-			styles.zIndex = 400 + Math.abs(pos.z % 100);
+			styles.zIndex = 10000 + trueMod(pos.z, 1000);
 		} else {
 			styles.left = pos.x;
 			styles.top = pos.y;
-			styles.zIndex = pos.z;
-		}
-
-		if (moving || moved) {
-			styles.pointerEvents = "none";
-			styles.zIndex = 300 + Math.abs(styles.zIndex % 100);
 		}
 
 		return styles;
-	}, [card.meta.dragPos, moving, moved, pos.x, pos.y, pos.z]);
-
-	useEffect(() => {
-		card.meta.elem.addEventListener("transitionstart", (event) => {
-			if (event.propertyName === "left" || event.propertyName === "top") {
-				setMoving(true);
-			}
-		});
-	}, []);
+	}, [card.meta.dragPos, pos.x, pos.y, pos.z]);
 
 	const onTransitionEnd = useCallback((event) => {
 		if (event.propertyName === "left" || event.propertyName === "top") {
@@ -63,7 +55,7 @@ function usePosition(card, pos) {
 		}
 	}, []);
 
-	return {style, onTransitionEnd};
+	return {style, moving: moved || moving, onTransitionEnd};
 }
 
 function useFlip(card, pos) {
@@ -77,11 +69,11 @@ function useFlip(card, pos) {
 			setState({
 				flipClass: state.faceUp ? styles.flipRtlA : styles.flipLtrA,
 				faceUp: state.faceUp,
-				zIndex: 200 - Math.abs(pos.z % 100),
+				z: 1000 - trueMod(pos.z, 1000),
 				animationEnd: () => setState({
 					flipClass: card.faceUp ? styles.flipLtrB : styles.flipRtlB,
 					faceUp: card.faceUp,
-					zIndex: 200 + Math.abs(pos.z % 100),
+					z: trueMod(pos.z, 1000),
 					animationEnd: () => setState({faceUp: card.faceUp}),
 				}),
 			});
@@ -104,9 +96,10 @@ export function Card({card, pos, onTap, onDoubleTap, getDragCards}) {
 	card.meta.rerender = useRerender();
 
 	const onPointerDown = usePointers(card, onTap, onDoubleTap, getDragCards);
-	const {style, ...positionProps} = usePosition(card, pos);
-	const {flipClass, faceUp, zIndex, animationEnd} = useFlip(card, pos);
+	const {style, moving, ...positionProps} = usePosition(card, pos);
+	const {flipClass, faceUp, z, animationEnd} = useFlip(card, pos);
 	const shadowClass = useDropShadow(card);
+	style.zIndex = (z ?? pos.z) + (moving ? 1000 : 0);
 
 	if (!faceUp) {
 		const className = cns(styles.cardBack, flipClass, shadowClass);
@@ -116,7 +109,7 @@ export function Card({card, pos, onTap, onDoubleTap, getDragCards}) {
 				onPointerDown={onPointerDown}
 				onAnimationEnd={animationEnd}
 				{...positionProps}
-				style={{...style, zIndex: zIndex ?? style.zIndex}}
+				style={{...style}}
 				ref={(elem) => card.meta.elem = elem}
 			>
 				<Brown />
@@ -132,7 +125,7 @@ export function Card({card, pos, onTap, onDoubleTap, getDragCards}) {
 			onPointerDown={onPointerDown}
 			onAnimationEnd={animationEnd}
 			{...positionProps}
-			style={{...style, zIndex: zIndex ?? style.zIndex}}
+			style={{...style}}
 			tabIndex={-1}
 			ref={(elem) => card.meta.elem = elem}
 		>

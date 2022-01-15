@@ -3,6 +3,7 @@ import {validatedDelta} from "../undo-stack";
 
 export class Game {
 	constructor() {
+		this.drawCount = 1;
 		this.drawPile = new Deck();
 		this.discardPile = new Deck();
 		this.tableau = new Array(7).fill(0).map(() => new Deck());
@@ -165,6 +166,7 @@ export class Game {
 	}
 	serialize() {
 		return {
+			dc: this.drawCount,
 			dr: this.drawPile.serialize(),
 			di: this.discardPile.serialize(),
 			t: this.tableau.map((d) => d.serialize()),
@@ -179,6 +181,7 @@ export class Game {
 	static deserialize = validatedDelta((input, game) => {
 		game ??= new Game();
 
+		game.drawCount = input.dc ?? game.drawCount;
 		game.drawPile = Deck.deserialize(input.dr, game.drawPile);
 		game.discardPile = Deck.deserialize(input.di, game.discardPile);
 		const tableau = game.tableau;
@@ -193,7 +196,8 @@ export class Game {
 
 		return game.setContexts();
 	});
-	static fromScratch(game) {
+	static fromScratch(game, drawCount) {
+		game.drawCount = drawCount;
 		game.drawPile.splice(0, game.drawPile.length, ...Deck.full().shuffle());
 		game.discardPile.splice(0, game.discardPile.length);
 		game.tableau.splice(0, game.tableau.length);

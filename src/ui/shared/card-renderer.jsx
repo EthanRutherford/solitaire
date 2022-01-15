@@ -34,11 +34,14 @@ export function CardRenderer({onDrop, children}) {
 
 // common board layout components
 
-export const renderPile = (slot, cards, handlers) => () => {
+function showOffset(showCount, cardCount, i) {
+	return Math.max(Math.min(showCount, cardCount) - (cardCount - i), 0);
+}
+export const renderPile = (slot, cards, handlers, showCount = 1) => ({cardWidth}) => {
 	return cards.map((card, i) => ({
 		card,
 		slot,
-		offsetX: Math.floor(i * .1) * 2,
+		offsetX: Math.floor(i * .1) * 2 + showOffset(showCount, cards.length, i) * cardWidth * .2,
 		offsetY: 0,
 		offsetZ: (slot.z ?? 0) + i,
 		handlers,
