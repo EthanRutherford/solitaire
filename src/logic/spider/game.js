@@ -11,10 +11,10 @@ function getOneSuitDeck() {
 }
 
 function getTwoSuitDeck() {
-	const suits = [suits.spades, suits.hearts];
+	const acceptedSuits = [suits.spades, suits.hearts];
 	const deck = new Deck();
 	for (let i = 0; i < 4; i++) {
-		deck.push(...Deck.full().filter((c) => suits.contains(c.suit)));
+		deck.push(...Deck.full().filter((c) => acceptedSuits.includes(c.suit)));
 	}
 
 	return deck;
