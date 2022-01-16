@@ -1475,7 +1475,7 @@ function Card({
     animationEnd
   } = useFlip(card, pos);
   const shadowClass = useDropShadow(card);
-  style.zIndex ??= (z ?? pos.z) + (moving ? 1000 : 0);
+  const zIndex = style.zIndex ?? (z ?? pos.z) + (moving ? 1000 : 0);
 
   if (!faceUp) {
     const className = cns(_card_css__WEBPACK_IMPORTED_MODULE_10__["default"].cardBack, flipClass, shadowClass);
@@ -1484,7 +1484,8 @@ function Card({
       onPointerDown: onPointerDown,
       onAnimationEnd: animationEnd,
       ...positionProps,
-      style: { ...style
+      style: { ...style,
+        zIndex
       },
       ref: elem => card.meta.elem = elem,
       children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)((_images_backs_brown__WEBPACK_IMPORTED_MODULE_1___default()), {})
@@ -1498,7 +1499,8 @@ function Card({
     onPointerDown: onPointerDown,
     onAnimationEnd: animationEnd,
     ...positionProps,
-    style: { ...style
+    style: { ...style,
+      zIndex
     },
     tabIndex: -1,
     ref: elem => card.meta.elem = elem,
