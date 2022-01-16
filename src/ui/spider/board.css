@@ -4,5 +4,6 @@
 	width: var(--board-width);
 	height: 100%;
 	user-select: none;
+	touch-action: none;
 	filter: drop-shadow(2px 2px 2px var(--shadow-color));
 }
