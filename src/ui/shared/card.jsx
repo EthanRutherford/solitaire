@@ -99,7 +99,7 @@ export function Card({card, pos, onTap, onDoubleTap, getDragCards}) {
 	const {style, moving, ...positionProps} = usePosition(card, pos);
 	const {flipClass, faceUp, z, animationEnd} = useFlip(card, pos);
 	const shadowClass = useDropShadow(card);
-	style.zIndex ??= (z ?? pos.z) + (moving ? 1000 : 0);
+	const zIndex = style.zIndex ?? ((z ?? pos.z) + (moving ? 1000 : 0));
 
 	if (!faceUp) {
 		const className = cns(styles.cardBack, flipClass, shadowClass);
@@ -109,7 +109,7 @@ export function Card({card, pos, onTap, onDoubleTap, getDragCards}) {
 				onPointerDown={onPointerDown}
 				onAnimationEnd={animationEnd}
 				{...positionProps}
-				style={{...style}}
+				style={{...style, zIndex}}
 				ref={(elem) => card.meta.elem = elem}
 			>
 				<Brown />
@@ -125,7 +125,7 @@ export function Card({card, pos, onTap, onDoubleTap, getDragCards}) {
 			onPointerDown={onPointerDown}
 			onAnimationEnd={animationEnd}
 			{...positionProps}
-			style={{...style}}
+			style={{...style, zIndex}}
 			tabIndex={-1}
 			ref={(elem) => card.meta.elem = elem}
 		>
