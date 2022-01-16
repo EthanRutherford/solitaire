@@ -1475,7 +1475,7 @@ function Card({
     animationEnd
   } = useFlip(card, pos);
   const shadowClass = useDropShadow(card);
-  style.zIndex = (z ?? pos.z) + (moving ? 1000 : 0);
+  style.zIndex ??= (z ?? pos.z) + (moving ? 1000 : 0);
 
   if (!faceUp) {
     const className = cns(_card_css__WEBPACK_IMPORTED_MODULE_10__["default"].cardBack, flipClass, shadowClass);
