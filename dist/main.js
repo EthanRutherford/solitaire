@@ -1044,9 +1044,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Menu": () => (/* binding */ Menu)
 /* harmony export */ });
-/* harmony import */ var _shared_app_router__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./shared/app-router */ "./src/ui/shared/app-router.jsx");
-/* harmony import */ var _menu_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./menu.css */ "./src/ui/menu.css");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var _util_install_prompt__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../util/install-prompt */ "./src/util/install-prompt.js");
+/* harmony import */ var _shared_app_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./shared/app-router */ "./src/ui/shared/app-router.jsx");
+/* harmony import */ var _menu_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./menu.css */ "./src/ui/menu.css");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+
 
 
 
@@ -1054,26 +1056,34 @@ __webpack_require__.r(__webpack_exports__);
 function Menu() {
   const {
     go
-  } = (0,_shared_app_router__WEBPACK_IMPORTED_MODULE_0__.useRouter)();
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
-    className: _menu_css__WEBPACK_IMPORTED_MODULE_1__["default"].menu,
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
-      className: _menu_css__WEBPACK_IMPORTED_MODULE_1__["default"].title,
+  } = (0,_shared_app_router__WEBPACK_IMPORTED_MODULE_1__.useRouter)();
+  const {
+    canPrompt,
+    promptForInstall
+  } = (0,_util_install_prompt__WEBPACK_IMPORTED_MODULE_0__.useInstallPrompt)();
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("div", {
+    className: _menu_css__WEBPACK_IMPORTED_MODULE_2__["default"].menu,
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("div", {
+      className: _menu_css__WEBPACK_IMPORTED_MODULE_2__["default"].title,
       children: "Solitaire"
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("button", {
-      className: _menu_css__WEBPACK_IMPORTED_MODULE_1__["default"].button,
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("button", {
+      className: _menu_css__WEBPACK_IMPORTED_MODULE_2__["default"].button,
       onClick: () => go("/klondike"),
       children: "klondike"
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("button", {
-      className: _menu_css__WEBPACK_IMPORTED_MODULE_1__["default"].button,
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("button", {
+      className: _menu_css__WEBPACK_IMPORTED_MODULE_2__["default"].button,
       onClick: () => go("/spider"),
       children: "spider"
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("button", {
-      className: _menu_css__WEBPACK_IMPORTED_MODULE_1__["default"].button,
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("button", {
+      className: _menu_css__WEBPACK_IMPORTED_MODULE_2__["default"].button,
       onClick: () => go("/free-cell"),
       children: "free cell"
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
-      className: _menu_css__WEBPACK_IMPORTED_MODULE_1__["default"].version,
+    }), canPrompt && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("button", {
+      className: _menu_css__WEBPACK_IMPORTED_MODULE_2__["default"].button,
+      onClick: promptForInstall,
+      children: "add to homescreen"
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("div", {
+      className: _menu_css__WEBPACK_IMPORTED_MODULE_2__["default"].version,
       children: "v0.1"
     })]
   });
@@ -34708,6 +34718,57 @@ function getContext(elem) {
 	}
 
 	return null;
+}
+
+
+/***/ }),
+
+/***/ "./src/util/install-prompt.js":
+/*!************************************!*\
+  !*** ./src/util/install-prompt.js ***!
+  \************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "useInstallPrompt": () => (/* binding */ useInstallPrompt)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+
+const listeners = new Set();
+
+let deferredPrompt = null;
+window.addEventListener("beforeinstallprompt", (event) => {
+	event.preventDefault();
+	deferredPrompt = event;
+
+	for (const listener of listeners) {
+		listener(true);
+	}
+});
+
+function useInstallPrompt() {
+	const [canPrompt, setCanPrompt] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+	(0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+		listeners.add(setCanPrompt);
+		return () => listeners.delete(setCanPrompt);
+	}, []);
+
+	const promptForInstall = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(() => {
+		deferredPrompt.prompt();
+		return deferredPrompt.userChoice.then((choiceResult) => {
+			deferredPrompt = null;
+			for (const listener of listeners) {
+				listener(false);
+			}
+
+			return choiceResult.outcome === "accepted";
+		});
+	}, [deferredPrompt]);
+
+	return {canPrompt, promptForInstall};
 }
 
 
