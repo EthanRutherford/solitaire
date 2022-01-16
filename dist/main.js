@@ -34387,10 +34387,7 @@ class Game {
 			return true;
 		}
 
-		if (
-			target?.fromTop().suit === card.suit &&
-			target?.fromTop().value - 1 === card.value
-		) {
+		if (target?.fromTop().value - 1 === card.value) {
 			return true;
 		}
 
