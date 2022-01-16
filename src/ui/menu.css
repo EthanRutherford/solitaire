@@ -3,6 +3,7 @@
 	margin: 0 auto;
 	padding: 20px;
 	width: 800px;
+	max-width: 100%;
 	height: 100%;
 }
 
@@ -26,7 +27,7 @@
 .version {
 	position: absolute;
 	bottom: 20px;
-	right: 0;
+	right: 20px;
 	color: white;
 	font: bold var(--huge) 'K2D';
 	text-shadow: 2px 2px rgba(0, 0, 0, .8);

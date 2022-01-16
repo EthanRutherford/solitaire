@@ -4,6 +4,7 @@
 	height: var(--card-height);
 	cursor: pointer;
 	transition: left ease-in-out .2s, top ease-in-out .2s, filter linear .1s;
+	will-change: left, top, transform, filter;
 }
 
 .card-front {

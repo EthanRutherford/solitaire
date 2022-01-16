@@ -33,6 +33,7 @@
 	height: var(--card-height);
 	cursor: pointer;
 	transition: left ease-in-out .2s, top ease-in-out .2s, filter linear .1s;
+	will-change: left, top, transform, filter;
 }
 
 .card__card-front--_X9Ha {
@@ -401,6 +402,7 @@ html, body, .root {
 	margin: 0 auto;
 	padding: 20px;
 	width: 800px;
+	max-width: 100%;
 	height: 100%;
 }
 
@@ -424,7 +426,7 @@ html, body, .root {
 .menu__version--Bq1q5 {
 	position: absolute;
 	bottom: 20px;
-	right: 0;
+	right: 20px;
 	color: white;
 	font: bold var(--huge) 'K2D';
 	text-shadow: 2px 2px rgba(0, 0, 0, .8);
