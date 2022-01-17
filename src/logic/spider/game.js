@@ -115,43 +115,35 @@ export class Game {
 		this.moveCards(context.draw(context.length - index), target);
 	}
 	tryGetMoveTarget(card) {
-		const [empty, nonEmpty] = this.tableau.reduce((partitions, deck) => {
-			partitions[deck.length === 0 ? 0 : 1].push(deck);
-			return partitions;
-		}, [[], []]);
-
-		let bestDeck = null;
-		let bestSize = -1;
-		for (const deck of nonEmpty) {
-			if (this.canMoveCards(card, deck)) {
-				let size = 0;
-				let value = card.value + 1;
-				while (
-					deck.fromTop(size)?.suit === card.suit &&
-					deck.fromTop(size)?.value === value
-				) {
-					size++;
-					value++;
-				}
-
-				if (size > bestSize) {
-					bestDeck = deck;
-					bestSize = size;
-				}
+		const possibleTargets = this.tableau.filter((deck) => this.canMoveCards(card, deck));
+		const ranked = possibleTargets.map((deck) => {
+			if (deck.length === 0) {
+				return {deck, sameSuitSize: 0, differentSuitSize: 0};
 			}
-		}
 
-		if (bestDeck != null) {
-			return bestDeck;
-		}
-
-		for (const deck of empty) {
-			if (this.canMoveCards(card, deck)) {
-				return deck;
+			let sameSuitSize = 0;
+			let value = card.value + 1;
+			while (
+				deck.fromTop(sameSuitSize)?.suit === card.suit &&
+				deck.fromTop(sameSuitSize)?.value === value
+			) {
+				sameSuitSize++;
+				value++;
 			}
-		}
 
-		return null;
+			let differentSuitSize = sameSuitSize;
+			while (deck.fromTop(differentSuitSize)?.value === value) {
+				differentSuitSize++;
+				value++;
+			}
+
+			return {deck, sameSuitSize, differentSuitSize};
+		}).sort((a, b) => {
+			const sameDiff = b.sameSuitSize - a.sameSuitSize;
+			return sameDiff !== 0 ? sameDiff : b.differentSuitSize - a.differentSuitSize;
+		});
+
+		return ranked[0]?.deck ?? null;
 	}
 	tryFlipCard(deck) {
 		if (this.tableau.includes(deck)) {
