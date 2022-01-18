@@ -1,10 +1,10 @@
 import {createContext, useCallback, useContext, useLayoutEffect, useMemo} from "react";
-import {getContext} from "./get-context";
+import {getContextAndCard} from "./get-context";
 
 function getContextAtPoint(pointer) {
 	const {left, top, width, height} = pointer.card.meta.elem.getBoundingClientRect();
 	const elem = document.elementFromPoint(left + width / 2, top + height / 2);
-	return getContext(elem);
+	return getContextAndCard(elem);
 }
 
 const pointerContext = createContext([]);
@@ -52,8 +52,7 @@ export function PointerManager({onDrag, onDrop, children}) {
 			pointers.previous = null;
 
 			if (current.dragging) {
-				const target = getContextAtPoint(current, event);
-				onDrop(current, target);
+				onDrop(current, ...getContextAtPoint(current, event));
 
 				for (const dragCard of current.dragCards) {
 					dragCard.card.meta.dragPos = null;

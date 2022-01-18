@@ -5,14 +5,15 @@
 	align-items: center;
 	border: 1px solid var(--carbon);
 	border-radius: calc(var(--card-width) * .05);
-	box-shadow: inset 0 0 calc(var(--card-width) * .05) var(--shadow-color);
+	box-shadow: inset 0 0 calc(var(--card-width) * .05) rgba(0, 0, 0, .5);
 	width: var(--card-width);
 	height: var(--card-height);
+	color: var(--shadow-color);
+	font: bold calc(var(--card-width) * .8) 'K2D';
 	cursor: pointer;
 	transition: left ease-in-out .2s, top ease-in-out .2s;
 }
 
 .empty-zone > svg {
 	width: calc(var(--card-width) * .5);
-	color: var(--shadow-color);
 }

@@ -116,6 +116,48 @@ module.exports = SvgDiamond;
 
 /***/ }),
 
+/***/ "./images/draw.svg":
+/*!*************************!*\
+  !*** ./images/draw.svg ***!
+  \*************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var _rect, _rect2, _path;
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+var SvgDraw = function SvgDraw(props) {
+  return /*#__PURE__*/React.createElement("svg", _extends({
+    xmlns: "http://www.w3.org/2000/svg",
+    viewBox: "0 0 20 20"
+  }, props), _rect || (_rect = /*#__PURE__*/React.createElement("rect", {
+    width: 5,
+    height: 8,
+    x: 1,
+    y: 6,
+    ry: 1,
+    fill: "currentColor",
+    stroke: "currentColor"
+  })), _rect2 || (_rect2 = /*#__PURE__*/React.createElement("rect", {
+    width: 5,
+    height: 8,
+    x: 14,
+    y: 6,
+    ry: 1,
+    fill: "none",
+    stroke: "currentColor"
+  })), _path || (_path = /*#__PURE__*/React.createElement("path", {
+    d: "M10 9V7l3 3-3 3v-2H7V9Z",
+    fill: "currentColor"
+  })));
+};
+
+module.exports = SvgDraw;
+
+/***/ }),
+
 /***/ "./images/heart.svg":
 /*!**************************!*\
   !*** ./images/heart.svg ***!
@@ -680,12 +722,8 @@ function useGame() {
         }
 
         yield 100;
-      } else {
-        if (!tryFinish()) {
-          saveGame();
-        }
-
-        return;
+      } else if (!tryFinish()) {
+        saveGame();
       }
     }
   });
@@ -1078,13 +1116,318 @@ function Menu() {
       className: _menu_css__WEBPACK_IMPORTED_MODULE_2__["default"].button,
       onClick: () => go("/free-cell"),
       children: "free cell"
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("button", {
+      className: _menu_css__WEBPACK_IMPORTED_MODULE_2__["default"].button,
+      onClick: () => go("/pyramid"),
+      children: "pyramid"
     }), canPrompt && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("button", {
       className: _menu_css__WEBPACK_IMPORTED_MODULE_2__["default"].button,
       onClick: promptForInstall,
       children: "add to homescreen"
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("div", {
       className: _menu_css__WEBPACK_IMPORTED_MODULE_2__["default"].version,
-      children: "v0.1"
+      children: "v0.2"
+    })]
+  });
+}
+
+/***/ }),
+
+/***/ "./src/ui/pyramid/board.jsx":
+/*!**********************************!*\
+  !*** ./src/ui/pyramid/board.jsx ***!
+  \**********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "renderPyramid": () => (/* binding */ renderPyramid),
+/* harmony export */   "Board": () => (/* binding */ Board)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var _images_draw_svg__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../images/draw.svg */ "./images/draw.svg");
+/* harmony import */ var _images_draw_svg__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_images_draw_svg__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _logic_pyramid_game__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../logic/pyramid/game */ "./src/logic/pyramid/game.js");
+/* harmony import */ var _logic_undo_stack__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../logic/undo-stack */ "./src/logic/undo-stack.js");
+/* harmony import */ var _logic_game_db__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../logic/game-db */ "./src/logic/game-db.js");
+/* harmony import */ var _util_use_rerender__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../util/use-rerender */ "./src/util/use-rerender.js");
+/* harmony import */ var _util_use_action_queue__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../util/use-action-queue */ "./src/util/use-action-queue.js");
+/* harmony import */ var _shared_card_renderer__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../shared/card-renderer */ "./src/ui/shared/card-renderer.jsx");
+/* harmony import */ var _shared_empty_zone__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../shared/empty-zone */ "./src/ui/shared/empty-zone.jsx");
+/* harmony import */ var _shared_get_context__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../shared/get-context */ "./src/ui/shared/get-context.js");
+/* harmony import */ var _shared_control_bar__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../shared/control-bar */ "./src/ui/shared/control-bar.jsx");
+/* harmony import */ var _shared_sizerator__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../shared/sizerator */ "./src/ui/shared/sizerator.jsx");
+/* harmony import */ var _board_css__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./board.css */ "./src/ui/pyramid/board.css");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function useGame() {
+  const game = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => new _logic_pyramid_game__WEBPACK_IMPORTED_MODULE_2__.Game(), []);
+  const undoStack = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => new _logic_undo_stack__WEBPACK_IMPORTED_MODULE_3__.UndoStack());
+  const enqueueAction = (0,_util_use_action_queue__WEBPACK_IMPORTED_MODULE_6__.useActionQueue)();
+  const rerender = (0,_util_use_rerender__WEBPACK_IMPORTED_MODULE_5__.useRerender)();
+  const saveGame = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(() => (0,_logic_game_db__WEBPACK_IMPORTED_MODULE_4__.put)(_logic_game_db__WEBPACK_IMPORTED_MODULE_4__.saveGameTable, {
+    key: "pyramid",
+    game: game.serialize(),
+    undoStack: undoStack.serialize()
+  }), []);
+  const newGame = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(() => {
+    _logic_pyramid_game__WEBPACK_IMPORTED_MODULE_2__.Game.fromScratch(game);
+    undoStack.reset();
+    enqueueAction.reset();
+    rerender();
+  }, []);
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    (async () => {
+      const save = await (0,_logic_game_db__WEBPACK_IMPORTED_MODULE_4__.get)(_logic_game_db__WEBPACK_IMPORTED_MODULE_4__.saveGameTable, "pyramid");
+
+      if (save != null) {
+        _logic_pyramid_game__WEBPACK_IMPORTED_MODULE_2__.Game.deserialize(save.game, game);
+        _logic_undo_stack__WEBPACK_IMPORTED_MODULE_3__.UndoStack.deserialize(save.undoStack, undoStack);
+        rerender();
+      } else {
+        newGame();
+        saveGame();
+      }
+    })();
+  }, []);
+  const tryFinish = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(() => {
+    if (game.hasWon()) {
+      undoStack.reset();
+      enqueueAction.reset();
+      doClearCards(...game.drawPile, ...game.discardPile);
+      (0,_logic_game_db__WEBPACK_IMPORTED_MODULE_4__.remove)(_logic_game_db__WEBPACK_IMPORTED_MODULE_4__.saveGameTable, "pyramid");
+      return true;
+    }
+
+    return false;
+  });
+  const doClearCards = enqueueAction(function* (...cards) {
+    const commit = undoStack.record(game);
+
+    for (const card of cards) {
+      game.clearCard(card);
+    }
+
+    rerender();
+    commit();
+    saveGame();
+    yield 100;
+
+    if (!tryFinish()) {
+      saveGame();
+    }
+  }, []);
+  const onDrop = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)((pointer, _, targetCard) => {
+    if (targetCard != null && game.canClearCards(pointer.card, targetCard)) {
+      doClearCards(pointer.card, targetCard);
+    }
+  }, []);
+  const flipDiscard = enqueueAction(function* () {
+    if (game.drawPile.length > 0 || game.remainingFlips === 0) {
+      return;
+    }
+
+    const commit = undoStack.record(game);
+    game.remainingFlips--;
+
+    while (game.discardPile.length > 0) {
+      game.undrawCard();
+      rerender();
+      commit();
+      yield 10;
+    }
+
+    saveGame();
+  });
+  const drawPileDraw = enqueueAction(function* () {
+    document.activeElement.blur();
+    const commit = undoStack.record(game);
+
+    if (game.drawPile.length > 0) {
+      game.drawCard();
+      rerender();
+      commit();
+      saveGame();
+      yield 100;
+    } else {
+      flipDiscard();
+    }
+  });
+  const playableGetCards = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(card => game.getMovableCards(card), []);
+  const playableTap = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(pointer => {
+    const activeCard = (0,_shared_get_context__WEBPACK_IMPORTED_MODULE_9__.getCard)(document.activeElement);
+
+    if (activeCard != null && game.canClearCards(activeCard, pointer.card)) {
+      doClearCards(activeCard, pointer.card);
+      return;
+    }
+
+    document.activeElement.blur();
+
+    if (pointer.dragCards != null) {
+      pointer.card.meta.elem.focus();
+    }
+  }, []);
+  const playableDoubleTap = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(pointer => {
+    if (pointer.card.value === 13) {
+      doClearCards(pointer.card);
+    }
+  });
+  const undo = enqueueAction(function* () {
+    const deltas = undoStack.undo();
+
+    if (deltas == null) {
+      return;
+    }
+
+    undoStack.lock = true;
+
+    while (deltas.length > 0) {
+      _logic_pyramid_game__WEBPACK_IMPORTED_MODULE_2__.Game.deserialize(deltas.pop(), game);
+      rerender();
+      yield 10;
+    }
+
+    saveGame();
+    undoStack.lock = false;
+  });
+  const redo = enqueueAction(function* () {
+    const deltas = undoStack.redo();
+
+    if (deltas == null) {
+      return;
+    }
+
+    undoStack.lock = true;
+
+    while (deltas.length > 0) {
+      _logic_pyramid_game__WEBPACK_IMPORTED_MODULE_2__.Game.deserialize(deltas.pop(), game);
+      rerender();
+      yield 10;
+    }
+
+    saveGame();
+    undoStack.lock = false;
+  });
+  return {
+    game,
+    newGame,
+    onDrop,
+    flipDiscard,
+    drawPileDraw,
+    playableGetCards,
+    playableTap,
+    playableDoubleTap,
+    undo,
+    redo
+  };
+}
+
+const renderPyramid = (cards, handlers) => () => {
+  const results = [];
+
+  for (let i = 0, j = 0; j < cards.length; i++, j += i) {
+    const rowSize = i + 1;
+    const startX = 3 - i / 2;
+
+    for (let k = 0; k < rowSize; k++) {
+      const card = cards[j + k];
+
+      if (card != null) {
+        results.push({
+          card: cards[j + k],
+          slot: {
+            x: startX + k,
+            y: i / 2
+          },
+          offsetZ: i,
+          handlers
+        });
+      }
+    }
+  }
+
+  return results;
+};
+function Board() {
+  const {
+    game,
+    newGame,
+    onDrop,
+    flipDiscard,
+    drawPileDraw,
+    playableGetCards,
+    playableTap,
+    playableDoubleTap,
+    undo,
+    redo
+  } = useGame();
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)(_shared_sizerator__WEBPACK_IMPORTED_MODULE_11__.Sizerator, {
+    cardsAcross: 7,
+    cardsTall: 5,
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)("div", {
+      className: _board_css__WEBPACK_IMPORTED_MODULE_12__["default"].board,
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_8__.EmptyZone, {
+        slot: {
+          x: 2,
+          y: 4
+        },
+        onClick: flipDiscard,
+        children: game.remainingFlips
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_8__.EmptyZone, {
+        slot: {
+          x: 4,
+          y: 4
+        }
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)("button", {
+        className: _board_css__WEBPACK_IMPORTED_MODULE_12__["default"].drawButton,
+        onClick: drawPileDraw,
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)((_images_draw_svg__WEBPACK_IMPORTED_MODULE_1___default()), {})
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)(_shared_card_renderer__WEBPACK_IMPORTED_MODULE_7__.CardRenderer, {
+        onDrop: onDrop,
+        children: [renderPyramid(game.tree, {
+          onTap: playableTap,
+          onDoubleTap: playableDoubleTap,
+          getDragCards: playableGetCards
+        }), (0,_shared_card_renderer__WEBPACK_IMPORTED_MODULE_7__.renderPile)({
+          x: 2,
+          y: 4
+        }, game.drawPile, {
+          onTap: playableTap,
+          onDoubleTap: playableDoubleTap,
+          getDragCards: playableGetCards
+        }), (0,_shared_card_renderer__WEBPACK_IMPORTED_MODULE_7__.renderPile)({
+          x: 4,
+          y: 4
+        }, game.discardPile, {
+          onTap: playableTap,
+          onDoubleTap: playableDoubleTap,
+          getDragCards: playableGetCards
+        }), (0,_shared_card_renderer__WEBPACK_IMPORTED_MODULE_7__.renderPile)({
+          x: 6,
+          y: 4
+        }, game.completed)]
+      })]
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_shared_control_bar__WEBPACK_IMPORTED_MODULE_10__.ControlBar, {
+      newGame: newGame,
+      undo: undo,
+      redo: redo
     })]
   });
 }
@@ -1260,8 +1603,8 @@ function CardRenderer({
     }) => /*#__PURE__*/(0,react__WEBPACK_IMPORTED_MODULE_3__.createElement)(_card_jsx__WEBPACK_IMPORTED_MODULE_0__.Card, {
       card: card,
       pos: {
-        x: margins + slot.x * cardOffsetX + offsetX,
-        y: margins + slot.y * cardOffsetY + offsetY,
+        x: margins + slot.x * cardOffsetX + (offsetX ?? 0),
+        y: margins + slot.y * cardOffsetY + (offsetY ?? 0),
         z: offsetZ
       },
       ...handlers,
@@ -1281,7 +1624,6 @@ const renderPile = (slot, cards, handlers, showCount = 1) => ({
     card,
     slot,
     offsetX: Math.floor(i * .1) * 2 + showOffset(showCount, cards.length, i) * cardWidth * .2,
-    offsetY: 0,
     offsetZ: (slot.z ?? 0) + i,
     handlers
   }));
@@ -1299,7 +1641,6 @@ const renderStack = (slot, cards, handlers) => sizes => {
     return {
       card,
       slot,
-      offsetX: 0,
       offsetY,
       offsetZ: (slot.z ?? 0) + i,
       handlers
@@ -1771,7 +2112,7 @@ function getContextAtPoint(pointer) {
     height
   } = pointer.card.meta.elem.getBoundingClientRect();
   const elem = document.elementFromPoint(left + width / 2, top + height / 2);
-  return (0,_get_context__WEBPACK_IMPORTED_MODULE_1__.getContext)(elem);
+  return (0,_get_context__WEBPACK_IMPORTED_MODULE_1__.getContextAndCard)(elem);
 }
 
 const pointerContext = /*#__PURE__*/(0,react__WEBPACK_IMPORTED_MODULE_0__.createContext)([]);
@@ -1829,8 +2170,7 @@ function PointerManager({
       pointers.previous = null;
 
       if (current.dragging) {
-        const target = getContextAtPoint(current, event);
-        onDrop(current, target);
+        onDrop(current, ...getContextAtPoint(current, event));
 
         for (const dragCard of current.dragCards) {
           dragCard.card.meta.dragPos = null;
@@ -2405,6 +2745,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 // extracted by mini-css-extract-plugin
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({"menu":"menu__menu--VxifX","title":"menu__title--Bf9_7","button":"menu__button--jMY8v","version":"menu__version--Bq1q5"});
+
+/***/ }),
+
+/***/ "./src/ui/pyramid/board.css":
+/*!**********************************!*\
+  !*** ./src/ui/pyramid/board.css ***!
+  \**********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// extracted by mini-css-extract-plugin
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({"board":"board__board--Jqr26","draw-button":"board__draw-button--bBq3G","drawButton":"board__draw-button--bBq3G"});
 
 /***/ }),
 
@@ -33638,7 +33994,7 @@ class Deck extends Array {
 		return this[this.length - number - 1];
 	}
 	serialize() {
-		return this.map((c) => c.serialize());
+		return this.map((c) => c?.serialize());
 	}
 	static deserialize = (0,_undo_stack__WEBPACK_IMPORTED_MODULE_0__.validatedDelta)((input, deck) => {
 		const {length, ...rest} = input;
@@ -34280,6 +34636,160 @@ class Game {
 
 /***/ }),
 
+/***/ "./src/logic/pyramid/game.js":
+/*!***********************************!*\
+  !*** ./src/logic/pyramid/game.js ***!
+  \***********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Game": () => (/* binding */ Game)
+/* harmony export */ });
+/* harmony import */ var _deck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../deck */ "./src/logic/deck.js");
+/* harmony import */ var _undo_stack__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../undo-stack */ "./src/logic/undo-stack.js");
+
+
+
+const treeRows = [0, 1, 3, 6, 10, 15, 21];
+class Game {
+	constructor() {
+		this.tree = new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck();
+		this.drawPile = new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck();
+		this.discardPile = new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck();
+		this.completed = new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck();
+		this.remainingFlips = 0;
+	}
+	setContexts() {
+		const contexts = [
+			this.tree,
+			this.drawPile,
+			this.discardPile,
+			this.completed,
+		];
+		for (const context of contexts) {
+			this.setContext(context);
+		}
+
+		return this;
+	}
+	setContext(context) {
+		for (const card of context) {
+			if (card != null) {
+				card.meta.context = context;
+			}
+		}
+	}
+	getChildrenOf(card) {
+		const index = this.tree.indexOf(card);
+		if (index === -1) {
+			return null;
+		}
+
+		const [curRow, nextRow] = treeRows.slice(
+			treeRows.findIndex((r, i) => index >= r && index < (treeRows[i + 1] ?? Infinity)),
+		);
+		const rowOffset = index - curRow;
+		return this.tree.slice(nextRow + rowOffset, nextRow + rowOffset + 2);
+	}
+	drawCard() {
+		const card = this.drawPile.draw(1)[0];
+		this.discardPile.push(card);
+		card.meta.context = this.discardPile;
+	}
+	undrawCard() {
+		const card = this.discardPile.draw(1)[0];
+		this.drawPile.push(card);
+		card.meta.context = this.drawPile;
+	}
+	getMovableCards(card) {
+		if (card.meta.context === this.drawPile) {
+			return [this.drawPile.fromTop()];
+		}
+		if (card.meta.context === this.discardPile) {
+			return [this.discardPile.fromTop()];
+		}
+		if (this.isPlayable(card)) {
+			return [card];
+		}
+
+		return null;
+	}
+	clearCard(card) {
+		if (card.meta.context === this.drawPile) {
+			this.drawPile.draw(1);
+		} else if (card.meta.context === this.discardPile) {
+			this.discardPile.draw(1);
+		} else if (card.meta.context === this.tree) {
+			const index = this.tree.indexOf(card);
+			this.tree[index] = null;
+		} else {
+			return;
+		}
+
+		this.completed.push(card);
+		card.meta.context = this.completed;
+		card.faceUp = false;
+	}
+	isPlayable(card) {
+		if (card.meta.context === this.completed) {
+			return false;
+		}
+
+		const children = this.getChildrenOf(card);
+		if (children != null && children.filter((c) => c != null).length > 0) {
+			return false;
+		}
+
+		return true;
+	}
+	canClearCards(cardA, cardB) {
+		if ((cardA.value + cardB.value) % 13 !== 0) {
+			return false;
+		}
+
+		return this.isPlayable(cardA) && this.isPlayable(cardB);
+	}
+	hasWon() {
+		return this.tree[0] == null;
+	}
+	serialize() {
+		return {
+			t: this.tree.serialize(),
+			dr: this.drawPile.serialize(),
+			di: this.discardPile.serialize(),
+			c: this.completed.serialize(),
+			r: this.remainingFlips,
+		};
+	}
+	static deserialize = (0,_undo_stack__WEBPACK_IMPORTED_MODULE_1__.validatedDelta)((input, game) => {
+		game ??= new Game();
+		game.tree = _deck__WEBPACK_IMPORTED_MODULE_0__.Deck.deserialize(input.t, game.tree);
+		game.drawPile = _deck__WEBPACK_IMPORTED_MODULE_0__.Deck.deserialize(input.dr, game.drawPile);
+		game.discardPile = _deck__WEBPACK_IMPORTED_MODULE_0__.Deck.deserialize(input.di, game.discardPile);
+		game.drawPile = _deck__WEBPACK_IMPORTED_MODULE_0__.Deck.deserialize(input.dr, game.drawPile);
+		game.completed = _deck__WEBPACK_IMPORTED_MODULE_0__.Deck.deserialize(input.c, game.completed);
+		game.remainingFlips = input.r ?? game.remainingFlips;
+		return game.setContexts();
+	});
+	static fromScratch(game) {
+		game.drawPile.splice(0, game.drawPile.length, ..._deck__WEBPACK_IMPORTED_MODULE_0__.Deck.full().shuffle());
+		for (const card of game.drawPile) {
+			card.faceUp = true;
+		}
+
+		game.discardPile.splice(0, game.discardPile.length);
+		game.completed.splice(0, game.completed.length);
+		game.tree.splice(0, game.tree.length, ...game.drawPile.draw(28));
+		game.remainingFlips = 2;
+		return game.setContexts();
+	}
+}
+
+
+/***/ }),
+
 /***/ "./src/logic/spider/game.js":
 /*!**********************************!*\
   !*** ./src/logic/spider/game.js ***!
@@ -34568,7 +35078,7 @@ class Delta {
 function validatedDelta(action) {
 	return function(delta, object = null) {
 		if (delta == null) {
-			return object;
+			return delta === undefined ? object : null;
 		}
 
 		return action(delta, object);
@@ -34670,7 +35180,7 @@ class UndoStack {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "getCard": () => (/* binding */ getCard),
-/* harmony export */   "getContext": () => (/* binding */ getContext)
+/* harmony export */   "getContextAndCard": () => (/* binding */ getContextAndCard)
 /* harmony export */ });
 /* harmony import */ var _card__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./card */ "./src/ui/shared/card.jsx");
 /* harmony import */ var _empty_zone__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./empty-zone */ "./src/ui/shared/empty-zone.jsx");
@@ -34699,13 +35209,13 @@ function getCard(elem) {
 	return null;
 }
 
-function getContext(elem) {
+function getContextAndCard(elem) {
 	const fiber = getComponentFiber(elem, [_card__WEBPACK_IMPORTED_MODULE_0__.Card, _empty_zone__WEBPACK_IMPORTED_MODULE_1__.EmptyZone]);
 	if (fiber?.type === _card__WEBPACK_IMPORTED_MODULE_0__.Card) {
-		return fiber.memoizedProps.card.meta.context;
+		return [fiber.memoizedProps.card.meta.context, fiber.memoizedProps.card];
 	}
 	if (fiber?.type === _empty_zone__WEBPACK_IMPORTED_MODULE_1__.EmptyZone) {
-		return fiber.memoizedProps.context;
+		return [fiber.memoizedProps.context];
 	}
 
 	return null;
@@ -34964,9 +35474,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ui_klondike_board__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ui/klondike/board */ "./src/ui/klondike/board.jsx");
 /* harmony import */ var _ui_spider_board__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./ui/spider/board */ "./src/ui/spider/board.jsx");
 /* harmony import */ var _ui_free_cell_board__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./ui/free-cell/board */ "./src/ui/free-cell/board.jsx");
-/* harmony import */ var _main_css__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./main.css */ "./src/main.css");
-/* harmony import */ var _ui_menu__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./ui/menu */ "./src/ui/menu.jsx");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var _ui_pyramid_board__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./ui/pyramid/board */ "./src/ui/pyramid/board.jsx");
+/* harmony import */ var _main_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./main.css */ "./src/main.css");
+/* harmony import */ var _ui_menu__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./ui/menu */ "./src/ui/menu.jsx");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+
 
 
 
@@ -34987,28 +35499,31 @@ if ("serviceWorker" in navigator) {
 }
 
 function App() {
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
-    className: _main_css__WEBPACK_IMPORTED_MODULE_5__["default"].app,
-    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)(_ui_shared_app_router__WEBPACK_IMPORTED_MODULE_1__.AppRouter, {
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_ui_shared_app_router__WEBPACK_IMPORTED_MODULE_1__.Route, {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("div", {
+    className: _main_css__WEBPACK_IMPORTED_MODULE_6__["default"].app,
+    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)(_ui_shared_app_router__WEBPACK_IMPORTED_MODULE_1__.AppRouter, {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_ui_shared_app_router__WEBPACK_IMPORTED_MODULE_1__.Route, {
         path: "/",
         exact: true,
-        Component: _ui_menu__WEBPACK_IMPORTED_MODULE_6__.Menu
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_ui_shared_app_router__WEBPACK_IMPORTED_MODULE_1__.Route, {
+        Component: _ui_menu__WEBPACK_IMPORTED_MODULE_7__.Menu
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_ui_shared_app_router__WEBPACK_IMPORTED_MODULE_1__.Route, {
         path: "/klondike",
         Component: _ui_klondike_board__WEBPACK_IMPORTED_MODULE_2__.Board
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_ui_shared_app_router__WEBPACK_IMPORTED_MODULE_1__.Route, {
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_ui_shared_app_router__WEBPACK_IMPORTED_MODULE_1__.Route, {
         path: "/spider",
         Component: _ui_spider_board__WEBPACK_IMPORTED_MODULE_3__.Board
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_ui_shared_app_router__WEBPACK_IMPORTED_MODULE_1__.Route, {
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_ui_shared_app_router__WEBPACK_IMPORTED_MODULE_1__.Route, {
         path: "/free-cell",
         Component: _ui_free_cell_board__WEBPACK_IMPORTED_MODULE_4__.Board
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_ui_shared_app_router__WEBPACK_IMPORTED_MODULE_1__.Route, {
+        path: "/pyramid",
+        Component: _ui_pyramid_board__WEBPACK_IMPORTED_MODULE_5__.Board
       })]
     })
   });
 }
 
-(0,react_dom__WEBPACK_IMPORTED_MODULE_0__.render)( /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(App, {}), document.getElementById("react-root"));
+(0,react_dom__WEBPACK_IMPORTED_MODULE_0__.render)( /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(App, {}), document.getElementById("react-root"));
 })();
 
 /******/ })()

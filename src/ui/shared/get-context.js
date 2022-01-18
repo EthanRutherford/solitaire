@@ -23,13 +23,13 @@ export function getCard(elem) {
 	return null;
 }
 
-export function getContext(elem) {
+export function getContextAndCard(elem) {
 	const fiber = getComponentFiber(elem, [Card, EmptyZone]);
 	if (fiber?.type === Card) {
-		return fiber.memoizedProps.card.meta.context;
+		return [fiber.memoizedProps.card.meta.context, fiber.memoizedProps.card];
 	}
 	if (fiber?.type === EmptyZone) {
-		return fiber.memoizedProps.context;
+		return [fiber.memoizedProps.context];
 	}
 
 	return null;

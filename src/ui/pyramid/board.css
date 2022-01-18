@@ -1,0 +1,27 @@
+.board {
+	position: relative;
+	margin: auto;
+	width: var(--board-width);
+	height: 100%;
+	user-select: none;
+	touch-action: none;
+	filter: drop-shadow(2px 2px 2px var(--shadow-color));
+}
+
+.draw-button {
+	position: absolute;
+	display: flex;
+	top: calc(var(--margin) * 5 + var(--card-height) * 4.5);
+	left: 50%;
+	transform: translate(-50%, -50%);
+	border-radius: calc(var(--card-width) * .05);
+	color: white;
+	transition: background-color .2s;
+}
+.draw-button > svg {
+	width: calc(var(--card-width) * .8);
+}
+
+.draw-button:hover {
+	background-color: rgba(255, 255, 255, .2);
+}

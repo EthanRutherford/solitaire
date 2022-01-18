@@ -66,7 +66,7 @@ export class Deck extends Array {
 		return this[this.length - number - 1];
 	}
 	serialize() {
-		return this.map((c) => c.serialize());
+		return this.map((c) => c?.serialize());
 	}
 	static deserialize = validatedDelta((input, deck) => {
 		const {length, ...rest} = input;

@@ -12,12 +12,13 @@ export function Menu() {
 			<button className={styles.button} onClick={() => go("/klondike")}>klondike</button>
 			<button className={styles.button} onClick={() => go("/spider")}>spider</button>
 			<button className={styles.button} onClick={() => go("/free-cell")}>free cell</button>
+			<button className={styles.button} onClick={() => go("/pyramid")}>pyramid</button>
 			{canPrompt && (
 				<button className={styles.button} onClick={promptForInstall}>
 					add to homescreen
 				</button>
 			)}
-			<div className={styles.version}>v0.1</div>
+			<div className={styles.version}>v0.2</div>
 		</div>
 	);
 }
