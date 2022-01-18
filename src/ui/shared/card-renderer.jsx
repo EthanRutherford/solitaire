@@ -20,8 +20,8 @@ export function CardRenderer({onDrop, children}) {
 				<Card
 					card={card}
 					pos={{
-						x: margins + slot.x * cardOffsetX + offsetX,
-						y: margins + slot.y * cardOffsetY + offsetY,
+						x: margins + slot.x * cardOffsetX + (offsetX ?? 0),
+						y: margins + slot.y * cardOffsetY + (offsetY ?? 0),
 						z: offsetZ,
 					}}
 					{...handlers}
@@ -42,7 +42,6 @@ export const renderPile = (slot, cards, handlers, showCount = 1) => ({cardWidth}
 		card,
 		slot,
 		offsetX: Math.floor(i * .1) * 2 + showOffset(showCount, cards.length, i) * cardWidth * .2,
-		offsetY: 0,
 		offsetZ: (slot.z ?? 0) + i,
 		handlers,
 	}));
@@ -59,7 +58,6 @@ export const renderStack = (slot, cards, handlers) => (sizes) => {
 		return {
 			card,
 			slot,
-			offsetX: 0,
 			offsetY,
 			offsetZ: (slot.z ?? 0) + i,
 			handlers,

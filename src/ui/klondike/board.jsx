@@ -74,12 +74,8 @@ function useGame() {
 				}
 
 				yield 100;
-			} else {
-				if (!tryFinish()) {
-					saveGame();
-				}
-
-				return;
+			} else if (!tryFinish()) {
+				saveGame();
 			}
 		}
 	});

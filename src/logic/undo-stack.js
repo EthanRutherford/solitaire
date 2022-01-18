@@ -50,7 +50,7 @@ class Delta {
 export function validatedDelta(action) {
 	return function(delta, object = null) {
 		if (delta == null) {
-			return object;
+			return delta === undefined ? object : null;
 		}
 
 		return action(delta, object);
