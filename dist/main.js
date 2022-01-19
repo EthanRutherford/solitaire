@@ -722,8 +722,12 @@ function useGame() {
         }
 
         yield 100;
-      } else if (!tryFinish()) {
-        saveGame();
+      } else {
+        if (!tryFinish()) {
+          saveGame();
+        }
+
+        return;
       }
     }
   });
