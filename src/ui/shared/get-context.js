@@ -32,5 +32,5 @@ export function getContextAndCard(elem) {
 		return [fiber.memoizedProps.context];
 	}
 
-	return null;
+	return [];
 }
