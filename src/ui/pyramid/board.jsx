@@ -125,7 +125,7 @@ function useGame() {
 	}, []);
 
 	const playableDoubleTap = useCallback((pointer) => {
-		if (pointer.card.value === 13) {
+		if (game.canClearCards(pointer.card, pointer.card)) {
 			doClearCards(pointer.card);
 		}
 	});

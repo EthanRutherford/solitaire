@@ -1306,7 +1306,7 @@ function useGame() {
     }
   }, []);
   const playableDoubleTap = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(pointer => {
-    if (pointer.card.value === 13) {
+    if (game.canClearCards(pointer.card, pointer.card)) {
       doClearCards(pointer.card);
     }
   });
