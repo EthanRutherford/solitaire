@@ -20,21 +20,11 @@ export function useNewGame(key, onStart) {
 }
 
 export function NewgameModal({initialSettings, onStart, onCancel}) {
-	const [drawCount, setDrawCount] = useState(initialSettings?.drawCount ?? 1);
 	const [generator, setGenerator] = useState(initialSettings?.generator ?? 1);
 
 	return (
 		<Modal>
-			<ModalHeader>Klondike Solitaire</ModalHeader>
-			<ModalLabel>Draw count</ModalLabel>
-			<ModalRadio
-				options={[
-					{label: "Draw 1", key: 1},
-					{label: "Draw 3", key: 3},
-				]}
-				selected={drawCount}
-				onSelection={setDrawCount}
-			/>
+			<ModalHeader>Pyramid Solitaire</ModalHeader>
 			<ModalLabel>Game mode</ModalLabel>
 			<ModalRadio
 				options={[
@@ -47,7 +37,7 @@ export function NewgameModal({initialSettings, onStart, onCancel}) {
 			<ModalDisclaimer>random games may not be solvable</ModalDisclaimer>
 			<ModalFooter>
 				<ModalButton onClick={onCancel}>Cancel</ModalButton>
-				<ModalButton onClick={() => onStart({drawCount})}>Start</ModalButton>
+				<ModalButton onClick={() => onStart({generator})}>Start</ModalButton>
 			</ModalFooter>
 		</Modal>
 	);

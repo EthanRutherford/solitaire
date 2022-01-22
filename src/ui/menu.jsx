@@ -18,7 +18,7 @@ export function Menu() {
 					add to homescreen
 				</button>
 			)}
-			<div className={styles.version}>v0.2</div>
+			<div className={styles.version}>v0.3</div>
 		</div>
 	);
 }

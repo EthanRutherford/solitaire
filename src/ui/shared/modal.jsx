@@ -70,3 +70,7 @@ export function ModalRadio({options, selected, onSelection}) {
 		/>
 	));
 }
+
+export function ModalDisclaimer({children}) {
+	return <div className={styles.disclaimer}>* {children}</div>;
+}

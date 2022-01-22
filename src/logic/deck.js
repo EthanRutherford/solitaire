@@ -36,6 +36,9 @@ export class Card {
 	get label() {
 		return faces[this.value];
 	}
+	get color() {
+		return this.suit % 2;
+	}
 	serialize() {
 		return {s: this.suit, v: this.value, f: this.faceUp, i: this.id};
 	}
@@ -92,6 +95,14 @@ export class Deck extends Array {
 			for (let v = 13; v > 0; v--) {
 				deck[i++] = new Card(suit, v);
 			}
+		}
+
+		return deck;
+	}
+	static ofSuit(suit) {
+		const deck = new Deck(13);
+		for (let v = 1; v <= 13; v++) {
+			deck[v - 1] = new Card(suit, v);
 		}
 
 		return deck;

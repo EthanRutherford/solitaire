@@ -43,7 +43,7 @@ export class Game {
 			const prev = cards[i - 1];
 			const cur = cards[i];
 			if (
-				(prev.suit + cur.suit) % 2 === 0 ||
+				prev.color === cur.color ||
 				prev.value - 1 !== cur.value
 			) {
 				return null;
@@ -77,7 +77,7 @@ export class Game {
 		if (
 			topCard != null &&
 			(
-				(card.suit + topCard.suit) % 2 === 0 ||
+				card.color === topCard.color ||
 				card.value + 1 !== topCard.value
 			)
 		) {

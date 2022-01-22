@@ -10,6 +10,7 @@ import {EmptyZone} from "../shared/empty-zone";
 import {getCard} from "../shared/get-context";
 import {ControlBar} from "../shared/control-bar";
 import {Sizerator} from "../shared/sizerator";
+import {NewgameModal, useNewGame} from "./newgame-modal";
 import styles from "./board.css";
 
 function useGame() {
@@ -22,12 +23,13 @@ function useGame() {
 		game: game.serialize(),
 		undoStack: undoStack.serialize(),
 	}), []);
-	const newGame = useCallback(() => {
-		Game.fromScratch(game);
+	const newGame = useNewGame("klondike", (settings) => {
+		Game.fromScratch(game, settings);
 		undoStack.reset();
 		enqueueAction.reset();
+		saveGame();
 		rerender();
-	}, []);
+	});
 
 	useEffect(() => {
 		(async () => {
@@ -37,8 +39,7 @@ function useGame() {
 				UndoStack.deserialize(save.undoStack, undoStack);
 				rerender();
 			} else {
-				newGame();
-				saveGame();
+				newGame.openModal();
 			}
 		})();
 	}, []);
@@ -241,7 +242,10 @@ export function Board() {
 					{renderPile({x: 6, y: 4}, game.completed)}
 				</CardRenderer>
 			</div>
-			<ControlBar newGame={newGame} undo={undo} redo={redo} />
+			<ControlBar newGame={newGame.openModal} undo={undo} redo={redo} />
+			{newGame.showModal && (
+				<NewgameModal {...newGame} />
+			)}
 		</Sizerator>
 	);
 }
