@@ -1,5 +1,6 @@
 import {Deck, suits} from "../deck";
 import {validatedDelta} from "../undo-stack";
+import {randomShuffle, reverseGame} from "./generator";
 
 export class Game {
 	constructor() {
@@ -88,7 +89,7 @@ export class Game {
 	canMoveStack(card, target) {
 		const topCard = target.fromTop();
 		if (topCard == null ? card.value !== 13 :
-			(card.suit + topCard.suit) % 2 === 0 ||
+			card.color === topCard.color ||
 			card.value + 1 !== topCard.value
 		) {
 			return false;
@@ -196,22 +197,8 @@ export class Game {
 
 		return game.setContexts();
 	});
-	static fromScratch(game, drawCount) {
-		game.drawCount = drawCount;
-		game.drawPile.splice(0, game.drawPile.length, ...Deck.full().shuffle());
-		game.discardPile.splice(0, game.discardPile.length);
-		game.tableau.splice(0, game.tableau.length);
-		for (let i = 0; i < 7; i++) {
-			game.tableau.push(game.drawPile.draw(i + 1));
-		}
-		for (const k of Object.values(suits)) {
-			game.foundations[k] = new Deck();
-		}
-
-		for (const deck of game.tableau) {
-			deck.fromTop().faceUp = true;
-		}
-
-		return game.setContexts();
+	static fromScratch(game, settings) {
+		const generator = [randomShuffle, reverseGame][settings.generator];
+		return generator(game, settings.drawCount);
 	}
 }

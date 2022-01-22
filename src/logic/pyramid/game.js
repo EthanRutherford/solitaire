@@ -1,5 +1,6 @@
 import {Deck} from "../deck";
 import {validatedDelta} from "../undo-stack";
+import {randomShuffle, reverseGame} from "./generator";
 
 const treeRows = [0, 1, 3, 6, 10, 15, 21];
 export class Game {
@@ -122,16 +123,8 @@ export class Game {
 		game.remainingFlips = input.r ?? game.remainingFlips;
 		return game.setContexts();
 	});
-	static fromScratch(game) {
-		game.drawPile.splice(0, game.drawPile.length, ...Deck.full().shuffle());
-		for (const card of game.drawPile) {
-			card.faceUp = true;
-		}
-
-		game.discardPile.splice(0, game.discardPile.length);
-		game.completed.splice(0, game.completed.length);
-		game.tree.splice(0, game.tree.length, ...game.drawPile.draw(28));
-		game.remainingFlips = 2;
-		return game.setContexts();
+	static fromScratch(game, settings) {
+		const generator = [randomShuffle, reverseGame][settings.generator];
+		return generator(game);
 	}
 }

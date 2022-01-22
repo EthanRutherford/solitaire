@@ -195,7 +195,6 @@
 	flex-shrink: 0;
 	font-size: var(--huge);
 	font-weight: bold;
-	margin-bottom: 10px;
 }
 
 .modal__body--UkAGN {
@@ -215,7 +214,8 @@
 }
 
 .modal__label--YBB9D {
-	margin-bottom: 5px;
+	font-size: var(--large);
+	margin: 10px 0;
 }
 
 .modal__button--rP7Ny {
@@ -255,6 +255,12 @@
 .modal__selected--tslGT::before {
 	width: 10px;
 	height: 10px;
+}
+
+.modal__disclaimer--KgkD3 {
+	margin-top: 5px;
+	font-size: var(--small);
+	opacity: .8;
 }
 
 /*!*********************************************************************************************************!*\

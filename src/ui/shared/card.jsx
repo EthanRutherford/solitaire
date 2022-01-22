@@ -99,7 +99,7 @@ export function Card({card, pos, onTap, onDoubleTap, getDragCards}) {
 	const {style, moving, ...positionProps} = usePosition(card, pos);
 	const {flipClass, faceUp, z, animationEnd} = useFlip(card, pos);
 	const shadowClass = useDropShadow(card);
-	const zIndex = style.zIndex ?? ((z ?? pos.z) + (moving ? 1000 : 0));
+	const zIndex = style.zIndex ?? ((z ?? pos.z) + (moving ? 2000 : 0));
 
 	if (!faceUp) {
 		const className = cns(styles.cardBack, flipClass, shadowClass);

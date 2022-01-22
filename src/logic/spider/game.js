@@ -4,17 +4,17 @@ import {validatedDelta} from "../undo-stack";
 function getOneSuitDeck() {
 	const deck = new Deck();
 	for (let i = 0; i < 8; i++) {
-		deck.push(...Deck.full().filter((c) => c.suit === suits.spades));
+		deck.push(...Deck.ofSuit(suits.spades));
 	}
 
 	return deck;
 }
 
 function getTwoSuitDeck() {
-	const acceptedSuits = [suits.spades, suits.hearts];
 	const deck = new Deck();
 	for (let i = 0; i < 4; i++) {
-		deck.push(...Deck.full().filter((c) => acceptedSuits.includes(c.suit)));
+		deck.push(...Deck.ofSuit(suits.spades));
+		deck.push(...Deck.ofSuit(suits.hearts));
 	}
 
 	return deck;

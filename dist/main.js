@@ -677,7 +677,7 @@ function useGame() {
     undoStack: undoStack.serialize()
   }), []);
   const newGame = (0,_newgame_modal__WEBPACK_IMPORTED_MODULE_17__.useNewGame)("klondike", settings => {
-    _logic_klondike_game__WEBPACK_IMPORTED_MODULE_7__.Game.fromScratch(game, settings.drawCount);
+    _logic_klondike_game__WEBPACK_IMPORTED_MODULE_7__.Game.fromScratch(game, settings);
     undoStack.reset();
     enqueueAction.reset();
     saveGame();
@@ -1044,6 +1044,7 @@ function NewgameModal({
   onCancel
 }) {
   const [drawCount, setDrawCount] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(initialSettings?.drawCount ?? 1);
+  const [generator, setGenerator] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(initialSettings?.generator ?? 1);
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)(_shared_modal__WEBPACK_IMPORTED_MODULE_2__.Modal, {
     children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_shared_modal__WEBPACK_IMPORTED_MODULE_2__.ModalHeader, {
       children: "Klondike Solitaire"
@@ -1051,14 +1052,28 @@ function NewgameModal({
       children: "Draw count"
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_shared_modal__WEBPACK_IMPORTED_MODULE_2__.ModalRadio, {
       options: [{
-        label: "draw 1",
+        label: "Draw 1",
         key: 1
       }, {
-        label: "draw 3",
+        label: "Draw 3",
         key: 3
       }],
       selected: drawCount,
       onSelection: setDrawCount
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_shared_modal__WEBPACK_IMPORTED_MODULE_2__.ModalLabel, {
+      children: "Game mode"
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_shared_modal__WEBPACK_IMPORTED_MODULE_2__.ModalRadio, {
+      options: [{
+        label: "Solvable",
+        key: 1
+      }, {
+        label: "Random",
+        key: 0
+      }],
+      selected: generator,
+      onSelection: setGenerator
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_shared_modal__WEBPACK_IMPORTED_MODULE_2__.ModalDisclaimer, {
+      children: "random games may not be solvable"
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)(_shared_modal__WEBPACK_IMPORTED_MODULE_2__.ModalFooter, {
       children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_shared_modal__WEBPACK_IMPORTED_MODULE_2__.ModalButton, {
         onClick: onCancel,
@@ -1130,7 +1145,7 @@ function Menu() {
       children: "add to homescreen"
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("div", {
       className: _menu_css__WEBPACK_IMPORTED_MODULE_2__["default"].version,
-      children: "v0.2"
+      children: "v0.3"
     })]
   });
 }
@@ -1162,8 +1177,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _shared_get_context__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../shared/get-context */ "./src/ui/shared/get-context.js");
 /* harmony import */ var _shared_control_bar__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../shared/control-bar */ "./src/ui/shared/control-bar.jsx");
 /* harmony import */ var _shared_sizerator__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../shared/sizerator */ "./src/ui/shared/sizerator.jsx");
-/* harmony import */ var _board_css__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./board.css */ "./src/ui/pyramid/board.css");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var _newgame_modal__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./newgame-modal */ "./src/ui/pyramid/newgame-modal.jsx");
+/* harmony import */ var _board_css__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./board.css */ "./src/ui/pyramid/board.css");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+
 
 
 
@@ -1190,12 +1207,13 @@ function useGame() {
     game: game.serialize(),
     undoStack: undoStack.serialize()
   }), []);
-  const newGame = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(() => {
-    _logic_pyramid_game__WEBPACK_IMPORTED_MODULE_2__.Game.fromScratch(game);
+  const newGame = (0,_newgame_modal__WEBPACK_IMPORTED_MODULE_12__.useNewGame)("klondike", settings => {
+    _logic_pyramid_game__WEBPACK_IMPORTED_MODULE_2__.Game.fromScratch(game, settings);
     undoStack.reset();
     enqueueAction.reset();
+    saveGame();
     rerender();
-  }, []);
+  });
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     (async () => {
       const save = await (0,_logic_game_db__WEBPACK_IMPORTED_MODULE_4__.get)(_logic_game_db__WEBPACK_IMPORTED_MODULE_4__.saveGameTable, "pyramid");
@@ -1205,8 +1223,7 @@ function useGame() {
         _logic_undo_stack__WEBPACK_IMPORTED_MODULE_3__.UndoStack.deserialize(save.undoStack, undoStack);
         rerender();
       } else {
-        newGame();
-        saveGame();
+        newGame.openModal();
       }
     })();
   }, []);
@@ -1382,28 +1399,28 @@ function Board() {
     undo,
     redo
   } = useGame();
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)(_shared_sizerator__WEBPACK_IMPORTED_MODULE_11__.Sizerator, {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsxs)(_shared_sizerator__WEBPACK_IMPORTED_MODULE_11__.Sizerator, {
     cardsAcross: 7,
     cardsTall: 5,
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)("div", {
-      className: _board_css__WEBPACK_IMPORTED_MODULE_12__["default"].board,
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_8__.EmptyZone, {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsxs)("div", {
+      className: _board_css__WEBPACK_IMPORTED_MODULE_13__["default"].board,
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_8__.EmptyZone, {
         slot: {
           x: 2,
           y: 4
         },
         onClick: flipDiscard,
         children: game.remainingFlips
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_8__.EmptyZone, {
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_8__.EmptyZone, {
         slot: {
           x: 4,
           y: 4
         }
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)("button", {
-        className: _board_css__WEBPACK_IMPORTED_MODULE_12__["default"].drawButton,
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)("button", {
+        className: _board_css__WEBPACK_IMPORTED_MODULE_13__["default"].drawButton,
         onClick: drawPileDraw,
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)((_images_draw_svg__WEBPACK_IMPORTED_MODULE_1___default()), {})
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)(_shared_card_renderer__WEBPACK_IMPORTED_MODULE_7__.CardRenderer, {
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)((_images_draw_svg__WEBPACK_IMPORTED_MODULE_1___default()), {})
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsxs)(_shared_card_renderer__WEBPACK_IMPORTED_MODULE_7__.CardRenderer, {
         onDrop: onDrop,
         children: [renderPyramid(game.tree, {
           onTap: playableTap,
@@ -1428,10 +1445,95 @@ function Board() {
           y: 4
         }, game.completed)]
       })]
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_shared_control_bar__WEBPACK_IMPORTED_MODULE_10__.ControlBar, {
-      newGame: newGame,
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(_shared_control_bar__WEBPACK_IMPORTED_MODULE_10__.ControlBar, {
+      newGame: newGame.openModal,
       undo: undo,
       redo: redo
+    }), newGame.showModal && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(_newgame_modal__WEBPACK_IMPORTED_MODULE_12__.NewgameModal, { ...newGame
+    })]
+  });
+}
+
+/***/ }),
+
+/***/ "./src/ui/pyramid/newgame-modal.jsx":
+/*!******************************************!*\
+  !*** ./src/ui/pyramid/newgame-modal.jsx ***!
+  \******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "useNewGame": () => (/* binding */ useNewGame),
+/* harmony export */   "NewgameModal": () => (/* binding */ NewgameModal)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var _logic_game_db__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../logic/game-db */ "./src/logic/game-db.js");
+/* harmony import */ var _shared_modal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../shared/modal */ "./src/ui/shared/modal.jsx");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+
+
+
+
+
+function useNewGame(key, onStart) {
+  const [showModal, setShowModal] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
+  const [initialSettings, setSettings] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+  const openModal = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(async () => {
+    setSettings(await (0,_logic_game_db__WEBPACK_IMPORTED_MODULE_1__.get)(_logic_game_db__WEBPACK_IMPORTED_MODULE_1__.settingsTable, key));
+    setShowModal(true);
+  }, []);
+  const cancel = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(() => setShowModal(false), []);
+  const start = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(data => {
+    onStart(data);
+    setShowModal(false);
+    (0,_logic_game_db__WEBPACK_IMPORTED_MODULE_1__.put)(_logic_game_db__WEBPACK_IMPORTED_MODULE_1__.settingsTable, {
+      key,
+      ...data
+    });
+  }, []);
+  return {
+    showModal,
+    openModal,
+    initialSettings,
+    onStart: start,
+    onCancel: cancel
+  };
+}
+function NewgameModal({
+  initialSettings,
+  onStart,
+  onCancel
+}) {
+  const [generator, setGenerator] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(initialSettings?.generator ?? 1);
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)(_shared_modal__WEBPACK_IMPORTED_MODULE_2__.Modal, {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_shared_modal__WEBPACK_IMPORTED_MODULE_2__.ModalHeader, {
+      children: "Pyramid Solitaire"
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_shared_modal__WEBPACK_IMPORTED_MODULE_2__.ModalLabel, {
+      children: "Game mode"
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_shared_modal__WEBPACK_IMPORTED_MODULE_2__.ModalRadio, {
+      options: [{
+        label: "Solvable",
+        key: 1
+      }, {
+        label: "Random",
+        key: 0
+      }],
+      selected: generator,
+      onSelection: setGenerator
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_shared_modal__WEBPACK_IMPORTED_MODULE_2__.ModalDisclaimer, {
+      children: "random games may not be solvable"
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)(_shared_modal__WEBPACK_IMPORTED_MODULE_2__.ModalFooter, {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_shared_modal__WEBPACK_IMPORTED_MODULE_2__.ModalButton, {
+        onClick: onCancel,
+        children: "Cancel"
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_shared_modal__WEBPACK_IMPORTED_MODULE_2__.ModalButton, {
+        onClick: () => onStart({
+          generator
+        }),
+        children: "Start"
+      })]
     })]
   });
 }
@@ -1820,7 +1922,7 @@ function Card({
     animationEnd
   } = useFlip(card, pos);
   const shadowClass = useDropShadow(card);
-  const zIndex = style.zIndex ?? (z ?? pos.z) + (moving ? 1000 : 0);
+  const zIndex = style.zIndex ?? (z ?? pos.z) + (moving ? 2000 : 0);
 
   if (!faceUp) {
     const className = cns(_card_css__WEBPACK_IMPORTED_MODULE_10__["default"].cardBack, flipClass, shadowClass);
@@ -1997,7 +2099,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "ModalFooter": () => (/* binding */ ModalFooter),
 /* harmony export */   "ModalLabel": () => (/* binding */ ModalLabel),
 /* harmony export */   "ModalButton": () => (/* binding */ ModalButton),
-/* harmony export */   "ModalRadio": () => (/* binding */ ModalRadio)
+/* harmony export */   "ModalRadio": () => (/* binding */ ModalRadio),
+/* harmony export */   "ModalDisclaimer": () => (/* binding */ ModalDisclaimer)
 /* harmony export */ });
 /* harmony import */ var _modal_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modal.css */ "./src/ui/shared/modal.css");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
@@ -2085,6 +2188,14 @@ function ModalRadio({
     isSelected: key === selected,
     onClick: () => onSelection(key)
   }, key));
+}
+function ModalDisclaimer({
+  children
+}) {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+    className: _modal_css__WEBPACK_IMPORTED_MODULE_0__["default"].disclaimer,
+    children: ["* ", children]
+  });
 }
 
 /***/ }),
@@ -2828,7 +2939,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // extracted by mini-css-extract-plugin
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({"modal-backdrop":"modal__modal-backdrop--jigOP","modalBackdrop":"modal__modal-backdrop--jigOP","modal":"modal__modal--qO50N","header":"modal__header--dfcPJ","body":"modal__body--UkAGN","footer":"modal__footer--WEgLu","label":"modal__label--YBB9D","button":"modal__button--rP7Ny","radio-button":"modal__radio-button--UUirr","radioButton":"modal__radio-button--UUirr","radio-circle":"modal__radio-circle--a6SgK","radioCircle":"modal__radio-circle--a6SgK","selected":"modal__selected--tslGT"});
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({"modal-backdrop":"modal__modal-backdrop--jigOP","modalBackdrop":"modal__modal-backdrop--jigOP","modal":"modal__modal--qO50N","header":"modal__header--dfcPJ","body":"modal__body--UkAGN","footer":"modal__footer--WEgLu","label":"modal__label--YBB9D","button":"modal__button--rP7Ny","radio-button":"modal__radio-button--UUirr","radioButton":"modal__radio-button--UUirr","radio-circle":"modal__radio-circle--a6SgK","radioCircle":"modal__radio-circle--a6SgK","selected":"modal__selected--tslGT","disclaimer":"modal__disclaimer--KgkD3"});
 
 /***/ }),
 
@@ -33968,6 +34079,9 @@ class Card {
 	get label() {
 		return faces[this.value];
 	}
+	get color() {
+		return this.suit % 2;
+	}
 	serialize() {
 		return {s: this.suit, v: this.value, f: this.faceUp, i: this.id};
 	}
@@ -34024,6 +34138,14 @@ class Deck extends Array {
 			for (let v = 13; v > 0; v--) {
 				deck[i++] = new Card(suit, v);
 			}
+		}
+
+		return deck;
+	}
+	static ofSuit(suit) {
+		const deck = new Deck(13);
+		for (let v = 1; v <= 13; v++) {
+			deck[v - 1] = new Card(suit, v);
 		}
 
 		return deck;
@@ -34091,7 +34213,7 @@ class Game {
 			const prev = cards[i - 1];
 			const cur = cards[i];
 			if (
-				(prev.suit + cur.suit) % 2 === 0 ||
+				prev.color === cur.color ||
 				prev.value - 1 !== cur.value
 			) {
 				return null;
@@ -34125,7 +34247,7 @@ class Game {
 		if (
 			topCard != null &&
 			(
-				(card.suit + topCard.suit) % 2 === 0 ||
+				card.color === topCard.color ||
 				card.value + 1 !== topCard.value
 			)
 		) {
@@ -34419,6 +34541,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _deck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../deck */ "./src/logic/deck.js");
 /* harmony import */ var _undo_stack__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../undo-stack */ "./src/logic/undo-stack.js");
+/* harmony import */ var _generator__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./generator */ "./src/logic/klondike/generator.js");
+
 
 
 
@@ -34509,7 +34633,7 @@ class Game {
 	canMoveStack(card, target) {
 		const topCard = target.fromTop();
 		if (topCard == null ? card.value !== 13 :
-			(card.suit + topCard.suit) % 2 === 0 ||
+			card.color === topCard.color ||
 			card.value + 1 !== topCard.value
 		) {
 			return false;
@@ -34617,24 +34741,147 @@ class Game {
 
 		return game.setContexts();
 	});
-	static fromScratch(game, drawCount) {
-		game.drawCount = drawCount;
-		game.drawPile.splice(0, game.drawPile.length, ..._deck__WEBPACK_IMPORTED_MODULE_0__.Deck.full().shuffle());
-		game.discardPile.splice(0, game.discardPile.length);
-		game.tableau.splice(0, game.tableau.length);
-		for (let i = 0; i < 7; i++) {
-			game.tableau.push(game.drawPile.draw(i + 1));
-		}
-		for (const k of Object.values(_deck__WEBPACK_IMPORTED_MODULE_0__.suits)) {
-			game.foundations[k] = new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck();
-		}
-
-		for (const deck of game.tableau) {
-			deck.fromTop().faceUp = true;
-		}
-
-		return game.setContexts();
+	static fromScratch(game, settings) {
+		const generator = [_generator__WEBPACK_IMPORTED_MODULE_2__.randomShuffle, _generator__WEBPACK_IMPORTED_MODULE_2__.reverseGame][settings.generator];
+		return generator(game, settings.drawCount);
 	}
+}
+
+
+/***/ }),
+
+/***/ "./src/logic/klondike/generator.js":
+/*!*****************************************!*\
+  !*** ./src/logic/klondike/generator.js ***!
+  \*****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "randomShuffle": () => (/* binding */ randomShuffle),
+/* harmony export */   "reverseGame": () => (/* binding */ reverseGame)
+/* harmony export */ });
+/* harmony import */ var _deck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../deck */ "./src/logic/deck.js");
+
+
+function randomShuffle(game, drawCount) {
+	game.drawCount = drawCount;
+	game.drawPile.splice(0, game.drawPile.length, ..._deck__WEBPACK_IMPORTED_MODULE_0__.Deck.full().shuffle());
+	game.discardPile.splice(0, game.discardPile.length);
+	game.tableau.splice(0, game.tableau.length);
+	for (let i = 0; i < 7; i++) {
+		game.tableau.push(game.drawPile.draw(i + 1));
+	}
+	for (const k of Object.values(_deck__WEBPACK_IMPORTED_MODULE_0__.suits)) {
+		game.foundations[k] = new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck();
+	}
+
+	for (const deck of game.tableau) {
+		deck.fromTop().faceUp = true;
+	}
+
+	return game.setContexts();
+}
+
+// builds a game backward from solution
+function reverseGame(game, drawCount) {
+	// clear and initialize the game
+	game.drawCount = drawCount;
+	game.drawPile.splice(0, game.drawPile.length);
+	game.discardPile.splice(0, game.discardPile.length);
+	game.tableau.splice(0, game.tableau.length);
+	for (let i = 0; i < 7; i++) {
+		game.tableau.push(new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck());
+	}
+	for (const k of Object.values(_deck__WEBPACK_IMPORTED_MODULE_0__.suits)) {
+		game.foundations[k] = new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck();
+	}
+
+	// build a "completed" game
+	const completeSuits = [];
+	for (let i = 0; i < 4; i++) {
+		completeSuits[i] = _deck__WEBPACK_IMPORTED_MODULE_0__.Deck.ofSuit(i).reverse();
+	}
+
+	const completeStacks = [new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck()];
+	for (let i = 0; i < 13; i++) {
+		const sets = [[0, 2], [1, 3]];
+		if (i % 2 === 1) {
+			sets.reverse();
+		}
+		if (Math.random() < .5) {
+			sets[0].reverse();
+		}
+		if (Math.random() < .5) {
+			sets[1].reverse();
+		}
+
+		const plan = [sets[0][0], sets[1][0], sets[0][1], sets[1][1]];
+		for (let j = 0; j < 4; j++) {
+			completeStacks[j].push(completeSuits[plan[j]].pop());
+		}
+	}
+
+	// move cards from our completed state into the game decks
+	const notFullTableauDecks = [0, 1, 2, 3, 4, 5, 6];
+	while (notFullTableauDecks.length > 0 && completeStacks.length > 0) {
+		const stackIndex = Math.floor(Math.random() * completeStacks.length);
+		const card = completeStacks[stackIndex].pop();
+		if (completeStacks[stackIndex].length === 0) {
+			completeStacks.splice(stackIndex, 1);
+		}
+
+		if (Math.random() < .5) {
+			// move the card to an available spot in the tableau
+			const notFullIndex = Math.floor(Math.random() * notFullTableauDecks.length);
+			const tableauIndex = notFullTableauDecks[notFullIndex];
+			game.tableau[tableauIndex].push(card);
+			if (game.tableau[tableauIndex].length === tableauIndex + 1) {
+				notFullTableauDecks.splice(notFullIndex, 1);
+			}
+		} else {
+			// move the card to foundation or drawPile
+			const foundation = game.foundations[card.suit];
+			if (foundation.length === 0 || card.value === foundation.fromTop().value + 1) {
+				foundation.push(card);
+			} else {
+				game.drawPile.push(card);
+			}
+		}
+	}
+
+	for (const foundation of Object.values(game.foundations)) {
+		while (foundation.length > 0) {
+			const card = foundation.pop();
+			if (notFullTableauDecks.length > 0) {
+				const notFullIndex = Math.floor(Math.random() * notFullTableauDecks.length);
+				const tableauIndex = notFullTableauDecks[notFullIndex];
+				game.tableau[tableauIndex].push(card);
+				if (game.tableau[tableauIndex].length === tableauIndex + 1) {
+					notFullTableauDecks.splice(notFullIndex, 1);
+				}
+			} else {
+				game.drawPile.push(card);
+			}
+		}
+	}
+
+	game.drawPile.shuffle();
+	while (notFullTableauDecks.length > 0) {
+		const notFullIndex = Math.floor(Math.random() * notFullTableauDecks.length);
+		const tableauIndex = notFullTableauDecks[notFullIndex];
+		game.tableau[tableauIndex].push(this.drawPile.pop());
+		if (game.tableau[tableauIndex].length === tableauIndex + 1) {
+			notFullTableauDecks.splice(notFullIndex, 1);
+		}
+	}
+
+	for (const deck of game.tableau) {
+		deck.fromTop().faceUp = true;
+	}
+
+	return game.setContexts();
 }
 
 
@@ -34653,6 +34900,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _deck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../deck */ "./src/logic/deck.js");
 /* harmony import */ var _undo_stack__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../undo-stack */ "./src/logic/undo-stack.js");
+/* harmony import */ var _generator__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./generator */ "./src/logic/pyramid/generator.js");
+
 
 
 
@@ -34777,18 +35026,85 @@ class Game {
 		game.remainingFlips = input.r ?? game.remainingFlips;
 		return game.setContexts();
 	});
-	static fromScratch(game) {
-		game.drawPile.splice(0, game.drawPile.length, ..._deck__WEBPACK_IMPORTED_MODULE_0__.Deck.full().shuffle());
-		for (const card of game.drawPile) {
-			card.faceUp = true;
-		}
-
-		game.discardPile.splice(0, game.discardPile.length);
-		game.completed.splice(0, game.completed.length);
-		game.tree.splice(0, game.tree.length, ...game.drawPile.draw(28));
-		game.remainingFlips = 2;
-		return game.setContexts();
+	static fromScratch(game, settings) {
+		const generator = [_generator__WEBPACK_IMPORTED_MODULE_2__.randomShuffle, _generator__WEBPACK_IMPORTED_MODULE_2__.reverseGame][settings.generator];
+		return generator(game);
 	}
+}
+
+
+/***/ }),
+
+/***/ "./src/logic/pyramid/generator.js":
+/*!****************************************!*\
+  !*** ./src/logic/pyramid/generator.js ***!
+  \****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "randomShuffle": () => (/* binding */ randomShuffle),
+/* harmony export */   "reverseGame": () => (/* binding */ reverseGame)
+/* harmony export */ });
+/* harmony import */ var _deck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../deck */ "./src/logic/deck.js");
+
+
+function randomShuffle(game) {
+	game.drawPile.splice(0, game.drawPile.length, ..._deck__WEBPACK_IMPORTED_MODULE_0__.Deck.full().shuffle());
+	for (const card of game.drawPile) {
+		card.faceUp = true;
+	}
+
+	game.discardPile.splice(0, game.discardPile.length);
+	game.completed.splice(0, game.completed.length);
+	game.tree.splice(0, game.tree.length, ...game.drawPile.draw(28));
+	game.remainingFlips = 2;
+	return game.setContexts();
+}
+
+// builds a game backward from solution
+function reverseGame(game) {
+	// clear and initialize the game
+	game.drawPile.splice(0, game.drawPile.length);
+	game.discardPile.splice(0, game.discardPile.length);
+	game.completed.splice(0, game.completed.length);
+	game.tree.splice(0, game.tree.length);
+	game.remainingFlips = 2;
+
+	// pair off matched cards from a random shuffle
+	const deck = _deck__WEBPACK_IMPORTED_MODULE_0__.Deck.full().shuffle();
+	for (const card of deck) {
+		card.faceUp = true;
+	}
+
+	const matchedPairs = [];
+	while (deck.length > 0) {
+		const card = deck.pop();
+		if (card.value === 13) {
+			matchedPairs.push([card]);
+		} else {
+			const matchIndex = deck.findIndex((c) => c.value + card.value === 13);
+			matchedPairs.push(deck.splice(matchIndex, 1).concat(card));
+		}
+	}
+
+	// move cards from our completed state into the pyramid
+	for (let i = 0; i < 28; i++) {
+		const pairIndex = Math.floor(Math.random() * matchedPairs.length);
+		game.tree.push(matchedPairs[pairIndex].pop());
+		if (matchedPairs[pairIndex].length === 0) {
+			matchedPairs.splice(pairIndex, 1);
+		}
+	}
+
+	// place remaining cards in draw pile, and shuffle
+	for (const pair of matchedPairs) {
+		game.drawPile.push(...pair);
+	}
+
+	game.drawPile.shuffle();
+	return game.setContexts();
 }
 
 
@@ -34813,17 +35129,17 @@ __webpack_require__.r(__webpack_exports__);
 function getOneSuitDeck() {
 	const deck = new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck();
 	for (let i = 0; i < 8; i++) {
-		deck.push(..._deck__WEBPACK_IMPORTED_MODULE_0__.Deck.full().filter((c) => c.suit === _deck__WEBPACK_IMPORTED_MODULE_0__.suits.spades));
+		deck.push(..._deck__WEBPACK_IMPORTED_MODULE_0__.Deck.ofSuit(_deck__WEBPACK_IMPORTED_MODULE_0__.suits.spades));
 	}
 
 	return deck;
 }
 
 function getTwoSuitDeck() {
-	const acceptedSuits = [_deck__WEBPACK_IMPORTED_MODULE_0__.suits.spades, _deck__WEBPACK_IMPORTED_MODULE_0__.suits.hearts];
 	const deck = new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck();
 	for (let i = 0; i < 4; i++) {
-		deck.push(..._deck__WEBPACK_IMPORTED_MODULE_0__.Deck.full().filter((c) => acceptedSuits.includes(c.suit)));
+		deck.push(..._deck__WEBPACK_IMPORTED_MODULE_0__.Deck.ofSuit(_deck__WEBPACK_IMPORTED_MODULE_0__.suits.spades));
+		deck.push(..._deck__WEBPACK_IMPORTED_MODULE_0__.Deck.ofSuit(_deck__WEBPACK_IMPORTED_MODULE_0__.suits.hearts));
 	}
 
 	return deck;
