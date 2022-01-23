@@ -34,7 +34,7 @@ export function NewgameModal({initialSettings, onStart, onCancel}) {
 				selected={generator}
 				onSelection={setGenerator}
 			/>
-			<ModalDisclaimer>random games may not be solvable</ModalDisclaimer>
+			<ModalDisclaimer>solvable puzzle generator is experimental</ModalDisclaimer>
 			<ModalFooter>
 				<ModalButton onClick={onCancel}>Cancel</ModalButton>
 				<ModalButton onClick={() => onStart({generator})}>Start</ModalButton>
