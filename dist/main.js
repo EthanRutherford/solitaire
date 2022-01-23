@@ -1228,8 +1228,9 @@ function useGame() {
     })();
   }, []);
   const finishCards = enqueueAction(function* (...cards) {
-    for (const card of cards) {
+    for (const card of cards.reverse()) {
       game.clearCard(card);
+      rerender();
       yield 100;
     }
   });
@@ -34984,13 +34985,11 @@ class Game {
 		return null;
 	}
 	clearCard(card) {
-		if (card.meta.context === this.drawPile) {
-			this.drawPile.draw(1);
-		} else if (card.meta.context === this.discardPile) {
-			this.discardPile.draw(1);
-		} else if (card.meta.context === this.tree) {
+		if (card.meta.context === this.tree) {
 			const index = this.tree.indexOf(card);
 			this.tree[index] = null;
+		} else if (card.meta.context !== this.completed) {
+			card.meta.context.splice(card.meta.context.indexOf(card), 1);
 		} else {
 			return;
 		}
@@ -35721,22 +35720,24 @@ __webpack_require__.r(__webpack_exports__);
 
 function useActionQueue() {
 	const queue = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => [], []);
-	const working = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(false);
+	const working = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
 
 	const enqueuedAction = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => {
 		function begin() {
-			const [func, args] = queue.shift();
-			perform(func(...args));
+			const [func, args, token] = queue.shift();
+			working.current = token;
+			perform(func(...args), token);
 		}
 
-		function perform(gen) {
-			if (!working.current) return;
-
+		function perform(gen, token) {
+			if (working.current !== token) return;
 			const result = gen.next();
+			if (working.current !== token) return;
+
 			if (result.done) {
 				setTimeout(() => {
 					if (queue.length === 0) {
-						working.current = false;
+						working.current = null;
 					} else {
 						begin();
 					}
@@ -35745,20 +35746,19 @@ function useActionQueue() {
 				return;
 			}
 
-			setTimeout(() => perform(gen), result.value);
+			setTimeout(() => perform(gen, token), result.value);
 		}
 
 		const make = (generatorFunc) => (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)((...args) => {
-			queue.push([generatorFunc, args]);
+			queue.push([generatorFunc, args, Symbol("unique token")]);
 			if (!working.current) {
-				working.current = true;
 				begin();
 			}
 		}, []);
 
 		make.reset = () => {
 			queue.splice(0, queue.length);
-			working.current = false;
+			working.current = null;
 		};
 
 		return make;

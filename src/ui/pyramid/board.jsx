@@ -45,8 +45,9 @@ function useGame() {
 	}, []);
 
 	const finishCards = enqueueAction(function*(...cards) {
-		for (const card of cards) {
+		for (const card of cards.reverse()) {
 			game.clearCard(card);
+			rerender();
 			yield 100;
 		}
 	});
