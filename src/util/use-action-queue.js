@@ -2,22 +2,24 @@ import {useCallback, useMemo, useRef} from "react";
 
 export function useActionQueue() {
 	const queue = useMemo(() => [], []);
-	const working = useRef(false);
+	const working = useRef(null);
 
 	const enqueuedAction = useMemo(() => {
 		function begin() {
-			const [func, args] = queue.shift();
-			perform(func(...args));
+			const [func, args, token] = queue.shift();
+			working.current = token;
+			perform(func(...args), token);
 		}
 
-		function perform(gen) {
-			if (!working.current) return;
-
+		function perform(gen, token) {
+			if (working.current !== token) return;
 			const result = gen.next();
+			if (working.current !== token) return;
+
 			if (result.done) {
 				setTimeout(() => {
 					if (queue.length === 0) {
-						working.current = false;
+						working.current = null;
 					} else {
 						begin();
 					}
@@ -26,20 +28,19 @@ export function useActionQueue() {
 				return;
 			}
 
-			setTimeout(() => perform(gen), result.value);
+			setTimeout(() => perform(gen, token), result.value);
 		}
 
 		const make = (generatorFunc) => useCallback((...args) => {
-			queue.push([generatorFunc, args]);
+			queue.push([generatorFunc, args, Symbol("unique token")]);
 			if (!working.current) {
-				working.current = true;
 				begin();
 			}
 		}, []);
 
 		make.reset = () => {
 			queue.splice(0, queue.length);
-			working.current = false;
+			working.current = null;
 		};
 
 		return make;

@@ -75,13 +75,11 @@ export class Game {
 		return null;
 	}
 	clearCard(card) {
-		if (card.meta.context === this.drawPile) {
-			this.drawPile.draw(1);
-		} else if (card.meta.context === this.discardPile) {
-			this.discardPile.draw(1);
-		} else if (card.meta.context === this.tree) {
+		if (card.meta.context === this.tree) {
 			const index = this.tree.indexOf(card);
 			this.tree[index] = null;
+		} else if (card.meta.context !== this.completed) {
+			card.meta.context.splice(card.meta.context.indexOf(card), 1);
 		} else {
 			return;
 		}
