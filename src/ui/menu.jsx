@@ -18,7 +18,13 @@ export function Menu() {
 					add to homescreen
 				</button>
 			)}
-			<div className={styles.version}>v0.3</div>
+			<a
+				className={styles.version}
+				href="https://github.com/EthanRutherford/solitaire/projects/1"
+				target="_blank" rel="noreferrer"
+			>
+				v0.3
+			</a>
 		</div>
 	);
 }
