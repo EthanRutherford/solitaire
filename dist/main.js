@@ -1143,8 +1143,11 @@ function Menu() {
       className: _menu_css__WEBPACK_IMPORTED_MODULE_2__["default"].button,
       onClick: promptForInstall,
       children: "add to homescreen"
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("div", {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("a", {
       className: _menu_css__WEBPACK_IMPORTED_MODULE_2__["default"].version,
+      href: "https://github.com/EthanRutherford/solitaire/projects/1",
+      target: "_blank",
+      rel: "noreferrer",
       children: "v0.3"
     })]
   });
