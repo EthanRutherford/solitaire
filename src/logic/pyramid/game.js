@@ -1,8 +1,21 @@
 import {Deck} from "../deck";
 import {validatedDelta} from "../undo-stack";
-import {randomShuffle, reverseGame} from "./generator";
+import {randomShuffle, validatedShuffle} from "./generator";
 
 const treeRows = [0, 1, 3, 6, 10, 15, 21];
+export function getChildIndices(index) {
+	if (index >= treeRows[treeRows.length - 1]) {
+		return [];
+	}
+
+	const [curRow, nextRow] = treeRows.slice(
+		treeRows.findIndex((r, i) => index >= r && index < treeRows[i + 1]),
+	);
+
+	const rowOffset = index - curRow;
+	return [nextRow + rowOffset, nextRow + rowOffset + 1];
+}
+
 export class Game {
 	constructor() {
 		this.tree = new Deck();
@@ -31,17 +44,12 @@ export class Game {
 			}
 		}
 	}
-	getChildrenOf(card) {
-		const index = this.tree.indexOf(card);
+	getChildrenOf(index) {
 		if (index === -1) {
 			return null;
 		}
 
-		const [curRow, nextRow] = treeRows.slice(
-			treeRows.findIndex((r, i) => index >= r && index < (treeRows[i + 1] ?? Infinity)),
-		);
-		const rowOffset = index - curRow;
-		return this.tree.slice(nextRow + rowOffset, nextRow + rowOffset + 2);
+		return getChildIndices(index).map((i) => this.tree[i]).filter((c) => c != null);
 	}
 	drawCard() {
 		const card = this.drawPile.draw(1)[0];
@@ -87,8 +95,8 @@ export class Game {
 			return false;
 		}
 
-		const children = this.getChildrenOf(card);
-		if (children != null && children.filter((c) => c != null).length > 0) {
+		const children = this.getChildrenOf(this.tree.indexOf(card));
+		if (children != null && children.length > 0) {
 			return false;
 		}
 
@@ -124,7 +132,7 @@ export class Game {
 		return game.setContexts();
 	});
 	static fromScratch(game, settings) {
-		const generator = [randomShuffle, reverseGame][settings.generator];
+		const generator = [randomShuffle, validatedShuffle][settings.generator];
 		return generator(game);
 	}
 }

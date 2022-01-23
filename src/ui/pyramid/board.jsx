@@ -44,11 +44,18 @@ function useGame() {
 		})();
 	}, []);
 
+	const finishCards = enqueueAction(function*(...cards) {
+		for (const card of cards) {
+			game.clearCard(card);
+			yield 100;
+		}
+	});
+
 	const tryFinish = useCallback(() => {
 		if (game.hasWon()) {
 			undoStack.reset();
 			enqueueAction.reset();
-			doClearCards(...game.drawPile, ...game.discardPile);
+			finishCards(...game.drawPile, ...game.discardPile);
 			remove(saveGameTable, "pyramid");
 			return true;
 		}
@@ -64,7 +71,6 @@ function useGame() {
 
 		rerender();
 		commit();
-		saveGame();
 		yield 100;
 
 		if (!tryFinish()) {
