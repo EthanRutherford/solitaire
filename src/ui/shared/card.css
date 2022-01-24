@@ -51,9 +51,21 @@
 
 .top-corner, .bottom-corner {
 	position: absolute;
+	width: max(calc(var(--card-width) * .12), 8px);
 	text-align: center;
 	font-size: max(calc(var(--card-width) * .15), 12px);
 	line-height: 1;
+}
+.top-corner > :nth-child(1), .bottom-corner > :nth-child(1) {
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
+}
+.top-corner > :nth-child(2), .bottom-corner > :nth-child(2) {
+	position: absolute;
+	top: max(calc(var(--card-height) * .11), 12px);
+	left: 50%;
+	transform: translateX(-50%);
 }
 
 .top-corner {

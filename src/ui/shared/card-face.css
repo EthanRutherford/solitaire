@@ -1,0 +1,156 @@
+.card-face {
+	position: absolute;
+	left: 20%;
+	top: 10%;
+	width: 60%;
+	height: 80%;
+}
+
+.card-face > svg {
+	position: absolute;
+	width: calc(var(--card-width) * .2);
+	height: calc(var(--card-width) * .2);
+	transform: translate(-50%, -50%);
+}
+.c1 > svg {
+	width: calc(var(--card-width) * .5);
+	height: calc(var(--card-width) * .5);
+}
+
+.c1 > svg, .c3 > svg:nth-child(3), .c5 > svg:nth-child(5), .c9 > svg:nth-child(9) {
+	left: 50%;
+	top: 50%;
+}
+.c2 > svg:nth-child(1), .c3 > svg:nth-child(1) {
+	left: 50%;
+	top: 10%;
+}
+.c2 > svg:nth-child(2), .c3 > svg:nth-child(2) {
+	left: 50%;
+	top: 90%;
+	transform: translate(-50%, -50%) rotate(180deg);
+}
+
+.c4 > svg:nth-child(1),
+.c5 > svg:nth-child(1),
+.c6 > svg:nth-child(1),
+.c7 > svg:nth-child(1),
+.c8 > svg:nth-child(1),
+.c9 > svg:nth-child(1),
+.c10 > svg:nth-child(1) {
+	left: 20%;
+	top: 10%;
+}
+.c4 > svg:nth-child(2),
+.c5 > svg:nth-child(2),
+.c6 > svg:nth-child(2),
+.c7 > svg:nth-child(2),
+.c8 > svg:nth-child(2),
+.c9 > svg:nth-child(2),
+.c10 > svg:nth-child(2) {
+	left: 80%;
+	top: 10%;
+}
+.c4 > svg:nth-child(3),
+.c5 > svg:nth-child(3),
+.c6 > svg:nth-child(3),
+.c7 > svg:nth-child(3),
+.c8 > svg:nth-child(3),
+.c9 > svg:nth-child(3),
+.c10 > svg:nth-child(3) {
+	left: 20%;
+	top: 90%;
+	transform: translate(-50%, -50%) rotate(180deg);
+}
+.c4 > svg:nth-child(4),
+.c5 > svg:nth-child(4),
+.c6 > svg:nth-child(4),
+.c7 > svg:nth-child(4),
+.c8 > svg:nth-child(4),
+.c9 > svg:nth-child(4),
+.c10 > svg:nth-child(4) {
+	left: 80%;
+	top: 90%;
+	transform: translate(-50%, -50%) rotate(180deg);
+}
+
+.c6 > svg:nth-child(5), .c7 > svg:nth-child(5), .c8 > svg:nth-child(5) {
+	left: 20%;
+	top: 50%;
+}
+.c6 > svg:nth-child(6), .c7 > svg:nth-child(6), .c8 > svg:nth-child(6) {
+	left: 80%;
+	top: 50%;
+}
+.c7 > svg:nth-child(7), .c8 > svg:nth-child(7) {
+	left: 50%;
+	top: 30%;
+}
+.c7 > svg:nth-child(8), .c8 > svg:nth-child(8) {
+	left: 50%;
+	top: 70%;
+	transform: translate(-50%, -50%) rotate(180deg);
+}
+
+.c9 > svg:nth-child(5), .c10 > svg:nth-child(5) {
+	left: 20%;
+	top: calc(10% + (80% / 3));
+}
+.c9 > svg:nth-child(6), .c10 > svg:nth-child(6) {
+	left: 80%;
+	top: calc(10% + (80% / 3));
+}
+.c9 > svg:nth-child(7), .c10 > svg:nth-child(7) {
+	left: 20%;
+	top: calc(10% + (80% * 2 / 3));
+	transform: translate(-50%, -50%) rotate(180deg);
+}
+.c9 > svg:nth-child(8), .c10 > svg:nth-child(8) {
+	left: 80%;
+	top: calc(10% + (80% * 2 / 3));
+	transform: translate(-50%, -50%) rotate(180deg);
+}
+
+.c10 > svg:nth-child(9) {
+	left: 50%;
+	top: calc(10% + (80% / 6));
+}
+.c10 > svg:nth-child(10) {
+	left: 50%;
+	top: calc(10% + (80% * 5 / 6));
+	transform: translate(-50%, -50%) rotate(180deg);
+}
+
+.c11 > svg:nth-child(1), .c12 > svg:nth-child(1), .c13 > svg:nth-child(1) {
+	left: 20%;
+	top: 10%;
+}
+
+.c11 > svg:nth-child(2), .c12 > svg:nth-child(2), .c13 > svg:nth-child(2) {
+	left: 50%;
+	top: 50%;
+	width: calc(var(--card-width) * .5);
+	height: calc(var(--card-width) * .5);
+}
+
+.c11 > svg:nth-child(3), .c12 > svg:nth-child(3), .c13 > svg:nth-child(3) {
+	left: 80%;
+	top: 90%;
+	transform: translate(-50%, -50%) rotate(180deg);
+}
+
+/* 
+	blarg, this really doesn't work when the card size isn't based on screen width
+	need to compute it in javascript, based off card width
+*/
+@media (max-width: 420px) {
+	.card-face > svg:first-child {
+		width: calc(var(--card-width) * .5);
+		height: calc(var(--card-width) * .5);
+		left: 50%;
+		top: 50%;
+	}
+	.card-face > svg:not(:first-child) {
+		display: none;
+	}
+}

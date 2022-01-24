@@ -9,6 +9,7 @@ import {useRerender} from "../../util/use-rerender";
 import {suits} from "../../logic/deck";
 import {usePointers} from "./pointer-manager";
 import styles from "./card.css";
+import {CardFace} from "./card-face";
 
 const suitSvgs = {
 	[suits.spades]: Spade,
@@ -130,11 +131,12 @@ export function Card({card, pos, onTap, onDoubleTap, getDragCards}) {
 			ref={(elem) => card.meta.elem = elem}
 		>
 			<div className={styles.topCorner}>
-				{card.label}<br />
+				<div>{card.label}</div>
 				<SuitSvg className={styles.suit} />
 			</div>
+			<CardFace Icon={SuitSvg} value={card.value} />
 			<div className={styles.bottomCorner}>
-				{card.label}<br />
+				<div>{card.label}</div>
 				<SuitSvg className={styles.suit} />
 			</div>
 		</div>
