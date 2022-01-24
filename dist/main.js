@@ -158,6 +158,98 @@ module.exports = SvgDraw;
 
 /***/ }),
 
+/***/ "./images/faces/jack-hat.svg":
+/*!***********************************!*\
+  !*** ./images/faces/jack-hat.svg ***!
+  \***********************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var _path;
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+var SvgJackHat = function SvgJackHat(props) {
+  return /*#__PURE__*/React.createElement("svg", _extends({
+    xmlns: "http://www.w3.org/2000/svg",
+    viewBox: "0 0 20 20"
+  }, props), _path || (_path = /*#__PURE__*/React.createElement("path", {
+    d: "m1 9 3 7s4-1 6-1 6 1 6 1l3-7s-6-1-9-1-9 1-9 1Zm4-2s2-3 5-3 5 3 5 3C11 6 9 6 5 7Z",
+    fill: "currentColor",
+    stroke: "currentColor",
+    strokeLinejoin: "round"
+  })));
+};
+
+module.exports = SvgJackHat;
+
+/***/ }),
+
+/***/ "./images/faces/king-hat.svg":
+/*!***********************************!*\
+  !*** ./images/faces/king-hat.svg ***!
+  \***********************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var _g;
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+var SvgKingHat = function SvgKingHat(props) {
+  return /*#__PURE__*/React.createElement("svg", _extends({
+    xmlns: "http://www.w3.org/2000/svg",
+    viewBox: "0 0 20 20"
+  }, props), _g || (_g = /*#__PURE__*/React.createElement("g", {
+    fill: "currentColor",
+    stroke: "currentColor",
+    strokeLinejoin: "round"
+  }, /*#__PURE__*/React.createElement("path", {
+    d: "m4 17-1-2c5-1 9-1 14 0l-1 2s-4-1-6-1-6 1-6 1zm-2-4C-3 2 8 4 9 6c-6-2-9 0-7 7Zm16 0c5-11-6-9-7-7 6-2 9 0 7 7zm-9 0c0-3 0-6 1-6s1 3 1 6H9z"
+  }), /*#__PURE__*/React.createElement("path", {
+    d: "M7.75 13C6 13 4 13.5 4 13.5 3 8 6 8 8 8c-.5 3-.25 5-.25 5Zm4.5 0c1.75 0 3.75.5 3.75.5C17 8 14 8 12 8c.5 3 .25 5 .25 5z"
+  }), /*#__PURE__*/React.createElement("circle", {
+    cx: 10,
+    cy: 4,
+    r: 0.5,
+    paintOrder: "markers stroke fill"
+  }))));
+};
+
+module.exports = SvgKingHat;
+
+/***/ }),
+
+/***/ "./images/faces/queen-hat.svg":
+/*!************************************!*\
+  !*** ./images/faces/queen-hat.svg ***!
+  \************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var _path;
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+var SvgQueenHat = function SvgQueenHat(props) {
+  return /*#__PURE__*/React.createElement("svg", _extends({
+    xmlns: "http://www.w3.org/2000/svg",
+    viewBox: "0 0 20 20"
+  }, props), _path || (_path = /*#__PURE__*/React.createElement("path", {
+    d: "M1 9c3 2 5 2 7 2l1-3-2-1 2-1 1-2 1 2 2 1-2 1 1 3c2 0 4 0 7-2l-3 7s-4-1-6-1-6 1-6 1z",
+    fill: "currentColor",
+    stroke: "currentColor",
+    strokeLinejoin: "round"
+  })));
+};
+
+module.exports = SvgQueenHat;
+
+/***/ }),
+
 /***/ "./images/heart.svg":
 /*!**************************!*\
   !*** ./images/heart.svg ***!
@@ -1665,6 +1757,74 @@ function useRouter() {
 
 /***/ }),
 
+/***/ "./src/ui/shared/card-face.jsx":
+/*!*************************************!*\
+  !*** ./src/ui/shared/card-face.jsx ***!
+  \*************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "CardFace": () => (/* binding */ CardFace)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var _images_faces_jack_hat__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../images/faces/jack-hat */ "./images/faces/jack-hat.svg");
+/* harmony import */ var _images_faces_jack_hat__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_images_faces_jack_hat__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _images_faces_queen_hat__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../images/faces/queen-hat */ "./images/faces/queen-hat.svg");
+/* harmony import */ var _images_faces_queen_hat__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_images_faces_queen_hat__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _images_faces_king_hat__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../images/faces/king-hat */ "./images/faces/king-hat.svg");
+/* harmony import */ var _images_faces_king_hat__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_images_faces_king_hat__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _card_face_css__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./card-face.css */ "./src/ui/shared/card-face.css");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+
+
+
+
+
+
+
+const hats = [(_images_faces_jack_hat__WEBPACK_IMPORTED_MODULE_1___default()), (_images_faces_queen_hat__WEBPACK_IMPORTED_MODULE_2___default()), (_images_faces_king_hat__WEBPACK_IMPORTED_MODULE_3___default())];
+
+function renderFaceCard(Icon, value) {
+  const className = `${_card_face_css__WEBPACK_IMPORTED_MODULE_4__["default"].cardFace} ${_card_face_css__WEBPACK_IMPORTED_MODULE_4__["default"][`c${value}`]}`;
+  const HatIcon = hats[value - 11];
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
+    className: className,
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(Icon, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(HatIcon, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(Icon, {})]
+  });
+}
+
+function renderNumberCard(Icon, value) {
+  const icons = [];
+
+  for (let i = 0; i < value; i++) {
+    icons.push( /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(Icon, {}, i));
+  }
+
+  const className = `${_card_face_css__WEBPACK_IMPORTED_MODULE_4__["default"].cardFace} ${_card_face_css__WEBPACK_IMPORTED_MODULE_4__["default"][`c${value}`]}`;
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
+    className: className,
+    children: icons
+  });
+}
+
+function CardFace({
+  Icon,
+  value
+}) {
+  const output = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => {
+    if (value > 10) {
+      return renderFaceCard(Icon, value);
+    }
+
+    return renderNumberCard(Icon, value);
+  }, [Icon, value]);
+  return output;
+}
+
+/***/ }),
+
 /***/ "./src/ui/shared/card-renderer.jsx":
 /*!*****************************************!*\
   !*** ./src/ui/shared/card-renderer.jsx ***!
@@ -1804,7 +1964,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _logic_deck__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../logic/deck */ "./src/logic/deck.js");
 /* harmony import */ var _pointer_manager__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./pointer-manager */ "./src/ui/shared/pointer-manager.jsx");
 /* harmony import */ var _card_css__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./card.css */ "./src/ui/shared/card.css");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var _card_face__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./card-face */ "./src/ui/shared/card-face.jsx");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+
 
 
 
@@ -1935,7 +2097,7 @@ function Card({
 
   if (!faceUp) {
     const className = cns(_card_css__WEBPACK_IMPORTED_MODULE_10__["default"].cardBack, flipClass, shadowClass);
-    return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)("div", {
+    return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)("div", {
       className: className,
       onPointerDown: onPointerDown,
       onAnimationEnd: animationEnd,
@@ -1944,13 +2106,13 @@ function Card({
         zIndex
       },
       ref: elem => card.meta.elem = elem,
-      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)((_images_backs_brown__WEBPACK_IMPORTED_MODULE_1___default()), {})
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)((_images_backs_brown__WEBPACK_IMPORTED_MODULE_1___default()), {})
     });
   }
 
   const className = cns(_card_css__WEBPACK_IMPORTED_MODULE_10__["default"].cardFront, suitColors[card.suit], flipClass, shadowClass);
   const SuitSvg = suitSvgs[card.suit];
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsxs)("div", {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)("div", {
     className: className,
     onPointerDown: onPointerDown,
     onAnimationEnd: animationEnd,
@@ -1960,14 +2122,21 @@ function Card({
     },
     tabIndex: -1,
     ref: elem => card.meta.elem = elem,
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsxs)("div", {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)("div", {
       className: _card_css__WEBPACK_IMPORTED_MODULE_10__["default"].topCorner,
-      children: [card.label, /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)("br", {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)(SuitSvg, {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)("div", {
+        children: card.label
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(SuitSvg, {
         className: _card_css__WEBPACK_IMPORTED_MODULE_10__["default"].suit
       })]
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsxs)("div", {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_card_face__WEBPACK_IMPORTED_MODULE_11__.CardFace, {
+      Icon: SuitSvg,
+      value: card.value
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)("div", {
       className: _card_css__WEBPACK_IMPORTED_MODULE_10__["default"].bottomCorner,
-      children: [card.label, /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)("br", {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)(SuitSvg, {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)("div", {
+        children: card.label
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(SuitSvg, {
         className: _card_css__WEBPACK_IMPORTED_MODULE_10__["default"].suit
       })]
     })]
@@ -2885,6 +3054,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 // extracted by mini-css-extract-plugin
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({"board":"board__board--Jqr26","draw-button":"board__draw-button--bBq3G","drawButton":"board__draw-button--bBq3G"});
+
+/***/ }),
+
+/***/ "./src/ui/shared/card-face.css":
+/*!*************************************!*\
+  !*** ./src/ui/shared/card-face.css ***!
+  \*************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// extracted by mini-css-extract-plugin
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({"card-face":"card-face__card-face--CAalN","cardFace":"card-face__card-face--CAalN","c1":"card-face__c1--dcp3i","c3":"card-face__c3--CL2wx","c5":"card-face__c5--a4NIE","c9":"card-face__c9--kfQJg","c2":"card-face__c2--Njjh0","c4":"card-face__c4--iDIRq","c6":"card-face__c6--CNbSW","c7":"card-face__c7--hGPLZ","c8":"card-face__c8--jIpkR","c10":"card-face__c10--vYO0Q","c11":"card-face__c11--CaABM","c12":"card-face__c12--yK57y","c13":"card-face__c13--M3XXS"});
 
 /***/ }),
 

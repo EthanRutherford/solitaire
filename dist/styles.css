@@ -81,9 +81,21 @@
 
 .card__top-corner--sC8iJ, .card__bottom-corner--_HdjH {
 	position: absolute;
+	width: max(calc(var(--card-width) * .12), 8px);
 	text-align: center;
 	font-size: max(calc(var(--card-width) * .15), 12px);
 	line-height: 1;
+}
+.card__top-corner--sC8iJ > :nth-child(1), .card__bottom-corner--_HdjH > :nth-child(1) {
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
+}
+.card__top-corner--sC8iJ > :nth-child(2), .card__bottom-corner--_HdjH > :nth-child(2) {
+	position: absolute;
+	top: max(calc(var(--card-height) * .11), 12px);
+	left: 50%;
+	transform: translateX(-50%);
 }
 
 .card__top-corner--sC8iJ {
@@ -116,6 +128,166 @@
 	}
 	to {
 		transform: perspective(800px) translateZ(0px) rotateY(0deg);
+	}
+}
+
+/*!***********************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[0].use[1]!./src/ui/shared/card-face.css ***!
+  \***********************************************************************************************************/
+.card-face__card-face--CAalN {
+	position: absolute;
+	left: 20%;
+	top: 10%;
+	width: 60%;
+	height: 80%;
+}
+
+.card-face__card-face--CAalN > svg {
+	position: absolute;
+	width: calc(var(--card-width) * .2);
+	height: calc(var(--card-width) * .2);
+	transform: translate(-50%, -50%);
+}
+.card-face__c1--dcp3i > svg {
+	width: calc(var(--card-width) * .5);
+	height: calc(var(--card-width) * .5);
+}
+
+.card-face__c1--dcp3i > svg, .card-face__c3--CL2wx > svg:nth-child(3), .card-face__c5--a4NIE > svg:nth-child(5), .card-face__c9--kfQJg > svg:nth-child(9) {
+	left: 50%;
+	top: 50%;
+}
+.card-face__c2--Njjh0 > svg:nth-child(1), .card-face__c3--CL2wx > svg:nth-child(1) {
+	left: 50%;
+	top: 10%;
+}
+.card-face__c2--Njjh0 > svg:nth-child(2), .card-face__c3--CL2wx > svg:nth-child(2) {
+	left: 50%;
+	top: 90%;
+	transform: translate(-50%, -50%) rotate(180deg);
+}
+
+.card-face__c4--iDIRq > svg:nth-child(1),
+.card-face__c5--a4NIE > svg:nth-child(1),
+.card-face__c6--CNbSW > svg:nth-child(1),
+.card-face__c7--hGPLZ > svg:nth-child(1),
+.card-face__c8--jIpkR > svg:nth-child(1),
+.card-face__c9--kfQJg > svg:nth-child(1),
+.card-face__c10--vYO0Q > svg:nth-child(1) {
+	left: 20%;
+	top: 10%;
+}
+.card-face__c4--iDIRq > svg:nth-child(2),
+.card-face__c5--a4NIE > svg:nth-child(2),
+.card-face__c6--CNbSW > svg:nth-child(2),
+.card-face__c7--hGPLZ > svg:nth-child(2),
+.card-face__c8--jIpkR > svg:nth-child(2),
+.card-face__c9--kfQJg > svg:nth-child(2),
+.card-face__c10--vYO0Q > svg:nth-child(2) {
+	left: 80%;
+	top: 10%;
+}
+.card-face__c4--iDIRq > svg:nth-child(3),
+.card-face__c5--a4NIE > svg:nth-child(3),
+.card-face__c6--CNbSW > svg:nth-child(3),
+.card-face__c7--hGPLZ > svg:nth-child(3),
+.card-face__c8--jIpkR > svg:nth-child(3),
+.card-face__c9--kfQJg > svg:nth-child(3),
+.card-face__c10--vYO0Q > svg:nth-child(3) {
+	left: 20%;
+	top: 90%;
+	transform: translate(-50%, -50%) rotate(180deg);
+}
+.card-face__c4--iDIRq > svg:nth-child(4),
+.card-face__c5--a4NIE > svg:nth-child(4),
+.card-face__c6--CNbSW > svg:nth-child(4),
+.card-face__c7--hGPLZ > svg:nth-child(4),
+.card-face__c8--jIpkR > svg:nth-child(4),
+.card-face__c9--kfQJg > svg:nth-child(4),
+.card-face__c10--vYO0Q > svg:nth-child(4) {
+	left: 80%;
+	top: 90%;
+	transform: translate(-50%, -50%) rotate(180deg);
+}
+
+.card-face__c6--CNbSW > svg:nth-child(5), .card-face__c7--hGPLZ > svg:nth-child(5), .card-face__c8--jIpkR > svg:nth-child(5) {
+	left: 20%;
+	top: 50%;
+}
+.card-face__c6--CNbSW > svg:nth-child(6), .card-face__c7--hGPLZ > svg:nth-child(6), .card-face__c8--jIpkR > svg:nth-child(6) {
+	left: 80%;
+	top: 50%;
+}
+.card-face__c7--hGPLZ > svg:nth-child(7), .card-face__c8--jIpkR > svg:nth-child(7) {
+	left: 50%;
+	top: 30%;
+}
+.card-face__c7--hGPLZ > svg:nth-child(8), .card-face__c8--jIpkR > svg:nth-child(8) {
+	left: 50%;
+	top: 70%;
+	transform: translate(-50%, -50%) rotate(180deg);
+}
+
+.card-face__c9--kfQJg > svg:nth-child(5), .card-face__c10--vYO0Q > svg:nth-child(5) {
+	left: 20%;
+	top: calc(10% + (80% / 3));
+}
+.card-face__c9--kfQJg > svg:nth-child(6), .card-face__c10--vYO0Q > svg:nth-child(6) {
+	left: 80%;
+	top: calc(10% + (80% / 3));
+}
+.card-face__c9--kfQJg > svg:nth-child(7), .card-face__c10--vYO0Q > svg:nth-child(7) {
+	left: 20%;
+	top: calc(10% + (80% * 2 / 3));
+	transform: translate(-50%, -50%) rotate(180deg);
+}
+.card-face__c9--kfQJg > svg:nth-child(8), .card-face__c10--vYO0Q > svg:nth-child(8) {
+	left: 80%;
+	top: calc(10% + (80% * 2 / 3));
+	transform: translate(-50%, -50%) rotate(180deg);
+}
+
+.card-face__c10--vYO0Q > svg:nth-child(9) {
+	left: 50%;
+	top: calc(10% + (80% / 6));
+}
+.card-face__c10--vYO0Q > svg:nth-child(10) {
+	left: 50%;
+	top: calc(10% + (80% * 5 / 6));
+	transform: translate(-50%, -50%) rotate(180deg);
+}
+
+.card-face__c11--CaABM > svg:nth-child(1), .card-face__c12--yK57y > svg:nth-child(1), .card-face__c13--M3XXS > svg:nth-child(1) {
+	left: 20%;
+	top: 10%;
+}
+
+.card-face__c11--CaABM > svg:nth-child(2), .card-face__c12--yK57y > svg:nth-child(2), .card-face__c13--M3XXS > svg:nth-child(2) {
+	left: 50%;
+	top: 50%;
+	width: calc(var(--card-width) * .5);
+	height: calc(var(--card-width) * .5);
+}
+
+.card-face__c11--CaABM > svg:nth-child(3), .card-face__c12--yK57y > svg:nth-child(3), .card-face__c13--M3XXS > svg:nth-child(3) {
+	left: 80%;
+	top: 90%;
+	transform: translate(-50%, -50%) rotate(180deg);
+}
+
+/* 
+	blarg, this really doesn't work when the card size isn't based on screen width
+	need to compute it in javascript, based off card width
+*/
+@media (max-width: 420px) {
+	.card-face__card-face--CAalN > svg:first-child {
+		width: calc(var(--card-width) * .5);
+		height: calc(var(--card-width) * .5);
+		left: 50%;
+		top: 50%;
+	}
+	.card-face__card-face--CAalN > svg:not(:first-child) {
+		display: none;
 	}
 }
 
