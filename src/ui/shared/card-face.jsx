@@ -13,9 +13,8 @@ function renderFaceCard(Icon, value, smallCard) {
 
 	return (
 		<div className={className}>
-			{!smallCard && <Icon />}
 			<HatIcon />
-			{!smallCard && <Icon />}
+			{!smallCard && <><Icon /><Icon /></>}
 		</div>
 	);
 }
