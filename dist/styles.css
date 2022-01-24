@@ -258,37 +258,19 @@
 }
 
 .card-face__c11--CaABM > svg:nth-child(1), .card-face__c12--yK57y > svg:nth-child(1), .card-face__c13--M3XXS > svg:nth-child(1) {
-	left: 20%;
-	top: 10%;
-}
-
-.card-face__c11--CaABM > svg:nth-child(2), .card-face__c12--yK57y > svg:nth-child(2), .card-face__c13--M3XXS > svg:nth-child(2) {
 	left: 50%;
 	top: 50%;
 	width: calc(var(--card-width) * .5);
 	height: calc(var(--card-width) * .5);
 }
-
+.card-face__c11--CaABM > svg:nth-child(2), .card-face__c12--yK57y > svg:nth-child(2), .card-face__c13--M3XXS > svg:nth-child(2) {
+	left: 20%;
+	top: 10%;
+}
 .card-face__c11--CaABM > svg:nth-child(3), .card-face__c12--yK57y > svg:nth-child(3), .card-face__c13--M3XXS > svg:nth-child(3) {
 	left: 80%;
 	top: 90%;
 	transform: translate(-50%, -50%) rotate(180deg);
-}
-
-/* 
-	blarg, this really doesn't work when the card size isn't based on screen width
-	need to compute it in javascript, based off card width
-*/
-@media (max-width: 420px) {
-	.card-face__card-face--CAalN > svg:first-child {
-		width: calc(var(--card-width) * .5);
-		height: calc(var(--card-width) * .5);
-		left: 50%;
-		top: 50%;
-	}
-	.card-face__card-face--CAalN > svg:not(:first-child) {
-		display: none;
-	}
 }
 
 /*!*************************************************************************************************************!*\

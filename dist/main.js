@@ -1775,8 +1775,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _images_faces_queen_hat__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_images_faces_queen_hat__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _images_faces_king_hat__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../images/faces/king-hat */ "./images/faces/king-hat.svg");
 /* harmony import */ var _images_faces_king_hat__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_images_faces_king_hat__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _card_face_css__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./card-face.css */ "./src/ui/shared/card-face.css");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var _sizerator__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./sizerator */ "./src/ui/shared/sizerator.jsx");
+/* harmony import */ var _card_face_css__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./card-face.css */ "./src/ui/shared/card-face.css");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+
 
 
 
@@ -1786,12 +1788,12 @@ __webpack_require__.r(__webpack_exports__);
 
 const hats = [(_images_faces_jack_hat__WEBPACK_IMPORTED_MODULE_1___default()), (_images_faces_queen_hat__WEBPACK_IMPORTED_MODULE_2___default()), (_images_faces_king_hat__WEBPACK_IMPORTED_MODULE_3___default())];
 
-function renderFaceCard(Icon, value) {
-  const className = `${_card_face_css__WEBPACK_IMPORTED_MODULE_4__["default"].cardFace} ${_card_face_css__WEBPACK_IMPORTED_MODULE_4__["default"][`c${value}`]}`;
+function renderFaceCard(Icon, value, smallCard) {
+  const className = `${_card_face_css__WEBPACK_IMPORTED_MODULE_5__["default"].cardFace} ${_card_face_css__WEBPACK_IMPORTED_MODULE_5__["default"][`c${value}`]}`;
   const HatIcon = hats[value - 11];
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
     className: className,
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(Icon, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(HatIcon, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(Icon, {})]
+    children: [!smallCard && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(Icon, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(HatIcon, {}), !smallCard && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(Icon, {})]
   });
 }
 
@@ -1799,11 +1801,11 @@ function renderNumberCard(Icon, value) {
   const icons = [];
 
   for (let i = 0; i < value; i++) {
-    icons.push( /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(Icon, {}, i));
+    icons.push( /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(Icon, {}, i));
   }
 
-  const className = `${_card_face_css__WEBPACK_IMPORTED_MODULE_4__["default"].cardFace} ${_card_face_css__WEBPACK_IMPORTED_MODULE_4__["default"][`c${value}`]}`;
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
+  const className = `${_card_face_css__WEBPACK_IMPORTED_MODULE_5__["default"].cardFace} ${_card_face_css__WEBPACK_IMPORTED_MODULE_5__["default"][`c${value}`]}`;
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
     className: className,
     children: icons
   });
@@ -1813,13 +1815,17 @@ function CardFace({
   Icon,
   value
 }) {
+  const {
+    cardWidth
+  } = (0,_sizerator__WEBPACK_IMPORTED_MODULE_4__.useSizes)();
+  const smallCard = cardWidth < 50;
   const output = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => {
     if (value > 10) {
-      return renderFaceCard(Icon, value);
+      return renderFaceCard(Icon, value, smallCard);
     }
 
-    return renderNumberCard(Icon, value);
-  }, [Icon, value]);
+    return renderNumberCard(Icon, smallCard ? 1 : value);
+  }, [Icon, value, smallCard]);
   return output;
 }
 
