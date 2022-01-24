@@ -1786,6 +1786,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 const hats = [(_images_faces_jack_hat__WEBPACK_IMPORTED_MODULE_1___default()), (_images_faces_queen_hat__WEBPACK_IMPORTED_MODULE_2___default()), (_images_faces_king_hat__WEBPACK_IMPORTED_MODULE_3___default())];
 
 function renderFaceCard(Icon, value, smallCard) {
@@ -1793,7 +1794,9 @@ function renderFaceCard(Icon, value, smallCard) {
   const HatIcon = hats[value - 11];
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
     className: className,
-    children: [!smallCard && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(Icon, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(HatIcon, {}), !smallCard && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(Icon, {})]
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(HatIcon, {}), !smallCard && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.Fragment, {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(Icon, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(Icon, {})]
+    })]
   });
 }
 
