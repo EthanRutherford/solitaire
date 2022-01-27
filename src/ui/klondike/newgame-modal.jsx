@@ -47,7 +47,7 @@ export function NewgameModal({initialSettings, onStart, onCancel}) {
 			<ModalDisclaimer>solvable puzzle generator is experimental</ModalDisclaimer>
 			<ModalFooter>
 				<ModalButton onClick={onCancel}>Cancel</ModalButton>
-				<ModalButton onClick={() => onStart({drawCount})}>Start</ModalButton>
+				<ModalButton onClick={() => onStart({drawCount, generator})}>Start</ModalButton>
 			</ModalFooter>
 		</Modal>
 	);

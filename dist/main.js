@@ -1172,7 +1172,8 @@ function NewgameModal({
         children: "Cancel"
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_shared_modal__WEBPACK_IMPORTED_MODULE_2__.ModalButton, {
         onClick: () => onStart({
-          drawCount
+          drawCount,
+          generator
         }),
         children: "Start"
       })]
