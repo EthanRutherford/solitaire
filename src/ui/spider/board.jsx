@@ -9,11 +9,14 @@ import {CardRenderer, renderPile, renderStack} from "../shared/card-renderer";
 import {EmptyZone} from "../shared/empty-zone";
 import {getCard} from "../shared/get-context";
 import {ControlBar} from "../shared/control-bar";
-import {Sizerator} from "../shared/sizerator";
+import {sizerated} from "../shared/sizerator";
+import {useAnimator} from "../animations/animator";
+import {CardRingAnimation} from "../animations/card-ring";
 import {NewgameModal, useNewGame} from "./newgame-modal";
 import styles from "./board.css";
 
 function useGame() {
+	const [isAnimating, setAnimation] = useAnimator();
 	const game = useMemo(() => new Game(), []);
 	const undoStack = useMemo(() => new UndoStack());
 	const enqueueAction = useActionQueue();
@@ -24,6 +27,7 @@ function useGame() {
 		undoStack: undoStack.serialize(),
 	}), []);
 	const newGame = useNewGame("spider", (settings) => {
+		setAnimation(null);
 		Game.fromScratch(game, settings.suitCount);
 		undoStack.reset();
 		enqueueAction.reset();
@@ -49,6 +53,8 @@ function useGame() {
 			undoStack.reset();
 			enqueueAction.reset();
 			remove(saveGameTable, "spider");
+			setAnimation(new CardRingAnimation(...game.foundation));
+			rerender();
 			return true;
 		}
 
@@ -192,6 +198,7 @@ function useGame() {
 
 	return {
 		game,
+		isAnimating,
 		newGame,
 		onDrop,
 		drawPileTap,
@@ -204,9 +211,10 @@ function useGame() {
 	};
 }
 
-export function Board() {
+export const Board = sizerated(10, 5, function Board() {
 	const {
 		game,
+		isAnimating,
 		newGame,
 		onDrop,
 		drawPileTap,
@@ -219,7 +227,7 @@ export function Board() {
 	} = useGame();
 
 	return (
-		<Sizerator cardsAcross={10} cardsTall={5}>
+		<>
 			<div className={styles.board}>
 				{game.tableau.map((stack, i) => (
 					<EmptyZone
@@ -229,7 +237,7 @@ export function Board() {
 						key={i}
 					/>
 				))}
-				<CardRenderer onDrop={onDrop}>
+				<CardRenderer onDrop={onDrop} isAnimating={isAnimating}>
 					{renderPile({x: 9, y: 4}, game.drawPile, {
 						onTap: drawPileTap,
 					})}
@@ -247,6 +255,6 @@ export function Board() {
 			{newGame.showModal && (
 				<NewgameModal {...newGame} />
 			)}
-		</Sizerator>
+		</>
 	);
-}
+});
