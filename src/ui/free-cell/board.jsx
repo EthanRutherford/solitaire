@@ -13,15 +13,19 @@ import {CardRenderer, renderPile, renderStack} from "../shared/card-renderer";
 import {EmptyZone} from "../shared/empty-zone";
 import {getCard} from "../shared/get-context";
 import {ControlBar} from "../shared/control-bar";
-import {Sizerator} from "../shared/sizerator";
+import {sizerated} from "../shared/sizerator";
+import {useAnimator} from "../animations/animator";
+import {CardRingAnimation} from "../animations/card-ring";
 import styles from "./board.css";
 
 function useGame() {
+	const [isAnimating, setAnimation] = useAnimator();
 	const game = useMemo(() => new Game(), []);
 	const undoStack = useMemo(() => new UndoStack());
 	const enqueueAction = useActionQueue();
 	const rerender = useRerender();
 	const newGame = useCallback(() => {
+		setAnimation(null);
 		Game.fromScratch(game);
 		undoStack.reset();
 		enqueueAction.reset();
@@ -52,6 +56,8 @@ function useGame() {
 			undoStack.reset();
 			enqueueAction.reset();
 			remove(saveGameTable, "free-cell");
+			setAnimation(new CardRingAnimation(...Object.values(game.foundations)));
+			rerender();
 			return true;
 		}
 
@@ -127,7 +133,7 @@ function useGame() {
 	});
 
 	const foundationTap = useCallback((pointer) => {
-		targetTap(pointer.elem.meta.context);
+		targetTap(pointer.card.meta.context);
 	}, []);
 
 	const undo = enqueueAction(function*() {
@@ -166,6 +172,7 @@ function useGame() {
 
 	return {
 		game,
+		isAnimating,
 		newGame,
 		onDrop,
 		targetTap,
@@ -177,9 +184,10 @@ function useGame() {
 	};
 }
 
-export function Board() {
+export const Board = sizerated(8, 5, function Board() {
 	const {
 		game,
+		isAnimating,
 		newGame,
 		onDrop,
 		targetTap,
@@ -191,7 +199,7 @@ export function Board() {
 	} = useGame();
 
 	return (
-		<Sizerator cardsAcross={8} cardsTall={5}>
+		<>
 			<div className={styles.board}>
 				{game.freeCells.map((cell, i) => (
 					<EmptyZone
@@ -237,7 +245,7 @@ export function Board() {
 						key={i}
 					/>
 				))}
-				<CardRenderer onDrop={onDrop}>
+				<CardRenderer onDrop={onDrop} isAnimating={isAnimating}>
 					{game.freeCells.map((deck, i) => renderStack({x: i, y: 0}, deck, {
 						onTap: playableTap,
 						onDoubleTap: playableDoubleTap,
@@ -263,6 +271,6 @@ export function Board() {
 				</CardRenderer>
 			</div>
 			<ControlBar newGame={newGame} undo={undo} redo={redo} />
-		</Sizerator>
+		</>
 	);
-}
+});

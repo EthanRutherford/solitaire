@@ -14,11 +14,14 @@ import {CardRenderer, renderPile, renderStack} from "../shared/card-renderer";
 import {EmptyZone} from "../shared/empty-zone";
 import {getCard} from "../shared/get-context";
 import {ControlBar} from "../shared/control-bar";
-import {Sizerator} from "../shared/sizerator";
+import {sizerated} from "../shared/sizerator";
+import {useAnimator} from "../animations/animator";
+import {CardRingAnimation} from "../animations/card-ring";
 import {NewgameModal, useNewGame} from "./newgame-modal";
 import styles from "./board.css";
 
 function useGame() {
+	const [isAnimating, setAnimation] = useAnimator();
 	const game = useMemo(() => new Game(), []);
 	const undoStack = useMemo(() => new UndoStack());
 	const enqueueAction = useActionQueue();
@@ -29,6 +32,7 @@ function useGame() {
 		undoStack: undoStack.serialize(),
 	}), []);
 	const newGame = useNewGame("klondike", (settings) => {
+		setAnimation(null);
 		Game.fromScratch(game, settings);
 		undoStack.reset();
 		enqueueAction.reset();
@@ -54,6 +58,8 @@ function useGame() {
 			undoStack.reset();
 			enqueueAction.reset();
 			remove(saveGameTable, "klondike");
+			setAnimation(new CardRingAnimation(...Object.values(game.foundations)));
+			rerender();
 			return true;
 		}
 
@@ -212,6 +218,7 @@ function useGame() {
 
 	return {
 		game,
+		isAnimating,
 		newGame,
 		onDrop,
 		flipDiscard,
@@ -226,9 +233,10 @@ function useGame() {
 	};
 }
 
-export function Board() {
+export const Board = sizerated(7, 5, function Board() {
 	const {
 		game,
+		isAnimating,
 		newGame,
 		onDrop,
 		flipDiscard,
@@ -243,7 +251,7 @@ export function Board() {
 	} = useGame();
 
 	return (
-		<Sizerator cardsAcross={7} cardsTall={5}>
+		<>
 			<div className={styles.board}>
 				<EmptyZone slot={{x: 0, y: 0}} context={game.drawPile} onTap={flipDiscard}>
 					<Undo />
@@ -284,7 +292,7 @@ export function Board() {
 						key={i}
 					/>
 				))}
-				<CardRenderer onDrop={onDrop}>
+				<CardRenderer onDrop={onDrop} isAnimating={isAnimating}>
 					{renderPile({x: 0, y: 0}, game.drawPile, {
 						onTap: drawPileTap,
 					})}
@@ -316,6 +324,6 @@ export function Board() {
 			{newGame.showModal && (
 				<NewgameModal {...newGame} />
 			)}
-		</Sizerator>
+		</>
 	);
-}
+});

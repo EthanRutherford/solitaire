@@ -9,11 +9,14 @@ import {CardRenderer, renderPile} from "../shared/card-renderer";
 import {EmptyZone} from "../shared/empty-zone";
 import {getCard} from "../shared/get-context";
 import {ControlBar} from "../shared/control-bar";
-import {Sizerator} from "../shared/sizerator";
+import {sizerated} from "../shared/sizerator";
+import {useAnimator} from "../animations/animator";
+import {CardRingAnimation} from "../animations/card-ring";
 import {NewgameModal, useNewGame} from "./newgame-modal";
 import styles from "./board.css";
 
 function useGame() {
+	const [isAnimating, setAnimation] = useAnimator();
 	const game = useMemo(() => new Game(), []);
 	const undoStack = useMemo(() => new UndoStack());
 	const enqueueAction = useActionQueue();
@@ -24,6 +27,7 @@ function useGame() {
 		undoStack: undoStack.serialize(),
 	}), []);
 	const newGame = useNewGame("klondike", (settings) => {
+		setAnimation(null);
 		Game.fromScratch(game, settings);
 		undoStack.reset();
 		enqueueAction.reset();
@@ -50,6 +54,9 @@ function useGame() {
 			rerender();
 			yield 100;
 		}
+
+		setAnimation(new CardRingAnimation(game.completed));
+		rerender();
 	});
 
 	const tryFinish = useCallback(() => {
@@ -173,6 +180,7 @@ function useGame() {
 
 	return {
 		game,
+		isAnimating,
 		newGame,
 		onDrop,
 		flipDiscard,
@@ -206,9 +214,10 @@ export const renderPyramid = (cards, handlers) => () => {
 	return results;
 };
 
-export function Board() {
+export const Board = sizerated(7, 5, function Board() {
 	const {
 		game,
+		isAnimating,
 		newGame,
 		onDrop,
 		flipDiscard,
@@ -221,7 +230,7 @@ export function Board() {
 	} = useGame();
 
 	return (
-		<Sizerator cardsAcross={7} cardsTall={5}>
+		<>
 			<div className={styles.board}>
 				<EmptyZone slot={{x: 2, y: 4}} onClick={flipDiscard}>
 					{game.remainingFlips}
@@ -230,7 +239,7 @@ export function Board() {
 				<button className={styles.drawButton} onClick={drawPileDraw}>
 					<Draw />
 				</button>
-				<CardRenderer onDrop={onDrop}>
+				<CardRenderer onDrop={onDrop} isAnimating={isAnimating}>
 					{renderPyramid(game.tree, {
 						onTap: playableTap,
 						onDoubleTap: playableDoubleTap,
@@ -253,6 +262,6 @@ export function Board() {
 			{newGame.showModal && (
 				<NewgameModal {...newGame} />
 			)}
-		</Sizerator>
+		</>
 	);
-}
+});

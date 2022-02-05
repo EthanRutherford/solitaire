@@ -411,8 +411,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _shared_get_context__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../shared/get-context */ "./src/ui/shared/get-context.js");
 /* harmony import */ var _shared_control_bar__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../shared/control-bar */ "./src/ui/shared/control-bar.jsx");
 /* harmony import */ var _shared_sizerator__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../shared/sizerator */ "./src/ui/shared/sizerator.jsx");
-/* harmony import */ var _board_css__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./board.css */ "./src/ui/free-cell/board.css");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var _animations_animator__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../animations/animator */ "./src/ui/animations/animator.js");
+/* harmony import */ var _animations_card_ring__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../animations/card-ring */ "./src/ui/animations/card-ring.js");
+/* harmony import */ var _board_css__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./board.css */ "./src/ui/free-cell/board.css");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+
+
+
 
 
 
@@ -434,11 +439,13 @@ __webpack_require__.r(__webpack_exports__);
 
 
 function useGame() {
+  const [isAnimating, setAnimation] = (0,_animations_animator__WEBPACK_IMPORTED_MODULE_16__.useAnimator)();
   const game = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => new _logic_free_cell_game__WEBPACK_IMPORTED_MODULE_6__.Game(), []);
   const undoStack = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => new _logic_undo_stack__WEBPACK_IMPORTED_MODULE_7__.UndoStack());
   const enqueueAction = (0,_util_use_action_queue__WEBPACK_IMPORTED_MODULE_10__.useActionQueue)();
   const rerender = (0,_util_use_rerender__WEBPACK_IMPORTED_MODULE_9__.useRerender)();
   const newGame = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(() => {
+    setAnimation(null);
     _logic_free_cell_game__WEBPACK_IMPORTED_MODULE_6__.Game.fromScratch(game);
     undoStack.reset();
     enqueueAction.reset();
@@ -468,6 +475,8 @@ function useGame() {
       undoStack.reset();
       enqueueAction.reset();
       (0,_logic_game_db__WEBPACK_IMPORTED_MODULE_8__.remove)(_logic_game_db__WEBPACK_IMPORTED_MODULE_8__.saveGameTable, "free-cell");
+      setAnimation(new _animations_card_ring__WEBPACK_IMPORTED_MODULE_17__.CardRingAnimation(...Object.values(game.foundations)));
+      rerender();
       return true;
     }
 
@@ -538,7 +547,7 @@ function useGame() {
     }
   });
   const foundationTap = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(pointer => {
-    targetTap(pointer.elem.meta.context);
+    targetTap(pointer.card.meta.context);
   }, []);
   const undo = enqueueAction(function* () {
     const deltas = undoStack.undo();
@@ -578,6 +587,7 @@ function useGame() {
   });
   return {
     game,
+    isAnimating,
     newGame,
     onDrop,
     targetTap,
@@ -589,9 +599,10 @@ function useGame() {
   };
 }
 
-function Board() {
+const Board = (0,_shared_sizerator__WEBPACK_IMPORTED_MODULE_15__.sizerated)(8, 5, function Board() {
   const {
     game,
+    isAnimating,
     newGame,
     onDrop,
     targetTap,
@@ -601,59 +612,58 @@ function Board() {
     undo,
     redo
   } = useGame();
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsxs)(_shared_sizerator__WEBPACK_IMPORTED_MODULE_15__.Sizerator, {
-    cardsAcross: 8,
-    cardsTall: 5,
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsxs)("div", {
-      className: _board_css__WEBPACK_IMPORTED_MODULE_16__["default"].board,
-      children: [game.freeCells.map((cell, i) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_12__.EmptyZone, {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.Fragment, {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsxs)("div", {
+      className: _board_css__WEBPACK_IMPORTED_MODULE_18__["default"].board,
+      children: [game.freeCells.map((cell, i) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_12__.EmptyZone, {
         slot: {
           x: i,
           y: 0
         },
         context: cell,
         onTap: targetTap
-      }, i)), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_12__.EmptyZone, {
+      }, i)), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_12__.EmptyZone, {
         slot: {
           x: 4,
           y: 0
         },
         context: game.foundations[_logic_deck__WEBPACK_IMPORTED_MODULE_5__.suits.spades],
         onTap: targetTap,
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)((_images_spade__WEBPACK_IMPORTED_MODULE_1___default()), {})
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_12__.EmptyZone, {
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)((_images_spade__WEBPACK_IMPORTED_MODULE_1___default()), {})
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_12__.EmptyZone, {
         slot: {
           x: 5,
           y: 0
         },
         context: game.foundations[_logic_deck__WEBPACK_IMPORTED_MODULE_5__.suits.diamonds],
         onTap: targetTap,
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)((_images_diamond__WEBPACK_IMPORTED_MODULE_2___default()), {})
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_12__.EmptyZone, {
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)((_images_diamond__WEBPACK_IMPORTED_MODULE_2___default()), {})
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_12__.EmptyZone, {
         slot: {
           x: 6,
           y: 0
         },
         context: game.foundations[_logic_deck__WEBPACK_IMPORTED_MODULE_5__.suits.clubs],
         onTap: targetTap,
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)((_images_club__WEBPACK_IMPORTED_MODULE_3___default()), {})
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_12__.EmptyZone, {
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)((_images_club__WEBPACK_IMPORTED_MODULE_3___default()), {})
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_12__.EmptyZone, {
         slot: {
           x: 7,
           y: 0
         },
         context: game.foundations[_logic_deck__WEBPACK_IMPORTED_MODULE_5__.suits.hearts],
         onTap: targetTap,
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)((_images_heart__WEBPACK_IMPORTED_MODULE_4___default()), {})
-      }), game.tableau.map((stack, i) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_12__.EmptyZone, {
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)((_images_heart__WEBPACK_IMPORTED_MODULE_4___default()), {})
+      }), game.tableau.map((stack, i) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_12__.EmptyZone, {
         slot: {
           x: i,
           y: 1
         },
         context: stack,
         onTap: targetTap
-      }, i)), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsxs)(_shared_card_renderer__WEBPACK_IMPORTED_MODULE_11__.CardRenderer, {
+      }, i)), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsxs)(_shared_card_renderer__WEBPACK_IMPORTED_MODULE_11__.CardRenderer, {
         onDrop: onDrop,
+        isAnimating: isAnimating,
         children: [game.freeCells.map((deck, i) => (0,_shared_card_renderer__WEBPACK_IMPORTED_MODULE_11__.renderStack)({
           x: i,
           y: 0
@@ -690,13 +700,13 @@ function Board() {
           getDragCards: game.getMovableCards
         }))]
       })]
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_shared_control_bar__WEBPACK_IMPORTED_MODULE_14__.ControlBar, {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)(_shared_control_bar__WEBPACK_IMPORTED_MODULE_14__.ControlBar, {
       newGame: newGame,
       undo: undo,
       redo: redo
     })]
   });
-}
+});
 
 /***/ }),
 
@@ -733,9 +743,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _shared_get_context__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../shared/get-context */ "./src/ui/shared/get-context.js");
 /* harmony import */ var _shared_control_bar__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../shared/control-bar */ "./src/ui/shared/control-bar.jsx");
 /* harmony import */ var _shared_sizerator__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../shared/sizerator */ "./src/ui/shared/sizerator.jsx");
-/* harmony import */ var _newgame_modal__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./newgame-modal */ "./src/ui/klondike/newgame-modal.jsx");
-/* harmony import */ var _board_css__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./board.css */ "./src/ui/klondike/board.css");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var _animations_animator__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../animations/animator */ "./src/ui/animations/animator.js");
+/* harmony import */ var _animations_card_ring__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../animations/card-ring */ "./src/ui/animations/card-ring.js");
+/* harmony import */ var _newgame_modal__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./newgame-modal */ "./src/ui/klondike/newgame-modal.jsx");
+/* harmony import */ var _board_css__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./board.css */ "./src/ui/klondike/board.css");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+
+
+
 
 
 
@@ -759,6 +774,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 function useGame() {
+  const [isAnimating, setAnimation] = (0,_animations_animator__WEBPACK_IMPORTED_MODULE_17__.useAnimator)();
   const game = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => new _logic_klondike_game__WEBPACK_IMPORTED_MODULE_7__.Game(), []);
   const undoStack = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => new _logic_undo_stack__WEBPACK_IMPORTED_MODULE_8__.UndoStack());
   const enqueueAction = (0,_util_use_action_queue__WEBPACK_IMPORTED_MODULE_11__.useActionQueue)();
@@ -768,7 +784,8 @@ function useGame() {
     game: game.serialize(),
     undoStack: undoStack.serialize()
   }), []);
-  const newGame = (0,_newgame_modal__WEBPACK_IMPORTED_MODULE_17__.useNewGame)("klondike", settings => {
+  const newGame = (0,_newgame_modal__WEBPACK_IMPORTED_MODULE_19__.useNewGame)("klondike", settings => {
+    setAnimation(null);
     _logic_klondike_game__WEBPACK_IMPORTED_MODULE_7__.Game.fromScratch(game, settings);
     undoStack.reset();
     enqueueAction.reset();
@@ -793,6 +810,8 @@ function useGame() {
       undoStack.reset();
       enqueueAction.reset();
       (0,_logic_game_db__WEBPACK_IMPORTED_MODULE_9__.remove)(_logic_game_db__WEBPACK_IMPORTED_MODULE_9__.saveGameTable, "klondike");
+      setAnimation(new _animations_card_ring__WEBPACK_IMPORTED_MODULE_18__.CardRingAnimation(...Object.values(game.foundations)));
+      rerender();
       return true;
     }
 
@@ -950,6 +969,7 @@ function useGame() {
   });
   return {
     game,
+    isAnimating,
     newGame,
     onDrop,
     flipDiscard,
@@ -964,9 +984,10 @@ function useGame() {
   };
 }
 
-function Board() {
+const Board = (0,_shared_sizerator__WEBPACK_IMPORTED_MODULE_16__.sizerated)(7, 5, function Board() {
   const {
     game,
+    isAnimating,
     newGame,
     onDrop,
     flipDiscard,
@@ -979,60 +1000,59 @@ function Board() {
     undo,
     redo
   } = useGame();
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsxs)(_shared_sizerator__WEBPACK_IMPORTED_MODULE_16__.Sizerator, {
-    cardsAcross: 7,
-    cardsTall: 5,
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsxs)("div", {
-      className: _board_css__WEBPACK_IMPORTED_MODULE_18__["default"].board,
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_13__.EmptyZone, {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__.Fragment, {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__.jsxs)("div", {
+      className: _board_css__WEBPACK_IMPORTED_MODULE_20__["default"].board,
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_13__.EmptyZone, {
         slot: {
           x: 0,
           y: 0
         },
         context: game.drawPile,
         onTap: flipDiscard,
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)((_images_undo__WEBPACK_IMPORTED_MODULE_1___default()), {})
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_13__.EmptyZone, {
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__.jsx)((_images_undo__WEBPACK_IMPORTED_MODULE_1___default()), {})
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_13__.EmptyZone, {
         slot: {
           x: 3,
           y: 0
         },
         context: game.foundations[_logic_deck__WEBPACK_IMPORTED_MODULE_6__.suits.spades],
         onTap: targetTap,
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)((_images_spade__WEBPACK_IMPORTED_MODULE_2___default()), {})
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_13__.EmptyZone, {
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__.jsx)((_images_spade__WEBPACK_IMPORTED_MODULE_2___default()), {})
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_13__.EmptyZone, {
         slot: {
           x: 4,
           y: 0
         },
         context: game.foundations[_logic_deck__WEBPACK_IMPORTED_MODULE_6__.suits.diamonds],
         onTap: targetTap,
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)((_images_diamond__WEBPACK_IMPORTED_MODULE_3___default()), {})
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_13__.EmptyZone, {
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__.jsx)((_images_diamond__WEBPACK_IMPORTED_MODULE_3___default()), {})
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_13__.EmptyZone, {
         slot: {
           x: 5,
           y: 0
         },
         context: game.foundations[_logic_deck__WEBPACK_IMPORTED_MODULE_6__.suits.clubs],
         onTap: targetTap,
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)((_images_club__WEBPACK_IMPORTED_MODULE_4___default()), {})
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_13__.EmptyZone, {
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__.jsx)((_images_club__WEBPACK_IMPORTED_MODULE_4___default()), {})
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_13__.EmptyZone, {
         slot: {
           x: 6,
           y: 0
         },
         context: game.foundations[_logic_deck__WEBPACK_IMPORTED_MODULE_6__.suits.hearts],
         onTap: targetTap,
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)((_images_heart__WEBPACK_IMPORTED_MODULE_5___default()), {})
-      }), game.tableau.map((stack, i) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_13__.EmptyZone, {
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__.jsx)((_images_heart__WEBPACK_IMPORTED_MODULE_5___default()), {})
+      }), game.tableau.map((stack, i) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_13__.EmptyZone, {
         slot: {
           x: i,
           y: 1
         },
         context: stack,
         onTap: targetTap
-      }, i)), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsxs)(_shared_card_renderer__WEBPACK_IMPORTED_MODULE_12__.CardRenderer, {
+      }, i)), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__.jsxs)(_shared_card_renderer__WEBPACK_IMPORTED_MODULE_12__.CardRenderer, {
         onDrop: onDrop,
+        isAnimating: isAnimating,
         children: [(0,_shared_card_renderer__WEBPACK_IMPORTED_MODULE_12__.renderPile)({
           x: 0,
           y: 0
@@ -1074,14 +1094,14 @@ function Board() {
           getDragCards: playableGetCards
         }))]
       })]
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)(_shared_control_bar__WEBPACK_IMPORTED_MODULE_15__.ControlBar, {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__.jsx)(_shared_control_bar__WEBPACK_IMPORTED_MODULE_15__.ControlBar, {
       newGame: newGame.openModal,
       undo: undo,
       redo: redo
-    }), newGame.showModal && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)(_newgame_modal__WEBPACK_IMPORTED_MODULE_17__.NewgameModal, { ...newGame
+    }), newGame.showModal && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_21__.jsx)(_newgame_modal__WEBPACK_IMPORTED_MODULE_19__.NewgameModal, { ...newGame
     })]
   });
-}
+});
 
 /***/ }),
 
@@ -1273,9 +1293,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _shared_get_context__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../shared/get-context */ "./src/ui/shared/get-context.js");
 /* harmony import */ var _shared_control_bar__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../shared/control-bar */ "./src/ui/shared/control-bar.jsx");
 /* harmony import */ var _shared_sizerator__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../shared/sizerator */ "./src/ui/shared/sizerator.jsx");
-/* harmony import */ var _newgame_modal__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./newgame-modal */ "./src/ui/pyramid/newgame-modal.jsx");
-/* harmony import */ var _board_css__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./board.css */ "./src/ui/pyramid/board.css");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var _animations_animator__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../animations/animator */ "./src/ui/animations/animator.js");
+/* harmony import */ var _animations_card_ring__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../animations/card-ring */ "./src/ui/animations/card-ring.js");
+/* harmony import */ var _newgame_modal__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./newgame-modal */ "./src/ui/pyramid/newgame-modal.jsx");
+/* harmony import */ var _board_css__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./board.css */ "./src/ui/pyramid/board.css");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+
+
+
 
 
 
@@ -1294,6 +1319,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 function useGame() {
+  const [isAnimating, setAnimation] = (0,_animations_animator__WEBPACK_IMPORTED_MODULE_12__.useAnimator)();
   const game = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => new _logic_pyramid_game__WEBPACK_IMPORTED_MODULE_2__.Game(), []);
   const undoStack = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => new _logic_undo_stack__WEBPACK_IMPORTED_MODULE_3__.UndoStack());
   const enqueueAction = (0,_util_use_action_queue__WEBPACK_IMPORTED_MODULE_6__.useActionQueue)();
@@ -1303,7 +1329,8 @@ function useGame() {
     game: game.serialize(),
     undoStack: undoStack.serialize()
   }), []);
-  const newGame = (0,_newgame_modal__WEBPACK_IMPORTED_MODULE_12__.useNewGame)("klondike", settings => {
+  const newGame = (0,_newgame_modal__WEBPACK_IMPORTED_MODULE_14__.useNewGame)("klondike", settings => {
+    setAnimation(null);
     _logic_pyramid_game__WEBPACK_IMPORTED_MODULE_2__.Game.fromScratch(game, settings);
     undoStack.reset();
     enqueueAction.reset();
@@ -1329,6 +1356,9 @@ function useGame() {
       rerender();
       yield 100;
     }
+
+    setAnimation(new _animations_card_ring__WEBPACK_IMPORTED_MODULE_13__.CardRingAnimation(game.completed));
+    rerender();
   });
   const tryFinish = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(() => {
     if (game.hasWon()) {
@@ -1450,6 +1480,7 @@ function useGame() {
   });
   return {
     game,
+    isAnimating,
     newGame,
     onDrop,
     flipDiscard,
@@ -1488,9 +1519,10 @@ const renderPyramid = (cards, handlers) => () => {
 
   return results;
 };
-function Board() {
+const Board = (0,_shared_sizerator__WEBPACK_IMPORTED_MODULE_11__.sizerated)(7, 5, function Board() {
   const {
     game,
+    isAnimating,
     newGame,
     onDrop,
     flipDiscard,
@@ -1501,29 +1533,28 @@ function Board() {
     undo,
     redo
   } = useGame();
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsxs)(_shared_sizerator__WEBPACK_IMPORTED_MODULE_11__.Sizerator, {
-    cardsAcross: 7,
-    cardsTall: 5,
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsxs)("div", {
-      className: _board_css__WEBPACK_IMPORTED_MODULE_13__["default"].board,
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_8__.EmptyZone, {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.Fragment, {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsxs)("div", {
+      className: _board_css__WEBPACK_IMPORTED_MODULE_15__["default"].board,
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_8__.EmptyZone, {
         slot: {
           x: 2,
           y: 4
         },
         onClick: flipDiscard,
         children: game.remainingFlips
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_8__.EmptyZone, {
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_8__.EmptyZone, {
         slot: {
           x: 4,
           y: 4
         }
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)("button", {
-        className: _board_css__WEBPACK_IMPORTED_MODULE_13__["default"].drawButton,
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("button", {
+        className: _board_css__WEBPACK_IMPORTED_MODULE_15__["default"].drawButton,
         onClick: drawPileDraw,
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)((_images_draw_svg__WEBPACK_IMPORTED_MODULE_1___default()), {})
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsxs)(_shared_card_renderer__WEBPACK_IMPORTED_MODULE_7__.CardRenderer, {
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)((_images_draw_svg__WEBPACK_IMPORTED_MODULE_1___default()), {})
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsxs)(_shared_card_renderer__WEBPACK_IMPORTED_MODULE_7__.CardRenderer, {
         onDrop: onDrop,
+        isAnimating: isAnimating,
         children: [renderPyramid(game.tree, {
           onTap: playableTap,
           onDoubleTap: playableDoubleTap,
@@ -1547,14 +1578,14 @@ function Board() {
           y: 4
         }, game.completed)]
       })]
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(_shared_control_bar__WEBPACK_IMPORTED_MODULE_10__.ControlBar, {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_shared_control_bar__WEBPACK_IMPORTED_MODULE_10__.ControlBar, {
       newGame: newGame.openModal,
       undo: undo,
       redo: redo
-    }), newGame.showModal && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(_newgame_modal__WEBPACK_IMPORTED_MODULE_12__.NewgameModal, { ...newGame
+    }), newGame.showModal && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_newgame_modal__WEBPACK_IMPORTED_MODULE_14__.NewgameModal, { ...newGame
     })]
   });
-}
+});
 
 /***/ }),
 
@@ -1866,7 +1897,8 @@ __webpack_require__.r(__webpack_exports__);
 
 function CardRenderer({
   onDrop,
-  children
+  children,
+  isAnimating
 }) {
   const sizes = (0,_sizerator_jsx__WEBPACK_IMPORTED_MODULE_2__.useSizes)();
   const {
@@ -1878,23 +1910,28 @@ function CardRenderer({
   const defs = functions.flatMap(f => f(sizes)).sort((a, b) => a.card.id - b.card.id);
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_pointer_manager_jsx__WEBPACK_IMPORTED_MODULE_1__.PointerManager, {
     onDrop: onDrop,
-    children: defs.map(({
-      card,
-      slot,
-      offsetX,
-      offsetY,
-      offsetZ,
-      handlers
-    }) => /*#__PURE__*/(0,react__WEBPACK_IMPORTED_MODULE_3__.createElement)(_card_jsx__WEBPACK_IMPORTED_MODULE_0__.Card, {
-      card: card,
-      pos: {
-        x: margins + slot.x * cardOffsetX + (offsetX ?? 0),
-        y: margins + slot.y * cardOffsetY + (offsetY ?? 0),
-        z: offsetZ
-      },
-      ...handlers,
-      key: card.id
-    }))
+    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+      style: isAnimating ? {
+        transformStyle: "preserve-3d"
+      } : null,
+      children: defs.map(({
+        card,
+        slot,
+        offsetX,
+        offsetY,
+        offsetZ,
+        handlers
+      }) => /*#__PURE__*/(0,react__WEBPACK_IMPORTED_MODULE_3__.createElement)(_card_jsx__WEBPACK_IMPORTED_MODULE_0__.Card, {
+        card: card,
+        pos: {
+          x: margins + slot.x * cardOffsetX + (offsetX ?? 0),
+          y: margins + slot.y * cardOffsetY + (offsetY ?? 0),
+          z: offsetZ
+        },
+        ...handlers,
+        key: card.id
+      }))
+    })
   });
 } // common board layout components
 
@@ -2550,65 +2587,69 @@ function usePointers(card, onTap, onDoubleTap, getDragCards) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Sizerator": () => (/* binding */ Sizerator),
+/* harmony export */   "sizerated": () => (/* binding */ sizerated),
 /* harmony export */   "useSizes": () => (/* binding */ useSizes)
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var _util_use_rerender__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../util/use-rerender */ "./src/util/use-rerender.js");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
-
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 
 
 const SizeContext = /*#__PURE__*/(0,react__WEBPACK_IMPORTED_MODULE_0__.createContext)({});
 const cardRatio = 1.5;
-function Sizerator({
-  cardsAcross,
-  cardsTall,
-  children
-}) {
-  const rerender = (0,_util_use_rerender__WEBPACK_IMPORTED_MODULE_1__.useRerender)();
-  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
-    window.onresize = rerender;
-  }, []);
-  const {
-    clientWidth: width,
-    clientHeight: height
-  } = document.documentElement;
-  const margins = width < 600 ? 5 : 10;
-  const barHeight = Math.floor(height * .075);
-  const totalXMargin = (cardsAcross + 1) * margins;
-  const totalYMargin = (cardsTall + 1) * margins;
-  const maxCardWidth = (width - totalXMargin) / cardsAcross;
-  const maxCardHeight = (height - totalYMargin - barHeight) / cardsTall;
-  const dims = maxCardWidth * cardRatio < maxCardHeight ? [maxCardWidth, maxCardWidth * cardRatio] : [maxCardHeight / cardRatio, maxCardHeight];
-  const [cardWidth, cardHeight] = dims.map(d => Math.floor(d));
-  const cardOffsetX = cardWidth + margins;
-  const cardOffsetY = cardHeight + margins;
-  const boardWidth = margins + cardOffsetX * cardsAcross;
-  const boardHeight = margins + cardOffsetY * cardsTall;
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(SizeContext.Provider, {
-    value: {
-      margins,
-      cardWidth,
-      cardHeight,
-      cardOffsetX,
-      cardOffsetY,
-      boardWidth,
-      boardHeight
-    },
-    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
-      style: {
-        width: "100%",
-        height: "100%",
-        "--margin": `${margins}px`,
-        "--card-width": `${cardWidth}px`,
-        "--card-height": `${cardHeight}px`,
-        "--board-width": `${boardWidth}px`,
-        "--bar-height": `${barHeight}px`
-      },
-      children: children
-    })
-  });
+function sizerated(cardsAcross, cardsTall, Component) {
+  return function Sizerator(props) {
+    const computeSizes = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(() => {
+      const {
+        clientWidth: width,
+        clientHeight: height
+      } = document.documentElement;
+      const margins = width < 600 ? 5 : 10;
+      const barHeight = Math.floor(height * .075);
+      const totalXMargin = (cardsAcross + 1) * margins;
+      const totalYMargin = (cardsTall + 1) * margins;
+      const maxCardWidth = (width - totalXMargin) / cardsAcross;
+      const maxCardHeight = (height - totalYMargin - barHeight) / cardsTall;
+      const dims = maxCardWidth * cardRatio < maxCardHeight ? [maxCardWidth, maxCardWidth * cardRatio] : [maxCardHeight / cardRatio, maxCardHeight];
+      const [cardWidth, cardHeight] = dims.map(d => Math.floor(d));
+      const cardOffsetX = cardWidth + margins;
+      const cardOffsetY = cardHeight + margins;
+      const boardWidth = margins + cardOffsetX * cardsAcross;
+      const boardHeight = margins + cardOffsetY * cardsTall;
+      return {
+        margins,
+        cardWidth,
+        cardHeight,
+        cardOffsetX,
+        cardOffsetY,
+        boardWidth,
+        boardHeight,
+        barHeight
+      };
+    }, [cardsAcross, cardsTall]);
+    const [sizes, setSizes] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(computeSizes);
+    (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+      const resize = () => setSizes(computeSizes());
+
+      window.addEventListener("resize", resize);
+      return () => window.removeEventListener("resize", resize);
+    }, []);
+    return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(SizeContext.Provider, {
+      value: sizes,
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
+        style: {
+          width: "100%",
+          height: "100%",
+          "--margin": `${sizes.margins}px`,
+          "--card-width": `${sizes.cardWidth}px`,
+          "--card-height": `${sizes.cardHeight}px`,
+          "--board-width": `${sizes.boardWidth}px`,
+          "--bar-height": `${sizes.barHeight}px`
+        },
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(Component, { ...props
+        })
+      })
+    });
+  };
 }
 function useSizes() {
   return (0,react__WEBPACK_IMPORTED_MODULE_0__.useContext)(SizeContext);
@@ -2639,9 +2680,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _shared_get_context__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../shared/get-context */ "./src/ui/shared/get-context.js");
 /* harmony import */ var _shared_control_bar__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../shared/control-bar */ "./src/ui/shared/control-bar.jsx");
 /* harmony import */ var _shared_sizerator__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../shared/sizerator */ "./src/ui/shared/sizerator.jsx");
-/* harmony import */ var _newgame_modal__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./newgame-modal */ "./src/ui/spider/newgame-modal.jsx");
-/* harmony import */ var _board_css__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./board.css */ "./src/ui/spider/board.css");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var _animations_animator__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../animations/animator */ "./src/ui/animations/animator.js");
+/* harmony import */ var _animations_card_ring__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../animations/card-ring */ "./src/ui/animations/card-ring.js");
+/* harmony import */ var _newgame_modal__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./newgame-modal */ "./src/ui/spider/newgame-modal.jsx");
+/* harmony import */ var _board_css__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./board.css */ "./src/ui/spider/board.css");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+
+
+
 
 
 
@@ -2660,6 +2706,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 function useGame() {
+  const [isAnimating, setAnimation] = (0,_animations_animator__WEBPACK_IMPORTED_MODULE_12__.useAnimator)();
   const game = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => new _logic_spider_game__WEBPACK_IMPORTED_MODULE_2__.Game(), []);
   const undoStack = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => new _logic_undo_stack__WEBPACK_IMPORTED_MODULE_3__.UndoStack());
   const enqueueAction = (0,_util_use_action_queue__WEBPACK_IMPORTED_MODULE_6__.useActionQueue)();
@@ -2669,7 +2716,8 @@ function useGame() {
     game: game.serialize(),
     undoStack: undoStack.serialize()
   }), []);
-  const newGame = (0,_newgame_modal__WEBPACK_IMPORTED_MODULE_12__.useNewGame)("spider", settings => {
+  const newGame = (0,_newgame_modal__WEBPACK_IMPORTED_MODULE_14__.useNewGame)("spider", settings => {
+    setAnimation(null);
     _logic_spider_game__WEBPACK_IMPORTED_MODULE_2__.Game.fromScratch(game, settings.suitCount);
     undoStack.reset();
     enqueueAction.reset();
@@ -2694,6 +2742,8 @@ function useGame() {
       undoStack.reset();
       enqueueAction.reset();
       (0,_logic_game_db__WEBPACK_IMPORTED_MODULE_4__.remove)(_logic_game_db__WEBPACK_IMPORTED_MODULE_4__.saveGameTable, "spider");
+      setAnimation(new _animations_card_ring__WEBPACK_IMPORTED_MODULE_13__.CardRingAnimation(...game.foundation));
+      rerender();
       return true;
     }
 
@@ -2834,6 +2884,7 @@ function useGame() {
   });
   return {
     game,
+    isAnimating,
     newGame,
     onDrop,
     drawPileTap,
@@ -2846,9 +2897,10 @@ function useGame() {
   };
 }
 
-function Board() {
+const Board = (0,_shared_sizerator__WEBPACK_IMPORTED_MODULE_11__.sizerated)(10, 5, function Board() {
   const {
     game,
+    isAnimating,
     newGame,
     onDrop,
     drawPileTap,
@@ -2859,20 +2911,19 @@ function Board() {
     undo,
     redo
   } = useGame();
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsxs)(_shared_sizerator__WEBPACK_IMPORTED_MODULE_11__.Sizerator, {
-    cardsAcross: 10,
-    cardsTall: 5,
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsxs)("div", {
-      className: _board_css__WEBPACK_IMPORTED_MODULE_13__["default"].board,
-      children: [game.tableau.map((stack, i) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_8__.EmptyZone, {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.Fragment, {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsxs)("div", {
+      className: _board_css__WEBPACK_IMPORTED_MODULE_15__["default"].board,
+      children: [game.tableau.map((stack, i) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_8__.EmptyZone, {
         slot: {
           x: i,
           y: 0
         },
         context: stack,
         onTap: targetTap
-      }, i)), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsxs)(_shared_card_renderer__WEBPACK_IMPORTED_MODULE_7__.CardRenderer, {
+      }, i)), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsxs)(_shared_card_renderer__WEBPACK_IMPORTED_MODULE_7__.CardRenderer, {
         onDrop: onDrop,
+        isAnimating: isAnimating,
         children: [(0,_shared_card_renderer__WEBPACK_IMPORTED_MODULE_7__.renderPile)({
           x: 9,
           y: 4
@@ -2891,14 +2942,14 @@ function Board() {
           z: -1000 + i * 100
         }, deck, {}))]
       })]
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(_shared_control_bar__WEBPACK_IMPORTED_MODULE_10__.ControlBar, {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_shared_control_bar__WEBPACK_IMPORTED_MODULE_10__.ControlBar, {
       newGame: newGame.openModal,
       undo: undo,
       redo: redo
-    }), newGame.showModal && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(_newgame_modal__WEBPACK_IMPORTED_MODULE_12__.NewgameModal, { ...newGame
+    }), newGame.showModal && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_newgame_modal__WEBPACK_IMPORTED_MODULE_14__.NewgameModal, { ...newGame
     })]
   });
-}
+});
 
 /***/ }),
 
@@ -35792,6 +35843,322 @@ class UndoStack {
 
 		return undoStack;
 	});
+}
+
+
+/***/ }),
+
+/***/ "./src/ui/animations/animation-step.js":
+/*!*********************************************!*\
+  !*** ./src/ui/animations/animation-step.js ***!
+  \*********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "AnimationStep": () => (/* binding */ AnimationStep),
+/* harmony export */   "Sequence": () => (/* binding */ Sequence),
+/* harmony export */   "Parallel": () => (/* binding */ Parallel),
+/* harmony export */   "Loop": () => (/* binding */ Loop),
+/* harmony export */   "Delayed": () => (/* binding */ Delayed),
+/* harmony export */   "Eased": () => (/* binding */ Eased)
+/* harmony export */ });
+class AnimationStep {
+	advance(delta) {
+		this.progress += delta;
+		this.step(delta);
+	}
+	step() {}
+	progress = 0;
+}
+
+class Action extends AnimationStep {
+	constructor(func) {
+		super();
+		this.func = func;
+	}
+	step(delta) {
+		this.done = this.func(this.progress, delta) ?? false;
+	}
+}
+
+function wrapStep(step) {
+	if (step instanceof AnimationStep) {
+		return step;
+	}
+
+	return new Action(step);
+}
+
+class Sequence extends AnimationStep {
+	constructor(steps) {
+		super();
+		this.steps = steps.map(wrapStep);
+		this.stepIndex = 0;
+	}
+	step(delta) {
+		this.steps[this.stepIndex].advance(delta);
+		if (this.steps[this.stepIndex].done) {
+			this.stepIndex++;
+		}
+	}
+	get done() {
+		return this.stepIndex === this.steps.length;
+	}
+}
+
+class Parallel extends AnimationStep {
+	constructor(steps, race = false) {
+		super();
+		this.steps = steps.map(wrapStep);
+		this.race = race;
+	}
+	step(delta) {
+		for (const step of this.steps.filter((s) => !s.done)) {
+			step.advance(delta);
+		}
+	}
+	get done() {
+		if (this.race) {
+			return this.steps.some((s) => s.done);
+		}
+
+		return this.steps.every((s) => s.done);
+	}
+	static asRace(steps) {
+		return new Parallel(steps, true);
+	}
+}
+
+class Loop extends AnimationStep {
+	constructor(createStep, until = () => false) {
+		super();
+		this.create = () => wrapStep(createStep());
+		this.curStep = this.create();
+		this.until = until;
+	}
+	step(delta) {
+		this.curStep.advance(delta);
+		if (this.curStep.done) {
+			if (this.until()) {
+				this.curStep = null;
+			} else {
+				this.curStep = this.create();
+			}
+		}
+	}
+	get done() {
+		return this.curStep == null;
+	}
+}
+
+class Delayed extends AnimationStep {
+	constructor(step, delay) {
+		super();
+		this.substep = wrapStep(step);
+		this.delay = delay;
+	}
+	step(delta) {
+		if (this.progress >= this.delay) {
+			this.substep.advance(delta);
+		}
+	}
+	get done() {
+		return this.substep.done;
+	}
+}
+
+class Eased extends AnimationStep {
+	constructor(step, duration) {
+		super();
+		this.duration = duration;
+		this.substep = wrapStep(step);
+	}
+	advance(delta) {
+		if (this.progress > this.duration) {
+			throw "WTF";
+		}
+
+
+		const prevProgress = this.progress;
+		this.progress += delta;
+
+		const prevFraction = Math.min(prevProgress / this.duration);
+		const fraction = Math.min(this.progress / this.duration, 1);
+
+		const prevEased = Eased.easeInOut(prevFraction);
+		const eased = Eased.easeInOut(fraction);
+
+		this.substep.advance(eased - prevEased);
+	}
+	get done() {
+		return this.progress >= this.duration;
+	}
+	static easeInOut = (t) => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+}
+
+
+/***/ }),
+
+/***/ "./src/ui/animations/animator.js":
+/*!***************************************!*\
+  !*** ./src/ui/animations/animator.js ***!
+  \***************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "useAnimator": () => (/* binding */ useAnimator)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var _shared_sizerator__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../shared/sizerator */ "./src/ui/shared/sizerator.jsx");
+
+
+
+function useAnimator() {
+	const animData = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => ({}), []);
+	const sizes = (0,_shared_sizerator__WEBPACK_IMPORTED_MODULE_1__.useSizes)();
+	animData.animate = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)((time) => {
+		const delta = time - (animData.prevTime ?? time);
+		animData.prevTime = time;
+		animData.animation.advance(delta / 1000, sizes);
+		animData.frame = requestAnimationFrame(animData.animate);
+	}, [sizes]);
+
+	const setAnimation = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)((animation) => {
+		cancelAnimationFrame(animData.frame);
+		animData.animation = animation;
+		animData.prevTime = null;
+		if (animation != null) {
+			animData.frame = requestAnimationFrame(animData.animate);
+		}
+	}, []);
+
+	return [animData.animation != null, setAnimation];
+}
+
+
+/***/ }),
+
+/***/ "./src/ui/animations/card-ring.js":
+/*!****************************************!*\
+  !*** ./src/ui/animations/card-ring.js ***!
+  \****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "CardRingAnimation": () => (/* binding */ CardRingAnimation)
+/* harmony export */ });
+/* harmony import */ var _animation_step__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./animation-step */ "./src/ui/animations/animation-step.js");
+
+
+function getTransform(z, degrees, radius) {
+	const out = `translateY(-${radius * 150}%)`;
+	const rotate = `rotate(${degrees}deg)`;
+	return `translate(-50%, -50%) translateZ(${z}px) ${rotate} ${out} rotateY(2deg)`;
+}
+
+const gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
+function getCoprimeAround(value, desired) {
+	if (gcd(value, desired) === 1) {
+		return desired;
+	}
+
+	for (let i = 0; i < 100; i++) {
+		if (gcd(value, desired - i) === 1) {
+			return desired - i;
+		}
+		if (gcd(value, desired + i) === 1) {
+			return desired + i;
+		}
+	}
+
+	throw new Error("This should *definitely* not happen");
+}
+
+class CardRingAnimation {
+	constructor(...decks) {
+		this.cards = decks.flatMap((d) => [...d]);
+		this.totalCards = this.cards.length;
+		this.coprime = getCoprimeAround(this.totalCards, this.totalCards / 4);
+
+		for (const card of this.cards) {
+			const box = card.meta.elem.getBoundingClientRect();
+			card.meta.anim = {
+				left: Number.parseInt(card.meta.elem.style.left, 10) + box.width / 2,
+				top: Number.parseInt(card.meta.elem.style.top, 10) + box.height / 2,
+				easeProgress: 0,
+			};
+		}
+
+		const rps = .5;
+		this.baseAngle = 0;
+		this.spinAnimation = new _animation_step__WEBPACK_IMPORTED_MODULE_0__.Loop(() => (progress) => {
+			this.baseRotation = (progress * rps) % 1;
+		});
+
+		this.radius = 1.1;
+		this.sequence = new _animation_step__WEBPACK_IMPORTED_MODULE_0__.Sequence([
+			new _animation_step__WEBPACK_IMPORTED_MODULE_0__.Parallel([
+				// pulse
+				new _animation_step__WEBPACK_IMPORTED_MODULE_0__.Loop(() => new _animation_step__WEBPACK_IMPORTED_MODULE_0__.Sequence([
+					new _animation_step__WEBPACK_IMPORTED_MODULE_0__.Eased((progress) => {
+						const offset = (progress - .5) * .2;
+						this.radius = 1 - offset;
+					}, 1),
+					new _animation_step__WEBPACK_IMPORTED_MODULE_0__.Eased((progress) => {
+						const offset = (progress - .5) * .2;
+						this.radius = 1 + offset;
+					}, 1),
+				]), () => this.cards.every((card) => card.meta.anim.easeProgress === 1)),
+				// move cards into ring
+				...this.cards.map((card, i) => new _animation_step__WEBPACK_IMPORTED_MODULE_0__.Delayed(new _animation_step__WEBPACK_IMPORTED_MODULE_0__.Eased((progress) => {
+					card.meta.anim.easeProgress = progress;
+				}, .25), i * .1)),
+			]),
+			// shrink
+			new _animation_step__WEBPACK_IMPORTED_MODULE_0__.Eased((progress) => {
+				this.radius = 1.1 - progress * .6;
+			}, 1),
+			// fly out
+			() => {
+				this.radius += this.radius * .05;
+			},
+		]);
+	}
+	advance(delta, sizes) {
+		this.spinAnimation.advance(delta);
+		this.sequence.advance(delta);
+
+		const left = sizes.boardWidth / 2;
+		const top = sizes.boardHeight / 2;
+		for (let i = 0; i < this.cards.filter((c) => c.meta.anim.easeProgress > 0).length; i++) {
+			const card = this.cards[i];
+			const style = card.meta.elem.style;
+
+			const cardOffset = ((i * this.coprime) % this.totalCards) / this.totalCards;
+			const degrees = (this.baseRotation + cardOffset) * 360;
+
+			style.transition = "unset";
+			if (card.meta.anim.easeProgress !== 1) {
+				const diffLeft = left - card.meta.anim.left;
+				const diffTop = top - card.meta.anim.top;
+
+				const fraction = card.meta.anim.easeProgress;
+				style.left = `${card.meta.anim.left + diffLeft * fraction}px`;
+				style.top = `${card.meta.anim.top + diffTop * fraction}px`;
+				style.transform = getTransform(2000, degrees * fraction, this.radius * fraction * fraction);
+			} else {
+				style.left = `${left}px`;
+				style.top = `${top}px`;
+				style.transform = getTransform(1000, degrees, this.radius);
+			}
+		}
+	}
 }
 
 

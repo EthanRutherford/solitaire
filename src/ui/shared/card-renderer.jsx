@@ -8,7 +8,7 @@ import {useSizes} from "./sizerator.jsx";
 // so, to keep things moderately react-y, we have to fiddle around with how
 // we render the various parts of the board, using "subcomponents", aka functions
 // which return arrays of elements, which we concat together and render.
-export function CardRenderer({onDrop, children}) {
+export function CardRenderer({onDrop, children, isAnimating}) {
 	const sizes = useSizes();
 	const {margins, cardOffsetX, cardOffsetY} = sizes;
 	const functions = children.flat(2);
@@ -16,18 +16,20 @@ export function CardRenderer({onDrop, children}) {
 
 	return (
 		<PointerManager onDrop={onDrop}>
-			{defs.map(({card, slot, offsetX, offsetY, offsetZ, handlers}) => (
-				<Card
-					card={card}
-					pos={{
-						x: margins + slot.x * cardOffsetX + (offsetX ?? 0),
-						y: margins + slot.y * cardOffsetY + (offsetY ?? 0),
-						z: offsetZ,
-					}}
-					{...handlers}
-					key={card.id}
-				/>
-			))}
+			<div style={isAnimating ? {transformStyle: "preserve-3d"} : null}>
+				{defs.map(({card, slot, offsetX, offsetY, offsetZ, handlers}) => (
+					<Card
+						card={card}
+						pos={{
+							x: margins + slot.x * cardOffsetX + (offsetX ?? 0),
+							y: margins + slot.y * cardOffsetY + (offsetY ?? 0),
+							z: offsetZ,
+						}}
+						{...handlers}
+						key={card.id}
+					/>
+				))}
+			</div>
 		</PointerManager>
 	);
 }
