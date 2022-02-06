@@ -106,7 +106,7 @@ export function reverseGame(game, drawCount) {
 	while (notFullTableauDecks.length > 0) {
 		const notFullIndex = Math.floor(Math.random() * notFullTableauDecks.length);
 		const tableauIndex = notFullTableauDecks[notFullIndex];
-		game.tableau[tableauIndex].push(this.drawPile.pop());
+		game.tableau[tableauIndex].push(game.drawPile.pop());
 		if (game.tableau[tableauIndex].length === tableauIndex + 1) {
 			notFullTableauDecks.splice(notFullIndex, 1);
 		}
