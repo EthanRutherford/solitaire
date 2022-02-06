@@ -172,7 +172,7 @@ export function reverseGame(game) {
 
 	// pair-off all cards in a shuffled deck
 	const deck = Deck.full().shuffle();
-	const pairs = [];
+	const pairs = new Deck();
 	while (deck.length > 0) {
 		const cardA = deck.pop();
 		cardA.faceUp = true;
@@ -186,6 +186,8 @@ export function reverseGame(game) {
 		cardB.faceUp = true;
 		pairs.push([cardA, cardB]);
 	}
+
+	pairs.shuffle();
 
 	// add cards from the list of pairs
 	let added = 0;
