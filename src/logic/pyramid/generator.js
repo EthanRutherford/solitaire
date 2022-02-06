@@ -46,7 +46,7 @@ function microsolve(cards, value, remainingValue, remainingOther) {
 
 	// there may be a faster (non-exhaustive) way to check for solvability,
 	// but this is *probably* fast enough
-	const leaves = cards.filter((x) => x.blockedBy.length === 0);
+	const leaves = cards.filter((x) => x.blockedBy.size === 0);
 	for (let i = 0; i < leaves.length; i++) {
 		for (let j = i + 1; j < leaves.length; j++) {
 			if (leaves[i].value !== leaves[j].value) {
@@ -128,6 +128,7 @@ function canPlace(game, index, value) {
 }
 
 // shuffles a deck, but only places cards on the pyramid which do not cause an impossible game
+// NOTE: in hindsight, this method did not prevent *every* kind of impossible game
 export function validatedShuffle(game) {
 	// clear and initialize the game
 	game.drawPile.splice(0, game.drawPile.length, ...Deck.full().shuffle());
@@ -142,12 +143,85 @@ export function validatedShuffle(game) {
 	// put cards onto the pyramid, so long as they don't block completion
 	while (game.tree.length < 28) {
 		const card = game.drawPile.pop();
-		if (canPlace(game, game.tree.length, card)) {
+		if (canPlace(game, game.tree.length, card.value)) {
 			game.tree.push(card);
 		} else {
 			game.drawPile.unshift(card);
 		}
 	}
 
+	return game.setContexts();
+}
+
+export function reverseGame(game) {
+	// clear and initialize the game
+	game.drawPile.splice(0, game.drawPile.length);
+	game.discardPile.splice(0, game.discardPile.length);
+	game.completed.splice(0, game.completed.length);
+	game.tree.splice(0, game.tree.length);
+	game.remainingFlips = 2;
+
+	const parentMap = {0: []};
+	for (let i = 0; i < 21; i++) {
+		const children = getChildIndices(i);
+		for (const child of children) {
+			parentMap[child] ??= [];
+			parentMap[child].push(i);
+		}
+	}
+
+	// pair-off all cards in a shuffled deck
+	const deck = Deck.full().shuffle();
+	const pairs = [];
+	while (deck.length > 0) {
+		const cardA = deck.pop();
+		cardA.faceUp = true;
+		if (cardA.value === 13) {
+			pairs.push([cardA]);
+			continue;
+		}
+
+		const index = deck.findIndex((c) => c.value + cardA.value === 13);
+		const cardB = deck.splice(index, 1)[0];
+		cardB.faceUp = true;
+		pairs.push([cardA, cardB]);
+	}
+
+	// add cards from the list of pairs
+	let added = 0;
+	function add(leaf, card) {game.tree[leaf] = card; added++;}
+	while (added < 28) {
+		const pair = pairs.pop();
+
+		// gather available spots to put new card...
+		const available = [];
+		for (let i = 0; i < 28; i++) {
+			const parents = parentMap[i];
+			if (game.tree[i] == null && parents.every((p) => game.tree[p] != null)) {
+				available.push(i);
+			}
+		}
+
+		const leafA = available.splice(Math.random() * available.length, 1)[0];
+		add(leafA, pair[0] ?? 0);
+
+		if (pair.length === 1) {
+			continue;
+		}
+
+		if (available.length === 0 || Math.random() < .5) {
+			game.drawPile.push(pair[1]);
+			continue;
+		}
+
+		const leafB = available.splice(Math.random() * available.length, 1)[0];
+		add(leafB, pair[1]);
+	}
+
+	while (pairs.length > 0) {
+		game.drawPile.push(...pairs.pop());
+	}
+
+	game.drawPile.shuffle();
 	return game.setContexts();
 }

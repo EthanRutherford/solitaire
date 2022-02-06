@@ -1,6 +1,6 @@
 import {Deck} from "../deck";
 import {validatedDelta} from "../undo-stack";
-import {randomShuffle, validatedShuffle} from "./generator";
+import {randomShuffle, reverseGame} from "./generator";
 
 const treeRows = [0, 1, 3, 6, 10, 15, 21];
 export function getChildIndices(index) {
@@ -130,7 +130,7 @@ export class Game {
 		return game.setContexts();
 	});
 	static fromScratch(game, settings) {
-		const generator = [randomShuffle, validatedShuffle][settings.generator];
+		const generator = [randomShuffle, reverseGame][settings.generator];
 		return generator(game);
 	}
 }
