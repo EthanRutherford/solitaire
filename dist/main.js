@@ -35516,8 +35516,8 @@ function reverseGame(game) {
 			}
 		}
 
-		const leafA = available.splice(Math.random() * available.length, 1)[0];
-		add(leafA, pair[0] ?? 0);
+		const leafA = available.splice(Math.random() * available.length, 1)[0] ?? 0;
+		add(leafA, pair[0]);
 
 		if (pair.length === 1) {
 			continue;
