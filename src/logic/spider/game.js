@@ -188,8 +188,8 @@ export class Game {
 
 		return game.setContexts();
 	});
-	static fromScratch(game, suitCount) {
-		game.drawPile.splice(0, game.drawPile.length, ...getDeck(suitCount).shuffle());
+	static fromScratch(game, settings) {
+		game.drawPile.splice(0, game.drawPile.length, ...getDeck(settings.suitCount).shuffle());
 		game.foundation.splice(0, game.foundation.length);
 		game.tableau.splice(0, game.tableau.length);
 		for (let i = 0; i < 4; i++) {

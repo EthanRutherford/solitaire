@@ -1,65 +1,31 @@
-import {useCallback, useEffect, useMemo} from "react";
+import {useCallback} from "react";
 import {Deck} from "../../logic/deck";
 import {Game} from "../../logic/spider/game";
-import {UndoStack} from "../../logic/undo-stack";
-import {get, put, remove, saveGameTable} from "../../logic/game-db";
-import {useRerender} from "../../util/use-rerender";
-import {useActionQueue} from "../../util/use-action-queue";
 import {CardRenderer, renderPile, renderStack} from "../shared/card-renderer";
 import {EmptyZone} from "../shared/empty-zone";
 import {getCard} from "../shared/get-context";
-import {ControlBar} from "../shared/control-bar";
 import {sizerated} from "../shared/sizerator";
-import {useAnimator} from "../animations/animator";
+import {BoardCore, useGameCore} from "../shared/board";
 import {CardRingAnimation} from "../animations/card-ring";
 import {NewgameModal, useNewGame} from "./newgame-modal";
-import styles from "./board.css";
 
 function useGame() {
-	const [isAnimating, setAnimation] = useAnimator();
-	const game = useMemo(() => new Game(), []);
-	const undoStack = useMemo(() => new UndoStack());
-	const enqueueAction = useActionQueue();
-	const rerender = useRerender();
-	const saveGame = useCallback(() => put(saveGameTable, {
-		key: "spider",
-		game: game.serialize(),
-		undoStack: undoStack.serialize(),
-	}), []);
-	const newGame = useNewGame("spider", (settings) => {
-		setAnimation(null);
-		Game.fromScratch(game, settings.suitCount);
-		undoStack.reset();
-		enqueueAction.reset();
-		saveGame();
-		rerender();
-	});
-
-	useEffect(() => {
-		(async () => {
-			const save = await get(saveGameTable, "spider");
-			if (save != null) {
-				Game.deserialize(save.game, game);
-				UndoStack.deserialize(save.undoStack, undoStack);
-				rerender();
-			} else {
-				newGame.openModal();
-			}
-		})();
-	}, []);
-
-	const tryFinish = useCallback(() => {
-		if (game.hasWon()) {
-			undoStack.reset();
-			enqueueAction.reset();
-			remove(saveGameTable, "spider");
-			setAnimation(new CardRingAnimation(...game.foundation));
-			rerender();
-			return true;
-		}
-
-		return false;
-	});
+	const {
+		game,
+		undoStack,
+		enqueueAction,
+		isAnimating,
+		setAnimation,
+		useSetup,
+		rerender,
+		newGame: newGameCore,
+		saveGame,
+		tryFinish,
+		undo,
+		redo,
+	} = useGameCore(Game, "spider");
+	const newGame = useNewGame("spider", newGameCore);
+	useSetup(newGame.openModal);
 
 	const tryCompleteStack = enqueueAction(function*(deck, commit) {
 		if (game.canCompleteStack(deck)) {
@@ -79,6 +45,9 @@ function useGame() {
 
 			if (!tryFinish()) {
 				saveGame();
+			} else {
+				setAnimation(new CardRingAnimation(...game.foundation));
+				rerender();
 			}
 
 			yield 100;
@@ -162,40 +131,6 @@ function useGame() {
 		}
 	});
 
-	const undo = enqueueAction(function*() {
-		const deltas = undoStack.undo();
-		if (deltas == null) {
-			return;
-		}
-
-		undoStack.lock = true;
-		while (deltas.length > 0) {
-			Game.deserialize(deltas.pop(), game);
-			rerender();
-			yield 10;
-		}
-
-		saveGame();
-		undoStack.lock = false;
-	});
-
-	const redo = enqueueAction(function*() {
-		const deltas = undoStack.redo();
-		if (deltas == null) {
-			return;
-		}
-
-		undoStack.lock = true;
-		while (deltas.length > 0) {
-			Game.deserialize(deltas.pop(), game);
-			rerender();
-			yield 10;
-		}
-
-		saveGame();
-		undoStack.lock = false;
-	});
-
 	return {
 		game,
 		isAnimating,
@@ -227,8 +162,8 @@ export const Board = sizerated(10, 5, function Board() {
 	} = useGame();
 
 	return (
-		<>
-			<div className={styles.board}>
+		<BoardCore newGame={newGame.openModal} undo={undo} redo={redo}>
+			<BoardCore.Background>
 				{game.tableau.map((stack, i) => (
 					<EmptyZone
 						slot={{x: i, y: 0}}
@@ -237,24 +172,23 @@ export const Board = sizerated(10, 5, function Board() {
 						key={i}
 					/>
 				))}
-				<CardRenderer onDrop={onDrop} isAnimating={isAnimating}>
-					{renderPile({x: 9, y: 4}, game.drawPile, {
-						onTap: drawPileTap,
-					})}
-					{game.tableau.map((deck, i) => renderStack({x: i, y: 0}, deck, {
-						onTap: playableTap,
-						onDoubleTap: playableDoubleTap,
-						getDragCards: playableGetCards,
-					}))}
-					{game.foundation.map((deck, i) => renderPile({
-						x: i * .1, y: 4, z: -1000 + i * 100,
-					}, deck, {}))}
-				</CardRenderer>
-			</div>
-			<ControlBar newGame={newGame.openModal} undo={undo} redo={redo} />
+			</BoardCore.Background>
+			<CardRenderer onDrop={onDrop} isAnimating={isAnimating}>
+				{renderPile({x: 9, y: 4}, game.drawPile, {
+					onTap: drawPileTap,
+				})}
+				{game.tableau.map((deck, i) => renderStack({x: i, y: 0}, deck, {
+					onTap: playableTap,
+					onDoubleTap: playableDoubleTap,
+					getDragCards: playableGetCards,
+				}))}
+				{game.foundation.map((deck, i) => renderPile({
+					x: i * .1, y: 4, z: -1000 + i * 100,
+				}, deck, {}))}
+			</CardRenderer>
 			{newGame.showModal && (
 				<NewgameModal {...newGame} />
 			)}
-		</>
+		</BoardCore>
 	);
 });

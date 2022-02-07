@@ -1,13 +1,3 @@
-.board {
-	position: relative;
-	margin: auto;
-	width: var(--board-width);
-	height: 100%;
-	user-select: none;
-	touch-action: none;
-	filter: drop-shadow(2px 2px 2px var(--shadow-color));
-}
-
 .draw-button {
 	position: absolute;
 	display: flex;

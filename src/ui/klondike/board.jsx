@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useMemo} from "react";
+import {useCallback} from "react";
 import Undo from "../../../images/undo";
 import Spade from "../../../images/spade";
 import Diamond from "../../../images/diamond";
@@ -6,65 +6,31 @@ import Club from "../../../images/club";
 import Heart from "../../../images/heart";
 import {suits} from "../../logic/deck";
 import {Game} from "../../logic/klondike/game";
-import {UndoStack} from "../../logic/undo-stack";
-import {get, put, remove, saveGameTable} from "../../logic/game-db";
-import {useRerender} from "../../util/use-rerender";
-import {useActionQueue} from "../../util/use-action-queue";
 import {CardRenderer, renderPile, renderStack} from "../shared/card-renderer";
 import {EmptyZone} from "../shared/empty-zone";
 import {getCard} from "../shared/get-context";
-import {ControlBar} from "../shared/control-bar";
 import {sizerated} from "../shared/sizerator";
-import {useAnimator} from "../animations/animator";
+import {BoardCore, useGameCore} from "../shared/board";
 import {CardRingAnimation} from "../animations/card-ring";
 import {NewgameModal, useNewGame} from "./newgame-modal";
-import styles from "./board.css";
 
 function useGame() {
-	const [isAnimating, setAnimation] = useAnimator();
-	const game = useMemo(() => new Game(), []);
-	const undoStack = useMemo(() => new UndoStack());
-	const enqueueAction = useActionQueue();
-	const rerender = useRerender();
-	const saveGame = useCallback(() => put(saveGameTable, {
-		key: "klondike",
-		game: game.serialize(),
-		undoStack: undoStack.serialize(),
-	}), []);
-	const newGame = useNewGame("klondike", (settings) => {
-		setAnimation(null);
-		Game.fromScratch(game, settings);
-		undoStack.reset();
-		enqueueAction.reset();
-		saveGame();
-		rerender();
-	});
-
-	useEffect(() => {
-		(async () => {
-			const save = await get(saveGameTable, "klondike");
-			if (save != null) {
-				Game.deserialize(save.game, game);
-				UndoStack.deserialize(save.undoStack, undoStack);
-				rerender();
-			} else {
-				newGame.openModal();
-			}
-		})();
-	}, []);
-
-	const tryFinish = useCallback(() => {
-		if (game.hasWon()) {
-			undoStack.reset();
-			enqueueAction.reset();
-			remove(saveGameTable, "klondike");
-			setAnimation(new CardRingAnimation(...Object.values(game.foundations)));
-			rerender();
-			return true;
-		}
-
-		return false;
-	});
+	const {
+		game,
+		undoStack,
+		enqueueAction,
+		isAnimating,
+		setAnimation,
+		useSetup,
+		rerender,
+		newGame: newGameCore,
+		saveGame,
+		tryFinish,
+		undo,
+		redo,
+	} = useGameCore(Game, "klondike");
+	const newGame = useNewGame("klondike", newGameCore);
+	useSetup(newGame.openModal);
 
 	const tryAutoComplete = enqueueAction(function*() {
 		while (true) {
@@ -83,6 +49,9 @@ function useGame() {
 			} else {
 				if (!tryFinish()) {
 					saveGame();
+				} else {
+					setAnimation(new CardRingAnimation(...Object.values(game.foundations)));
+					rerender();
 				}
 
 				return;
@@ -182,40 +151,6 @@ function useGame() {
 		targetTap(pointer.card.meta.context);
 	}, []);
 
-	const undo = enqueueAction(function*() {
-		const deltas = undoStack.undo();
-		if (deltas == null) {
-			return;
-		}
-
-		undoStack.lock = true;
-		while (deltas.length > 0) {
-			Game.deserialize(deltas.pop(), game);
-			rerender();
-			yield 10;
-		}
-
-		saveGame();
-		undoStack.lock = false;
-	});
-
-	const redo = enqueueAction(function*() {
-		const deltas = undoStack.redo();
-		if (deltas == null) {
-			return;
-		}
-
-		undoStack.lock = true;
-		while (deltas.length > 0) {
-			Game.deserialize(deltas.pop(), game);
-			rerender();
-			yield 10;
-		}
-
-		saveGame();
-		undoStack.lock = false;
-	});
-
 	return {
 		game,
 		isAnimating,
@@ -251,8 +186,8 @@ export const Board = sizerated(7, 5, function Board() {
 	} = useGame();
 
 	return (
-		<>
-			<div className={styles.board}>
+		<BoardCore newGame={newGame.openModal} undo={undo} redo={redo}>
+			<BoardCore.Background>
 				<EmptyZone slot={{x: 0, y: 0}} context={game.drawPile} onTap={flipDiscard}>
 					<Undo />
 				</EmptyZone>
@@ -292,38 +227,37 @@ export const Board = sizerated(7, 5, function Board() {
 						key={i}
 					/>
 				))}
-				<CardRenderer onDrop={onDrop} isAnimating={isAnimating}>
-					{renderPile({x: 0, y: 0}, game.drawPile, {
-						onTap: drawPileTap,
-					})}
-					{renderPile({x: 1, y: 0}, game.discardPile, {
-						onTap: playableTap,
-						onDoubleTap: playableDoubleTap,
-						getDragCards: playableGetCards,
-					}, game.drawCount)}
-					{renderPile({x: 3, y: 0}, game.foundations[suits.spades], {
-						onTap: foundationTap,
-					})}
-					{renderPile({x: 4, y: 0}, game.foundations[suits.diamonds], {
-						onTap: foundationTap,
-					})}
-					{renderPile({x: 5, y: 0}, game.foundations[suits.clubs], {
-						onTap: foundationTap,
-					})}
-					{renderPile({x: 6, y: 0}, game.foundations[suits.hearts], {
-						onTap: foundationTap,
-					})}
-					{game.tableau.map((deck, i) => renderStack({x: i, y: 1}, deck, {
-						onTap: playableTap,
-						onDoubleTap: playableDoubleTap,
-						getDragCards: playableGetCards,
-					}))}
-				</CardRenderer>
-			</div>
-			<ControlBar newGame={newGame.openModal} undo={undo} redo={redo} />
+			</BoardCore.Background>
+			<CardRenderer onDrop={onDrop} isAnimating={isAnimating}>
+				{renderPile({x: 0, y: 0}, game.drawPile, {
+					onTap: drawPileTap,
+				})}
+				{renderPile({x: 1, y: 0}, game.discardPile, {
+					onTap: playableTap,
+					onDoubleTap: playableDoubleTap,
+					getDragCards: playableGetCards,
+				}, game.drawCount)}
+				{renderPile({x: 3, y: 0}, game.foundations[suits.spades], {
+					onTap: foundationTap,
+				})}
+				{renderPile({x: 4, y: 0}, game.foundations[suits.diamonds], {
+					onTap: foundationTap,
+				})}
+				{renderPile({x: 5, y: 0}, game.foundations[suits.clubs], {
+					onTap: foundationTap,
+				})}
+				{renderPile({x: 6, y: 0}, game.foundations[suits.hearts], {
+					onTap: foundationTap,
+				})}
+				{game.tableau.map((deck, i) => renderStack({x: i, y: 1}, deck, {
+					onTap: playableTap,
+					onDoubleTap: playableDoubleTap,
+					getDragCards: playableGetCards,
+				}))}
+			</CardRenderer>
 			{newGame.showModal && (
 				<NewgameModal {...newGame} />
 			)}
-		</>
+		</BoardCore>
 	);
 });
