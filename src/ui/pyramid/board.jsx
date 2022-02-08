@@ -43,6 +43,7 @@ function useGame() {
 		const commit = undoStack.record(game);
 		for (const card of cards) {
 			game.clearCard(card);
+			card.meta.elem.blur();
 		}
 
 		rerender();
