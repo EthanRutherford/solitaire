@@ -1,4 +1,4 @@
-import {useCallback, useMemo} from "react";
+import {useCallback, useEffect, useMemo} from "react";
 import {useSizes} from "../shared/sizerator";
 
 export function useAnimator() {
@@ -10,6 +10,10 @@ export function useAnimator() {
 		animData.animation.advance(delta / 1000, sizes);
 		animData.frame = requestAnimationFrame(animData.animate);
 	}, [sizes]);
+
+	useEffect(() => () => {
+		cancelAnimationFrame(animData.frame);
+	}, []);
 
 	const setAnimation = useCallback((animation) => {
 		cancelAnimationFrame(animData.frame);

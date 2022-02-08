@@ -13,6 +13,7 @@ export function Menu() {
 			<button className={styles.button} onClick={() => go("/spider")}>spider</button>
 			<button className={styles.button} onClick={() => go("/free-cell")}>free cell</button>
 			<button className={styles.button} onClick={() => go("/pyramid")}>pyramid</button>
+			<button className={styles.button} onClick={() => go("/wish")}>wish</button>
 			{canPrompt && (
 				<button className={styles.button} onClick={promptForInstall}>
 					add to homescreen
