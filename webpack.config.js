@@ -28,7 +28,7 @@ module.exports = (env) => [{
 					options: {template},
 				}],
 			}, {
-				test: /\.jsx$/,
+				test: /\.(t|j)sx?$/,
 				exclude: /node_modules/,
 				use: "babel-loader",
 			}, {
@@ -40,7 +40,7 @@ module.exports = (env) => [{
 			},
 		],
 	},
-	resolve: {extensions: [".js", ".jsx", ".json", ".css", ".svg"]},
+	resolve: {extensions: [".js", ".jsx", ".ts", ".tsx", ".json", ".css", ".svg"]},
 	mode: env === "prod" ? "production" : "development",
 	devtool: env === "prod" ? "" : "cheap-module-source-map",
 	devServer: {

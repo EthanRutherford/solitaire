@@ -1,3 +1,8 @@
 {
-	"extends": "@rutherford"
+	"parser": "@typescript-eslint/parser",
+	"plugins": ["@typescript-eslint"],
+	"extends": [
+		"@rutherford",
+		"plugin:@typescript-eslint/recommended"
+	]
 }
