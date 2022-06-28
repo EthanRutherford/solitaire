@@ -1,6 +1,6 @@
 import {useRef} from "react";
 
-export function useValueChanged(...values) {
+export function useValueChanged(...values: unknown[]) {
 	const store = useRef(values);
 	if (
 		values.length !== store.current.length ||
