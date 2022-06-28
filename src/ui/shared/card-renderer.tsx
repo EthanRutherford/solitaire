@@ -1,6 +1,6 @@
 import {Card} from "./card.jsx";
-import {PointerManager} from "./pointer-manager.jsx";
-import {useSizes} from "./sizerator.jsx";
+import {PointerManager} from "./pointer-manager";
+import {useSizes} from "./sizerator";
 
 // in order for css animations and transitions to work, the cards
 // must stay within the same parent. Additionally, for react to match up
