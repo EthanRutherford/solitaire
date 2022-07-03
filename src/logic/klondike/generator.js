@@ -60,14 +60,14 @@ export function reverseGame(game, drawCount) {
 
 	// move cards from our completed state into the game decks
 	const notFullTableauDecks = [0, 1, 2, 3, 4, 5, 6];
-	while (notFullTableauDecks.length > 0 && completeStacks.length > 0) {
+	while (completeStacks.length > 0) {
 		const stackIndex = Math.floor(Math.random() * completeStacks.length);
 		const card = completeStacks[stackIndex].pop();
 		if (completeStacks[stackIndex].length === 0) {
 			completeStacks.splice(stackIndex, 1);
 		}
 
-		if (Math.random() < .5) {
+		if (notFullTableauDecks.length > 0 && Math.random() < .5) {
 			// move the card to an available spot in the tableau
 			const notFullIndex = Math.floor(Math.random() * notFullTableauDecks.length);
 			const tableauIndex = notFullTableauDecks[notFullIndex];
