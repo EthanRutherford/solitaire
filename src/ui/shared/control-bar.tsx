@@ -1,11 +1,12 @@
-import Back from "../../../images/back";
-import Plus from "../../../images/plus";
-import Undo from "../../../images/undo";
-import Redo from "../../../images/redo";
+import Back from "../../../images/back.svg";
+import Plus from "../../../images/plus.svg";
+import Undo from "../../../images/undo.svg";
+import Redo from "../../../images/redo.svg";
 import styles from "./control-bar.css";
 import {useRouter} from "./app-router";
 
-export function ControlBar({newGame, undo, redo}) {
+interface ControlBarProps {newGame: () => void, undo: () => void, redo: () => void}
+export function ControlBar({newGame, undo, redo}: ControlBarProps) {
 	const {home} = useRouter();
 
 	return (

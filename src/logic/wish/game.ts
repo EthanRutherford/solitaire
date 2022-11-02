@@ -1,12 +1,23 @@
-import {Deck} from "../deck";
+import {TupleOf} from "../../util/tupleof";
+import {Card, Deck, SerializedDeck} from "../deck";
 import {validatedDelta} from "../undo-stack";
 import {randomShuffle, reverseGame} from "./generator";
 
+export interface SerializedGame {
+	t: SerializedDeck[],
+	c: SerializedDeck,
+}
+
+export enum GameGenerator {
+	Random,
+	Solveable,
+}
+
+export interface Settings {
+	generator: GameGenerator,
+}
+
 export class Game {
-	constructor() {
-		this.tableau = new Array(8).fill(0).map(() => new Deck());
-		this.completed = new Deck();
-	}
 	setContexts() {
 		const contexts = [
 			...this.tableau,
@@ -18,41 +29,42 @@ export class Game {
 
 		return this;
 	}
-	setContext(context) {
+	setContext(context: Deck<Card>) {
 		for (const card of context) {
 			if (card != null) {
 				card.meta.context = context;
 			}
 		}
 	}
-	getMovableCards(card) {
+	getMovableCards(card: Card) {
 		if (this.isPlayable(card)) {
 			return [card];
 		}
 
 		return null;
 	}
-	clearCard(card) {
+	clearCard(card: Card) {
 		if (card.meta.context === this.completed) {
 			return;
 		}
 
-		const formerContext = card.meta.context;
+		const formerContext = card.meta.context as Deck<Card>;
 		formerContext.splice(formerContext.indexOf(card), 1);
 		this.completed.push(card);
 		card.meta.context = this.completed;
 		if (formerContext.length > 0) {
-			formerContext.fromTop().faceUp = true;
+			formerContext.fromTop()!.faceUp = true;
 		}
 	}
-	isPlayable(card) {
+	isPlayable(card: Card) {
 		if (card.meta.context === this.completed) {
 			return false;
 		}
 
-		return card === card.meta.context.fromTop();
+		const context = card.meta.context as Deck<Card>;
+		return card === context.fromTop();
 	}
-	canClearCards(cardA, cardB) {
+	canClearCards(cardA: Card, cardB: Card) {
 		if (cardA === cardB || cardA.value !== cardB.value) {
 			return false;
 		}
@@ -62,13 +74,13 @@ export class Game {
 	hasWon() {
 		return this.completed.length === 32;
 	}
-	serialize() {
+	serialize(): SerializedGame {
 		return {
 			t: this.tableau.map((d) => d.serialize()),
 			c: this.completed.serialize(),
 		};
 	}
-	static deserialize = validatedDelta((input, game) => {
+	static deserialize = validatedDelta((input: SerializedGame, game: Game|null) => {
 		game ??= new Game();
 
 		const tableau = game.tableau;
@@ -79,8 +91,13 @@ export class Game {
 		game.completed = Deck.deserialize(input.c, game.completed);
 		return game.setContexts();
 	});
-	static fromScratch(game, settings) {
+	static fromScratch(game: Game, settings: Settings) {
 		const generator = [randomShuffle, reverseGame][settings.generator];
 		return generator(game);
 	}
+	tableau: TupleOf<Deck<Card>, 8> = [
+		new Deck<Card>(), new Deck<Card>(), new Deck<Card>(), new Deck<Card>(),
+		new Deck<Card>(), new Deck<Card>(), new Deck<Card>(), new Deck<Card>(),
+	];
+	completed = new Deck<Card>();
 }

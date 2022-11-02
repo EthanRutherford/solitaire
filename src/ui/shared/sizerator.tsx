@@ -1,10 +1,15 @@
-import {createContext, useCallback, useContext, useEffect, useState} from "react";
+import {ComponentType, createContext, useCallback, useContext, useEffect, useState} from "react";
 
-const SizeContext = createContext({});
+const SizeContext = createContext({
+	margins: 0, cardWidth: 0, cardHeight: 0,
+	cardOffsetX: 0, cardOffsetY: 0,
+	boardWidth: 0, boardHeight: 0, barHeight: 0,
+});
+
 const cardRatio = 1.5;
 
-export function sizerated(cardsAcross, cardsTall, Component) {
-	return function Sizerator(props) {
+export function sizerated(cardsAcross: number, cardsTall: number, Component: ComponentType) {
+	return function Sizerator(props: Record<string, unknown>) {
 		const computeSizes = useCallback(() => {
 			const {clientWidth: width, clientHeight: height} = document.documentElement;
 			const margins = width < 600 ? 5 : 10;
@@ -42,6 +47,7 @@ export function sizerated(cardsAcross, cardsTall, Component) {
 					style={{
 						width: "100%",
 						height: "100%",
+						// @ts-expect-error css variables are totally valid, morons
 						"--margin": `${sizes.margins}px`,
 						"--card-width": `${sizes.cardWidth}px`,
 						"--card-height": `${sizes.cardHeight}px`,

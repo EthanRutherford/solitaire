@@ -1,6 +1,7 @@
-import {Deck} from "../deck";
+import {Card, Deck} from "../deck";
+import {Game} from "./game";
 
-export function randomShuffle(game) {
+export function randomShuffle(game: Game) {
 	game.tableau.splice(0, game.tableau.length);
 	game.completed.splice(0, game.completed.length);
 
@@ -13,7 +14,7 @@ export function randomShuffle(game) {
 	return game.setContexts();
 }
 
-export function reverseGame(game) {
+export function reverseGame(game: Game) {
 	game.tableau.splice(0, game.tableau.length);
 	game.completed.splice(0, game.completed.length);
 	for (let i = 0; i < 8; i++) {
@@ -22,9 +23,9 @@ export function reverseGame(game) {
 
 	// pair-off all cards in a shuffled deck
 	const deck = Deck.full().shuffle().filter((c) => c.value < 2 || c.value > 6);
-	const pairs = new Deck();
+	const pairs = new Deck<Card[]>();
 	while (deck.length > 0) {
-		const cardA = deck.pop();
+		const cardA = deck.pop()!;
 		const index = deck.findIndex((c) => c.value === cardA.value);
 		const cardB = deck.splice(index, 1)[0];
 		pairs.push([cardA, cardB]);
@@ -41,7 +42,7 @@ export function reverseGame(game) {
 			an empty deck on third to last would be 0 3 3, (or 0 2) which forces us to break rule 2
 	*/
 	while (pairs.length > 0) {
-		const pair = pairs.pop();
+		const pair = pairs.pop()!;
 		const illegalDeckCount = pairs.length > 1 ? 2 : pairs.length > 0 ? 1 : -1;
 
 		const decks = game.tableau.filter((d) => d.length < 4);

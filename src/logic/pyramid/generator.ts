@@ -1,8 +1,8 @@
-import {Deck} from "../deck";
-import {getChildIndices} from "./game";
+import {Card, Deck} from "../deck";
+import {Game, getChildIndices} from "./game";
 
 // shuffles a deck and deals cards onto the pyramid
-export function randomShuffle(game) {
+export function randomShuffle(game: Game) {
 	game.drawPile.splice(0, game.drawPile.length, ...Deck.full().shuffle());
 	for (const card of game.drawPile) {
 		card.faceUp = true;
@@ -15,7 +15,7 @@ export function randomShuffle(game) {
 	return game.setContexts();
 }
 
-function isAncestorOf(indexA, indexB) {
+function isAncestorOf(indexA: number, indexB: number) {
 	if (indexA > indexB) {
 		return false;
 	}
@@ -30,8 +30,14 @@ function isAncestorOf(indexA, indexB) {
 	return false;
 }
 
-function without(set, ...items) {
-	const copy = new Set(set);
+interface MicroCard {
+	i: number,
+	value: number,
+	blockedBy: Set<MicroCard>,
+}
+
+function without<T>(set: Set<T>, ...items: T[]) {
+	const copy = new Set<T>(set);
 	for (const item of items) {
 		copy.delete(item);
 	}
@@ -39,7 +45,7 @@ function without(set, ...items) {
 	return copy;
 }
 
-function microsolve(cards, value, remainingValue, remainingOther) {
+function microsolve(cards: MicroCard[], value: number, remainingValue: number, remainingOther: number) {
 	if (cards.length === 0) {
 		return true;
 	}
@@ -84,7 +90,7 @@ function microsolve(cards, value, remainingValue, remainingOther) {
 	return false;
 }
 
-function canPlace(game, index, value) {
+function canPlace(game: Game, index: number, value: number) {
 	// kings are free
 	if (value === 13) {
 		return true;
@@ -97,9 +103,9 @@ function canPlace(game, index, value) {
 	let remainingOther = 4;
 
 	for (let i = 0; i < game.tree.length; i++) {
-		if (game.tree[i].value === value || game.tree[i].value === otherValue) {
-			relevantCards.push({i, value: game.tree[i].value, blockedBy: new Set()});
-			if (game.tree[i].value === value) {
+		if (game.tree[i]!.value === value || game.tree[i]!.value === otherValue) {
+			relevantCards.push({i, value: game.tree[i]!.value, blockedBy: new Set<MicroCard>()});
+			if (game.tree[i]!.value === value) {
 				remainingValue--;
 			} else {
 				remainingOther--;
@@ -107,7 +113,7 @@ function canPlace(game, index, value) {
 		}
 	}
 
-	relevantCards.push({i: index, value, blockedBy: new Set()});
+	relevantCards.push({i: index, value, blockedBy: new Set<MicroCard>()});
 
 	// if half or more of both values are in the drawPile, we know for sure they can be cleared
 	if (remainingValue >= 2 && remainingOther >= 2) {
@@ -129,7 +135,7 @@ function canPlace(game, index, value) {
 
 // shuffles a deck, but only places cards on the pyramid which do not cause an impossible game
 // NOTE: in hindsight, this method did not prevent *every* kind of impossible game
-export function validatedShuffle(game) {
+export function validatedShuffle(game: Game) {
 	// clear and initialize the game
 	game.drawPile.splice(0, game.drawPile.length, ...Deck.full().shuffle());
 	game.discardPile.splice(0, game.discardPile.length);
@@ -142,7 +148,7 @@ export function validatedShuffle(game) {
 
 	// put cards onto the pyramid, so long as they don't block completion
 	while (game.tree.length < 28) {
-		const card = game.drawPile.pop();
+		const card = game.drawPile.pop()!;
 		if (canPlace(game, game.tree.length, card.value)) {
 			game.tree.push(card);
 		} else {
@@ -153,7 +159,7 @@ export function validatedShuffle(game) {
 	return game.setContexts();
 }
 
-export function reverseGame(game) {
+export function reverseGame(game: Game) {
 	// clear and initialize the game
 	game.drawPile.splice(0, game.drawPile.length);
 	game.discardPile.splice(0, game.discardPile.length);
@@ -161,7 +167,7 @@ export function reverseGame(game) {
 	game.tree.splice(0, game.tree.length);
 	game.remainingFlips = 2;
 
-	const parentMap = {0: []};
+	const parentMap: Record<number, number[]> = {0: []};
 	for (let i = 0; i < 21; i++) {
 		const children = getChildIndices(i);
 		for (const child of children) {
@@ -172,9 +178,9 @@ export function reverseGame(game) {
 
 	// pair-off all cards in a shuffled deck
 	const deck = Deck.full().shuffle();
-	const pairs = new Deck();
+	const pairs = new Deck<[Card]|[Card, Card]>();
 	while (deck.length > 0) {
-		const cardA = deck.pop();
+		const cardA = deck.pop()!;
 		cardA.faceUp = true;
 		if (cardA.value === 13) {
 			pairs.push([cardA]);
@@ -191,9 +197,9 @@ export function reverseGame(game) {
 
 	// add cards from the list of pairs
 	let added = 0;
-	function add(leaf, card) {game.tree[leaf] = card; added++;}
+	function add(leaf: number, card: Card) {game.tree[leaf] = card; added++;}
 	while (added < 28) {
-		const pair = pairs.pop();
+		const pair = pairs.pop()!;
 
 		// gather available spots to put new card...
 		const available = [];
@@ -221,7 +227,7 @@ export function reverseGame(game) {
 	}
 
 	while (pairs.length > 0) {
-		game.drawPile.push(...pairs.pop());
+		game.drawPile.push(...pairs.pop()!);
 	}
 
 	game.drawPile.shuffle();
