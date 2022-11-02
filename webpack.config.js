@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 function template({componentName, props, jsx}, {tpl}) {
@@ -7,7 +8,7 @@ module.exports = ${componentName}`;
 }
 
 module.exports = (env) => [{
-	entry: "./src/main.jsx",
+	entry: "./src/main.tsx",
 	output: {filename: "main.js"},
 	plugins: [new MiniCssExtractPlugin({filename: "styles.css"})],
 	module: {

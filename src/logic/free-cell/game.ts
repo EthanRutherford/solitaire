@@ -1,17 +1,14 @@
-import {Deck, suits} from "../deck";
+import {TupleOf} from "../../util/tupleof";
+import {Card, Deck, Suit, SerializedDeck} from "../deck";
 import {validatedDelta} from "../undo-stack";
 
+export type SerializedGame = {
+	t: SerializedDeck[],
+	c: SerializedDeck[],
+	f: Record<string, SerializedDeck>,
+}
+
 export class Game {
-	constructor() {
-		this.tableau = new Array(8).fill(0).map(() => new Deck());
-		this.freeCells = new Array(4).fill(0).map(() => new Deck());
-		this.foundations = {
-			[suits.spades]: new Deck(),
-			[suits.diamonds]: new Deck(),
-			[suits.clubs]: new Deck(),
-			[suits.hearts]: new Deck(),
-		};
-	}
 	setContexts() {
 		const contexts = [
 			...this.tableau,
@@ -24,19 +21,19 @@ export class Game {
 
 		return this;
 	}
-	setContext(context) {
+	setContext(context: Deck<Card>) {
 		for (const card of context) {
 			card.meta.context = context;
 		}
 	}
-	moveCards(cards, target) {
+	moveCards(cards: Array<Card>, target: Deck<Card>) {
 		for (const card of cards) {
 			target.push(card);
 			card.meta.context = target;
 		}
 	}
-	getMovableCards(card) {
-		const context = card.meta.context;
+	getMovableCards(card: Card) {
+		const context = card.meta.context as Deck<Card>;
 		const index = context.indexOf(card);
 		const cards = context.slice(index);
 		for (let i = 1; i < cards.length; i++) {
@@ -52,8 +49,8 @@ export class Game {
 
 		return cards;
 	}
-	canMoveToFoundation(card, target) {
-		const context = card.meta.context;
+	canMoveToFoundation(card: Card, target: Deck<Card>) {
+		const context = card.meta.context as Deck<Card>;
 
 		// only cards on top can be sent to foundation
 		if (card !== context.fromTop()) {
@@ -72,7 +69,7 @@ export class Game {
 
 		return true;
 	}
-	canMoveStack(card, target) {
+	canMoveStack(card: Card, target: Deck<Card>) {
 		const topCard = target.fromTop();
 		if (
 			topCard != null &&
@@ -87,45 +84,48 @@ export class Game {
 		const freeCellCount = this.freeCells.filter((c) => c.length === 0).length;
 		const freeTableauCount = this.tableau.filter((t) => t !== target && t.length === 0).length;
 		const maxStackSize = (freeCellCount + 1) * (freeTableauCount + 1);
-		if (card.meta.context.length - card.meta.context.indexOf(card) > maxStackSize) {
+		const context = card.meta.context as Deck<Card>;
+		if (context.length - context.indexOf(card) > maxStackSize) {
 			return false;
 		}
 
 		return true;
 	}
-	canMoveCards(card, target) {
+	canMoveCards(card: Card, target: Deck<Card>) {
 		if (Object.values(this.foundations).includes(target)) {
 			return this.canMoveToFoundation(card, target);
 		} else if (this.tableau.includes(target)) {
 			return this.canMoveStack(card, target);
 		} else if (this.freeCells.includes(target)) {
-			return card === card.meta.context.fromTop() && target.length === 0;
+			const context = card.meta.context as Deck<Card>;
+			return card === context.fromTop() && target.length === 0;
 		}
 
 		return false;
 	}
-	transferCards(card, target) {
+	transferCards(card: Card, target: Deck<Card>) {
 		if (Object.values(this.foundations).includes(target)) {
-			const originDeck = card.meta.context;
+			const originDeck = card.meta.context as Deck<Card>;
 			this.moveCards(originDeck.draw(1), target);
 		} else if (this.tableau.includes(target)) {
-			const context = card.meta.context;
+			const context = card.meta.context as Deck<Card>;
 			const index = context.indexOf(card);
 			this.moveCards(context.draw(context.length - index), target);
 		} else if (this.freeCells.includes(target)) {
-			const originDeck = card.meta.context;
+			const originDeck = card.meta.context as Deck<Card>;
 			this.moveCards(originDeck.draw(1), target);
 		}
 	}
-	tryGetMoveTarget(card) {
-		if (card === card.meta.context.fromTop()) {
+	tryGetMoveTarget(card: Card) {
+		const context = card.meta.context as Deck<Card>;
+		if (card === context.fromTop()) {
 			const foundation = this.foundations[card.suit];
 			if (this.canMoveToFoundation(card, foundation)) {
 				return foundation;
 			}
 		}
 
-		const [empty, nonEmpty] = this.tableau.reduce((partitions, deck) => {
+		const [empty, nonEmpty] = this.tableau.reduce<[Deck<Card>[], Deck<Card>[]]>((partitions, deck) => {
 			partitions[deck.length === 0 ? 0 : 1].push(deck);
 			return partitions;
 		}, [[], []]);
@@ -175,7 +175,7 @@ export class Game {
 	hasWon() {
 		return Object.values(this.foundations).every((d) => d.length === 13);
 	}
-	serialize() {
+	serialize(): SerializedGame {
 		return {
 			t: this.tableau.map((d) => d.serialize()),
 			c: this.freeCells.map((c) => c.serialize()),
@@ -184,7 +184,7 @@ export class Game {
 			)),
 		};
 	}
-	static deserialize = validatedDelta((input, game) => {
+	static deserialize = validatedDelta((input: SerializedGame, game: Game|null) => {
 		game ??= new Game();
 
 		const tableau = game.tableau;
@@ -198,13 +198,13 @@ export class Game {
 		}
 
 		const foundations = game.foundations;
-		for (const k of Object.values(suits)) {
+		for (const k of [Suit.Spades, Suit.Diamonds, Suit.Clubs, Suit.Hearts]) {
 			foundations[k] = Deck.deserialize(input.f?.[k], foundations[k]);
 		}
 
 		return game.setContexts();
 	});
-	static fromScratch(game) {
+	static fromScratch(game: Game) {
 		const deck = Deck.full().shuffle();
 		game.tableau.splice(0, game.tableau.length);
 		game.freeCells.splice(0, game.freeCells.length);
@@ -216,7 +216,7 @@ export class Game {
 			game.freeCells.push(new Deck());
 		}
 
-		for (const k of Object.values(suits)) {
+		for (const k of [Suit.Spades, Suit.Diamonds, Suit.Clubs, Suit.Hearts]) {
 			game.foundations[k] = new Deck();
 		}
 
@@ -227,4 +227,17 @@ export class Game {
 
 		return game.setContexts();
 	}
+	tableau: TupleOf<Deck<Card>, 8> = [
+		new Deck<Card>(), new Deck<Card>(), new Deck<Card>(), new Deck<Card>(),
+		new Deck<Card>(), new Deck<Card>(), new Deck<Card>(), new Deck<Card>(),
+	];
+	freeCells: TupleOf<Deck<Card>, 4> = [
+		new Deck<Card>(), new Deck<Card>(), new Deck<Card>(), new Deck<Card>(),
+	];
+	foundations = {
+		[Suit.Spades]: new Deck<Card>(),
+		[Suit.Diamonds]: new Deck<Card>(),
+		[Suit.Clubs]: new Deck<Card>(),
+		[Suit.Hearts]: new Deck<Card>(),
+	};
 }

@@ -1,16 +1,17 @@
 import {useCallback} from "react";
-import Spade from "../../../images/spade";
-import Diamond from "../../../images/diamond";
-import Club from "../../../images/club";
-import Heart from "../../../images/heart";
-import {suits} from "../../logic/deck";
-import {Game} from "../../logic/free-cell/game";
+import Spade from "../../../images/spade.svg";
+import Diamond from "../../../images/diamond.svg";
+import Club from "../../../images/club.svg";
+import Heart from "../../../images/heart.svg";
+import {Card, Deck, Suit} from "../../logic/deck";
+import {Game, SerializedGame} from "../../logic/free-cell/game";
 import {CardRenderer, renderPile, renderStack} from "../shared/card-renderer";
 import {EmptyZone} from "../shared/empty-zone";
 import {getCard} from "../shared/get-context";
 import {sizerated} from "../shared/sizerator";
-import {CardRingAnimation} from "../animations/card-ring";
 import {BoardCore, useGameCore} from "../shared/board";
+import {CardRingAnimation} from "../animations/card-ring";
+import { Pointer } from "../shared/pointer-manager";
 
 function useGame() {
 	const {
@@ -51,8 +52,8 @@ function useGame() {
 		}
 	});
 
-	const doMoveCards = enqueueAction(function*(card, targetContext) {
-		card.meta.elem.blur();
+	const doMoveCards = enqueueAction(function*(card: Card, targetContext: Deck<Card>) {
+		card.meta.elem?.blur();
 		const commit = undoStack.record(game);
 		game.transferCards(card, targetContext);
 		rerender();
@@ -63,45 +64,46 @@ function useGame() {
 		tryAutoComplete();
 	});
 
-	const onDrop = useCallback((pointer, targetContext) => {
-		if (game.canMoveCards(pointer.card, targetContext)) {
-			doMoveCards(pointer.card, targetContext);
+	const onDrop = useCallback((pointer: Pointer, targetContext: unknown) => {
+		if (game.canMoveCards(pointer.card, targetContext as Deck<Card>)) {
+			doMoveCards(pointer.card, targetContext as Deck<Card>);
 		}
 	}, []);
 
-	const targetTap = useCallback((targetContext) => {
-		const activeCard = getCard(document.activeElement);
+	const targetTap = useCallback((targetContext: Deck<Card>) => {
+		const activeElement = document.activeElement as HTMLElement;
+		const activeCard = getCard(activeElement);
 		if (activeCard != null && game.canMoveCards(activeCard, targetContext)) {
 			doMoveCards(activeCard, targetContext);
 			return true;
 		}
 
-		document.activeElement.blur();
+		activeElement.blur();
 		return false;
-	});
+	}, []);
 
-	const playableTap = useCallback((pointer) => {
-		const targetContext = pointer.card.meta.context;
+	const playableTap = useCallback((pointer: Pointer) => {
+		const targetContext = pointer.card.meta.context as Deck<Card>;
 		if (targetTap(targetContext)) {
 			return;
 		}
 
 		if (pointer.dragCards != null) {
-			pointer.card.meta.elem.focus();
+			pointer.card.meta.elem?.focus();
 		}
 	}, []);
 
-	const playableDoubleTap = useCallback((pointer) => {
+	const playableDoubleTap = useCallback((pointer: Pointer) => {
 		if (pointer.dragCards != null) {
-			const target = game.tryGetMoveTarget(pointer.card);
+			const target = game.tryGetMoveTarget(pointer.card)!;
 			if (game.canMoveCards(pointer.card, target)) {
 				doMoveCards(pointer.card, target);
 			}
 		}
-	});
+	}, []);
 
-	const foundationTap = useCallback((pointer) => {
-		targetTap(pointer.card.meta.context);
+	const foundationTap = useCallback((pointer: Pointer) => {
+		targetTap(pointer.card.meta.context as Deck<Card>);
 	}, []);
 
 	return {
@@ -145,28 +147,28 @@ export const Board = sizerated(8, 5, function Board() {
 				))}
 				<EmptyZone
 					slot={{x: 4, y: 0}}
-					context={game.foundations[suits.spades]}
+					context={game.foundations[Suit.Spades]}
 					onTap={targetTap}
 				>
 					<Spade />
 				</EmptyZone>
 				<EmptyZone
 					slot={{x: 5, y: 0}}
-					context={game.foundations[suits.diamonds]}
+					context={game.foundations[Suit.Diamonds]}
 					onTap={targetTap}
 				>
 					<Diamond />
 				</EmptyZone>
 				<EmptyZone
 					slot={{x: 6, y: 0}}
-					context={game.foundations[suits.clubs]}
+					context={game.foundations[Suit.Clubs]}
 					onTap={targetTap}
 				>
 					<Club />
 				</EmptyZone>
 				<EmptyZone
 					slot={{x: 7, y: 0}}
-					context={game.foundations[suits.hearts]}
+					context={game.foundations[Suit.Hearts]}
 					onTap={targetTap}
 				>
 					<Heart />
@@ -186,16 +188,16 @@ export const Board = sizerated(8, 5, function Board() {
 					onDoubleTap: playableDoubleTap,
 					getDragCards: game.getMovableCards,
 				}))}
-				{renderPile({x: 4, y: 0}, game.foundations[suits.spades], {
+				{renderPile({x: 4, y: 0}, game.foundations[Suit.Spades], {
 					onTap: foundationTap,
 				})}
-				{renderPile({x: 5, y: 0}, game.foundations[suits.diamonds], {
+				{renderPile({x: 5, y: 0}, game.foundations[Suit.Diamonds], {
 					onTap: foundationTap,
 				})}
-				{renderPile({x: 6, y: 0}, game.foundations[suits.clubs], {
+				{renderPile({x: 6, y: 0}, game.foundations[Suit.Clubs], {
 					onTap: foundationTap,
 				})}
-				{renderPile({x: 7, y: 0}, game.foundations[suits.hearts], {
+				{renderPile({x: 7, y: 0}, game.foundations[Suit.Hearts], {
 					onTap: foundationTap,
 				})}
 				{game.tableau.map((deck, i) => renderStack({x: i, y: 1}, deck, {

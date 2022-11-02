@@ -3,11 +3,11 @@ export const settingsTable = "settings";
 
 // opens the database, initializing it if necessary
 function openDatabase() {
-	return new Promise((resolve, reject) => {
+	return new Promise<IDBDatabase>((resolve, reject) => {
 		const request = indexedDB.open("solitaire", 1);
 
-		request.onupgradeneeded = function(event) {
-			const database = event.target.result;
+		request.onupgradeneeded = function() {
+			const database = this.result;
 
 			// drop existing tables
 			for (const name of database.objectStoreNames) {
@@ -28,23 +28,23 @@ function openDatabase() {
 }
 
 // core database interactions
-function getCore(objectStore, id) {
-	return new Promise((resolve, reject) => {
+function getCore<T>(objectStore: IDBObjectStore, id: IDBValidKey) {
+	return new Promise<T>((resolve, reject) => {
 		const request = objectStore.get(id);
 		request.onerror = reject;
-		request.onsuccess = function(event) {
-			resolve(event.target.result);
+		request.onsuccess = function() {
+			resolve(this.result);
 		};
 	});
 }
-function listCore(objectStore) {
-	return new Promise((resolve, reject) => {
+function listCore<T>(objectStore: IDBObjectStore) {
+	return new Promise<{id: IDBValidKey, value: T}[]>((resolve, reject) => {
 		const request = objectStore.openCursor();
 		request.onerror = reject;
 
-		const list = [];
-		request.onsuccess = function(event) {
-			const cursor = event.target.result;
+		const list: {id: IDBValidKey, value: T}[] = [];
+		request.onsuccess = function() {
+			const cursor = this.result;
 			if (cursor) {
 				list.push({id: cursor.key, value: cursor.value});
 				cursor.continue();
@@ -54,26 +54,26 @@ function listCore(objectStore) {
 		};
 	});
 }
-function addCore(objectStore, object) {
-	return new Promise((resolve, reject) => {
+function addCore<T>(objectStore: IDBObjectStore, object: T) {
+	return new Promise<IDBValidKey>((resolve, reject) => {
 		const request = objectStore.add(object);
 		request.onerror = reject;
-		request.onsuccess = function(event) {
-			resolve(event.target.result);
+		request.onsuccess = function() {
+			resolve(this.result);
 		};
 	});
 }
-function putCore(objectStore, object, id) {
-	return new Promise((resolve, reject) => {
+function putCore<T>(objectStore: IDBObjectStore, object: T, id?: IDBValidKey) {
+	return new Promise<IDBValidKey>((resolve, reject) => {
 		const request = objectStore.put(object, id);
 		request.onerror = reject;
-		request.onsuccess = function(event) {
-			resolve(event.target.result);
+		request.onsuccess = function() {
+			resolve(this.result);
 		};
 	});
 }
-function deleteCore(objectStore, id) {
-	return new Promise((resolve, reject) => {
+function deleteCore(objectStore: IDBObjectStore, id: IDBValidKey) {
+	return new Promise<void>((resolve, reject) => {
 		const request = objectStore.delete(id);
 		request.onerror = reject;
 		request.onsuccess = function() {
@@ -81,25 +81,25 @@ function deleteCore(objectStore, id) {
 		};
 	});
 }
-async function getStore(tableName, readwrite = false) {
+async function getStore(tableName: string, readwrite = false) {
 	const db = await openDatabase();
 	const transaction = db.transaction([tableName], readwrite ? "readwrite" : "readonly");
 	return transaction.objectStore(tableName);
 }
 
 // public api
-export async function get(tableName, id) {
-	return await getCore(await getStore(tableName), id);
+export async function get<T>(tableName: string, id: IDBValidKey) {
+	return await getCore<T>(await getStore(tableName), id);
 }
-export async function list(tableName) {
-	return await listCore(await getStore(tableName));
+export async function list<T>(tableName: string) {
+	return await listCore<T>(await getStore(tableName));
 }
-export async function add(tableName, object) {
+export async function add<T>(tableName: string, object: T) {
 	return await addCore(await getStore(tableName, true), object);
 }
-export async function put(tableName, object, id) {
+export async function put<T>(tableName: string, object: T, id?: IDBValidKey) {
 	return await putCore(await getStore(tableName, true), object, id);
 }
-export async function remove(tableName, id) {
+export async function remove(tableName: string, id: IDBValidKey) {
 	return await deleteCore(await getStore(tableName, true), id);
 }

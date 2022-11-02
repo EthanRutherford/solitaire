@@ -1,20 +1,22 @@
-import {Deck, suits} from "../deck";
+import {TupleOf} from "../../util/tupleof";
+import {Card, Deck, Suit, SerializedDeck} from "../deck";
 import {validatedDelta} from "../undo-stack";
 import {randomShuffle, reverseGame} from "./generator";
 
+export type SerializedGame = {
+	dc: number,
+	dr: SerializedDeck,
+	di: SerializedDeck,
+	t: SerializedDeck[],
+	f: Record<string, SerializedDeck>,
+}
+
+export interface Settings {
+	generator: 0|1,
+	drawCount: 1|3,
+}
+
 export class Game {
-	constructor() {
-		this.drawCount = 1;
-		this.drawPile = new Deck();
-		this.discardPile = new Deck();
-		this.tableau = new Array(7).fill(0).map(() => new Deck());
-		this.foundations = {
-			[suits.spades]: new Deck(),
-			[suits.diamonds]: new Deck(),
-			[suits.clubs]: new Deck(),
-			[suits.hearts]: new Deck(),
-		};
-	}
 	setContexts() {
 		const contexts = [
 			this.drawPile,
@@ -28,46 +30,46 @@ export class Game {
 
 		return this;
 	}
-	setContext(context) {
+	setContext(context: Deck<Card>) {
 		for (const card of context) {
 			card.meta.context = context;
 		}
 	}
-	moveCards(cards, target) {
+	moveCards(cards: Array<Card>, target: Deck<Card>) {
 		for (const card of cards) {
 			target.push(card);
 			card.meta.context = target;
 		}
 	}
-	drawCards(count) {
+	drawCards(count: number) {
 		const cards = this.drawPile.draw(count).reverse();
 		this.moveCards(cards, this.discardPile);
 		for (const card of cards) {
 			card.faceUp = true;
 		}
 	}
-	undrawCards(count) {
+	undrawCards(count: number) {
 		const cards = this.discardPile.draw(count).reverse();
 		this.moveCards(cards, this.drawPile);
 		for (const card of cards) {
 			card.faceUp = false;
 		}
 	}
-	getMovableCards(card) {
+	getMovableCards(card: Card) {
 		if (card.meta.context === this.discardPile) {
 			return [this.discardPile.fromTop()];
 		}
 
 		if (card.faceUp) {
-			const context = card.meta.context;
+			const context = card.meta.context as Deck<Card>;
 			const index = context.indexOf(card);
 			return context.slice(index);
 		}
 
 		return null;
 	}
-	canMoveToFoundation(card, target) {
-		const context = card.meta.context;
+	canMoveToFoundation(card: Card, target: Deck<Card>) {
+		const context = card.meta.context as Deck<Card>;
 
 		// only cards on top can be sent to foundation
 		if (card !== context.fromTop()) {
@@ -86,7 +88,7 @@ export class Game {
 
 		return true;
 	}
-	canMoveStack(card, target) {
+	canMoveStack(card: Card, target: Deck<Card>) {
 		const topCard = target.fromTop();
 		if (topCard == null ? card.value !== 13 :
 			card.color === topCard.color ||
@@ -97,7 +99,7 @@ export class Game {
 
 		return true;
 	}
-	canMoveCards(card, target) {
+	canMoveCards(card: Card, target: Deck<Card>) {
 		if (Object.values(this.foundations).includes(target)) {
 			return this.canMoveToFoundation(card, target);
 		} else if (this.tableau.includes(target)) {
@@ -106,18 +108,19 @@ export class Game {
 
 		return false;
 	}
-	transferCards(card, target) {
+	transferCards(card: Card, target: Deck<Card>) {
 		if (Object.values(this.foundations).includes(target)) {
-			const originDeck = card.meta.context;
+			const originDeck = card.meta.context as Deck<Card>;
 			this.moveCards(originDeck.draw(1), target);
 		} else if (this.tableau.includes(target)) {
-			const context = card.meta.context;
+			const context = card.meta.context as Deck<Card>;
 			const index = context.indexOf(card);
 			this.moveCards(context.draw(context.length - index), target);
 		}
 	}
-	tryGetMoveTarget(card) {
-		if (card === card.meta.context.fromTop()) {
+	tryGetMoveTarget(card: Card) {
+		const context = card.meta.context as Deck<Card>;
+		if (card === context.fromTop()) {
 			const foundation = this.foundations[card.suit];
 			if (this.canMoveToFoundation(card, foundation)) {
 				return foundation;
@@ -132,7 +135,7 @@ export class Game {
 
 		return null;
 	}
-	tryFlipCard(deck) {
+	tryFlipCard(deck: Deck<Card>) {
 		if (this.tableau.includes(deck)) {
 			const top = deck.fromTop();
 			if (!(top?.faceUp ?? true)) {
@@ -165,7 +168,7 @@ export class Game {
 
 		return null;
 	}
-	serialize() {
+	serialize(): SerializedGame {
 		return {
 			dc: this.drawCount,
 			dr: this.drawPile.serialize(),
@@ -179,7 +182,7 @@ export class Game {
 	hasWon() {
 		return Object.values(this.foundations).every((d) => d.length === 13);
 	}
-	static deserialize = validatedDelta((input, game) => {
+	static deserialize = validatedDelta((input: SerializedGame, game: Game|null) => {
 		game ??= new Game();
 
 		game.drawCount = input.dc ?? game.drawCount;
@@ -191,14 +194,27 @@ export class Game {
 		}
 
 		const foundations = game.foundations;
-		for (const k of Object.values(suits)) {
+		for (const k of [Suit.Spades, Suit.Diamonds, Suit.Clubs, Suit.Hearts]) {
 			foundations[k] = Deck.deserialize(input.f?.[k], foundations[k]);
 		}
 
 		return game.setContexts();
 	});
-	static fromScratch(game, settings) {
+	static fromScratch(game: Game, settings: Settings) {
 		const generator = [randomShuffle, reverseGame][settings.generator];
 		return generator(game, settings.drawCount);
 	}
+	drawCount = 1;
+	drawPile = new Deck<Card>();
+	discardPile = new Deck<Card>();
+	tableau: TupleOf<Deck<Card>, 7> = [
+		new Deck<Card>(), new Deck<Card>(), new Deck<Card>(), new Deck<Card>(),
+		new Deck<Card>(), new Deck<Card>(), new Deck<Card>(),
+	];
+	foundations = {
+		[Suit.Spades]: new Deck<Card>(),
+		[Suit.Diamonds]: new Deck<Card>(),
+		[Suit.Clubs]: new Deck<Card>(),
+		[Suit.Hearts]: new Deck<Card>(),
+	};
 }

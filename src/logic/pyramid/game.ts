@@ -1,9 +1,9 @@
-import {Deck} from "../deck";
+import {Card, Deck, SerializedDeck, SerializedNullableDeck} from "../deck";
 import {validatedDelta} from "../undo-stack";
 import {randomShuffle, reverseGame} from "./generator";
 
 const treeRows = [0, 1, 3, 6, 10, 15, 21];
-export function getChildIndices(index) {
+export function getChildIndices(index: number) {
 	if (index >= treeRows[treeRows.length - 1]) {
 		return [];
 	}
@@ -16,14 +16,19 @@ export function getChildIndices(index) {
 	return [nextRow + rowOffset, nextRow + rowOffset + 1];
 }
 
+export type SerializedGame = {
+	t: SerializedNullableDeck,
+	dr: SerializedDeck,
+	di: SerializedDeck,
+	c: SerializedDeck,
+	r: number,
+}
+
+export interface Settings {
+	generator: 0|1,
+}
+
 export class Game {
-	constructor() {
-		this.tree = new Deck();
-		this.drawPile = new Deck();
-		this.discardPile = new Deck();
-		this.completed = new Deck();
-		this.remainingFlips = 0;
-	}
 	setContexts() {
 		const contexts = [
 			this.tree,
@@ -37,14 +42,14 @@ export class Game {
 
 		return this;
 	}
-	setContext(context) {
+	setContext(context: Deck<Card|null>) {
 		for (const card of context) {
 			if (card != null) {
 				card.meta.context = context;
 			}
 		}
 	}
-	getChildrenOf(index) {
+	getChildrenOf(index: number) {
 		if (index === -1) {
 			return null;
 		}
@@ -61,7 +66,7 @@ export class Game {
 		this.drawPile.push(card);
 		card.meta.context = this.drawPile;
 	}
-	getMovableCards(card) {
+	getMovableCards(card: Card) {
 		if (card.meta.context === this.drawPile) {
 			return [this.drawPile.fromTop()];
 		}
@@ -74,12 +79,13 @@ export class Game {
 
 		return null;
 	}
-	clearCard(card) {
+	clearCard(card: Card) {
 		if (card.meta.context === this.tree) {
 			const index = this.tree.indexOf(card);
 			this.tree[index] = null;
 		} else if (card.meta.context !== this.completed) {
-			card.meta.context.splice(card.meta.context.indexOf(card), 1);
+			const context = card.meta.context as Deck<Card>;
+			context.splice(context.indexOf(card), 1);
 		} else {
 			return;
 		}
@@ -88,7 +94,7 @@ export class Game {
 		card.meta.context = this.completed;
 		card.faceUp = false;
 	}
-	isPlayable(card) {
+	isPlayable(card: Card) {
 		if (card.meta.context === this.completed) {
 			return false;
 		}
@@ -100,7 +106,7 @@ export class Game {
 
 		return true;
 	}
-	canClearCards(cardA, cardB) {
+	canClearCards(cardA: Card, cardB: Card) {
 		if ((cardA.value + cardB.value) % 13 !== 0) {
 			return false;
 		}
@@ -110,7 +116,7 @@ export class Game {
 	hasWon() {
 		return this.tree[0] == null;
 	}
-	serialize() {
+	serialize(): SerializedGame {
 		return {
 			t: this.tree.serialize(),
 			dr: this.drawPile.serialize(),
@@ -119,7 +125,7 @@ export class Game {
 			r: this.remainingFlips,
 		};
 	}
-	static deserialize = validatedDelta((input, game) => {
+	static deserialize = validatedDelta((input: SerializedGame, game: Game|null) => {
 		game ??= new Game();
 		game.tree = Deck.deserialize(input.t, game.tree);
 		game.drawPile = Deck.deserialize(input.dr, game.drawPile);
@@ -129,8 +135,13 @@ export class Game {
 		game.remainingFlips = input.r ?? game.remainingFlips;
 		return game.setContexts();
 	});
-	static fromScratch(game, settings) {
+	static fromScratch(game: Game, settings: Settings) {
 		const generator = [randomShuffle, reverseGame][settings.generator];
 		return generator(game);
 	}
+	tree = new Deck<Card|null>();
+	drawPile = new Deck<Card>();
+	discardPile = new Deck<Card>();
+	completed = new Deck<Card>();
+	remainingFlips = 0;
 }

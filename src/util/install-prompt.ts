@@ -1,9 +1,18 @@
 import {useCallback, useEffect, useState} from "react";
 
-const listeners = new Set();
+interface BeforeInstallPromptEvent extends Event {
+	prompt: () => Promise<void>;
+	readonly userChoice: Promise<{outcome: "accepted"|"dismissed"}>;
+}
+declare global {
+	interface WindowEventMap {
+		beforeinstallprompt: BeforeInstallPromptEvent;
+	}
+}
 
-let deferredPrompt = null;
-window.addEventListener("beforeinstallprompt", (event) => {
+const listeners: Set<(success: boolean) => void> = new Set();
+let deferredPrompt: BeforeInstallPromptEvent|null = null;
+window.addEventListener("beforeinstallprompt", (event: BeforeInstallPromptEvent) => {
 	event.preventDefault();
 	deferredPrompt = event;
 
@@ -13,15 +22,15 @@ window.addEventListener("beforeinstallprompt", (event) => {
 });
 
 export function useInstallPrompt() {
-	const [canPrompt, setCanPrompt] = useState(null);
+	const [canPrompt, setCanPrompt] = useState(false);
 	useEffect(() => {
 		listeners.add(setCanPrompt);
-		return () => listeners.delete(setCanPrompt);
+		return () => {listeners.delete(setCanPrompt);};
 	}, []);
 
 	const promptForInstall = useCallback(() => {
-		deferredPrompt.prompt();
-		return deferredPrompt.userChoice.then((choiceResult) => {
+		deferredPrompt?.prompt();
+		return deferredPrompt?.userChoice.then((choiceResult) => {
 			deferredPrompt = null;
 			for (const listener of listeners) {
 				listener(false);

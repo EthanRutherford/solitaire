@@ -1,20 +1,21 @@
-import {Deck, suits} from "../deck";
+import {TupleOf} from "../../util/tupleof";
+import {Card, Deck, Suit, SerializedDeck} from "../deck";
 import {validatedDelta} from "../undo-stack";
 
 function getOneSuitDeck() {
-	const deck = new Deck();
+	const deck = new Deck<Card>();
 	for (let i = 0; i < 8; i++) {
-		deck.push(...Deck.ofSuit(suits.spades));
+		deck.push(...Deck.ofSuit(Suit.Spades));
 	}
 
 	return deck;
 }
 
 function getTwoSuitDeck() {
-	const deck = new Deck();
+	const deck = new Deck<Card>();
 	for (let i = 0; i < 4; i++) {
-		deck.push(...Deck.ofSuit(suits.spades));
-		deck.push(...Deck.ofSuit(suits.hearts));
+		deck.push(...Deck.ofSuit(Suit.Spades));
+		deck.push(...Deck.ofSuit(Suit.Hearts));
 	}
 
 	return deck;
@@ -24,7 +25,7 @@ function getFourSuitDeck() {
 	return Deck.full().concat(Deck.full());
 }
 
-function getDeck(suitCount) {
+function getDeck(suitCount: number) {
 	if (suitCount === 1) {
 		return getOneSuitDeck();
 	}
@@ -40,12 +41,17 @@ function getDeck(suitCount) {
 	throw new Error("invalid suitCount");
 }
 
+export type SerializedGame = {
+	d: SerializedDeck,
+	t: SerializedDeck[],
+	f: SerializedDeck[],
+}
+
+export interface Settings {
+	suitCount: 1|2|4,
+}
+
 export class Game {
-	constructor() {
-		this.drawPile = new Deck();
-		this.tableau = new Array(10).fill(0).map(() => new Deck());
-		this.foundation = [];
-	}
 	setContexts() {
 		const contexts = [
 			this.drawPile,
@@ -58,23 +64,23 @@ export class Game {
 
 		return this;
 	}
-	setContext(context) {
+	setContext(context: Deck<Card>) {
 		for (const card of context) {
 			card.meta.context = context;
 		}
 	}
-	moveCards(cards, target) {
+	moveCards(cards: Card[], target: Deck<Card>) {
 		for (const card of cards) {
 			target.push(card);
 			card.meta.context = target;
 		}
 	}
-	getMovableCards(card) {
+	getMovableCards(card: Card) {
 		if (!card.faceUp) {
 			return null;
 		}
 
-		const context = card.meta.context;
+		const context = card.meta.context as Deck<Card>;
 		const index = context.indexOf(card);
 		const cards = context.slice(index);
 		for (let i = 1; i < cards.length; i++) {
@@ -87,7 +93,7 @@ export class Game {
 
 		return cards;
 	}
-	canMoveCards(card, target) {
+	canMoveCards(card: Card, target: Deck<Card>) {
 		if (target?.length === 0) {
 			return true;
 		}
@@ -98,7 +104,7 @@ export class Game {
 
 		return false;
 	}
-	canCompleteStack(deck) {
+	canCompleteStack(deck: Deck<Card>) {
 		const suit = deck.fromTop().suit;
 		for (let i = 12; i >= 0; i--) {
 			const card = deck.fromTop(i);
@@ -109,12 +115,12 @@ export class Game {
 
 		return true;
 	}
-	transferCards(card, target) {
-		const context = card.meta.context;
+	transferCards(card: Card, target: Deck<Card>) {
+		const context = card.meta.context as Deck<Card>;
 		const index = context.indexOf(card);
 		this.moveCards(context.draw(context.length - index), target);
 	}
-	tryGetMoveTarget(card) {
+	tryGetMoveTarget(card: Card) {
 		const possibleTargets = this.tableau.filter((deck) => this.canMoveCards(card, deck));
 		const ranked = possibleTargets.map((deck) => {
 			if (deck.length === 0) {
@@ -145,7 +151,7 @@ export class Game {
 
 		return ranked[0]?.deck ?? null;
 	}
-	tryFlipCard(deck) {
+	tryFlipCard(deck: Deck<Card>) {
 		if (this.tableau.includes(deck)) {
 			const top = deck.fromTop();
 			if (!(top?.faceUp ?? true)) {
@@ -159,14 +165,14 @@ export class Game {
 	hasWon() {
 		return this.foundation.length === 8;
 	}
-	serialize() {
+	serialize(): SerializedGame {
 		return {
 			d: this.drawPile.serialize(),
 			t: this.tableau.map((d) => d.serialize()),
 			f: this.foundation.map((d) => d.serialize()),
 		};
 	}
-	static deserialize = validatedDelta((input, game) => {
+	static deserialize = validatedDelta((input: SerializedGame, game: Game|null) => {
 		game ??= new Game();
 
 		game.drawPile = Deck.deserialize(input.d, game.drawPile);
@@ -176,19 +182,16 @@ export class Game {
 		}
 
 		if (input.f != null) {
-			const {length, ...rest} = input.f;
 			const foundation = game.foundation;
-			foundation.length = length ?? foundation.length;
-			for (const [key, value] of Object.entries(rest)) {
-				if (key < foundation.length) {
-					foundation[key] = Deck.deserialize(value, foundation[key]);
-				}
+			foundation.length = input.f.length ?? foundation.length;
+			for (let i = 0; i < foundation.length; i++) {
+				foundation[i] = Deck.deserialize(input.f[i], foundation[i]);
 			}
 		}
 
 		return game.setContexts();
 	});
-	static fromScratch(game, settings) {
+	static fromScratch(game: Game, settings: Settings) {
 		game.drawPile.splice(0, game.drawPile.length, ...getDeck(settings.suitCount).shuffle());
 		game.foundation.splice(0, game.foundation.length);
 		game.tableau.splice(0, game.tableau.length);
@@ -204,4 +207,10 @@ export class Game {
 
 		return game.setContexts();
 	}
+	drawPile = new Deck<Card>();
+	tableau: TupleOf<Deck<Card>, 10> = [
+		new Deck<Card>(), new Deck<Card>(), new Deck<Card>(), new Deck<Card>(), new Deck<Card>(),
+		new Deck<Card>(), new Deck<Card>(), new Deck<Card>(), new Deck<Card>(), new Deck<Card>(),
+	];
+	foundation: Deck<Card>[] = [];
 }

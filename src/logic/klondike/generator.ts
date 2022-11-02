@@ -1,6 +1,7 @@
-import {Deck, suits} from "../deck";
+import {Card, Deck, Suit} from "../deck";
+import {Game} from "./game";
 
-export function randomShuffle(game, drawCount) {
+export function randomShuffle(game: Game, drawCount: 1|3) {
 	game.drawCount = drawCount;
 	game.drawPile.splice(0, game.drawPile.length, ...Deck.full().shuffle());
 	game.discardPile.splice(0, game.discardPile.length);
@@ -8,8 +9,8 @@ export function randomShuffle(game, drawCount) {
 	for (let i = 0; i < 7; i++) {
 		game.tableau.push(game.drawPile.draw(i + 1));
 	}
-	for (const k of Object.values(suits)) {
-		game.foundations[k] = new Deck();
+	for (const k of [Suit.Spades, Suit.Diamonds, Suit.Clubs, Suit.Hearts]) {
+		game.foundations[k] = new Deck<Card>();
 	}
 
 	for (const deck of game.tableau) {
@@ -20,26 +21,26 @@ export function randomShuffle(game, drawCount) {
 }
 
 // builds a game backward from solution
-export function reverseGame(game, drawCount) {
+export function reverseGame(game: Game, drawCount: 1|3) {
 	// clear and initialize the game
 	game.drawCount = drawCount;
 	game.drawPile.splice(0, game.drawPile.length);
 	game.discardPile.splice(0, game.discardPile.length);
 	game.tableau.splice(0, game.tableau.length);
 	for (let i = 0; i < 7; i++) {
-		game.tableau.push(new Deck());
+		game.tableau.push(new Deck<Card>());
 	}
-	for (const k of Object.values(suits)) {
-		game.foundations[k] = new Deck();
+	for (const k of [Suit.Spades, Suit.Diamonds, Suit.Clubs, Suit.Hearts]) {
+		game.foundations[k] = new Deck<Card>();
 	}
 
 	// build a "completed" game
-	const completeSuits = [];
+	const completeSuits: Deck<Card>[] = [];
 	for (let i = 0; i < 4; i++) {
 		completeSuits[i] = Deck.ofSuit(i).reverse();
 	}
 
-	const completeStacks = [new Deck(), new Deck(), new Deck(), new Deck()];
+	const completeStacks = [new Deck<Card>(), new Deck<Card>(), new Deck<Card>(), new Deck<Card>()];
 	for (let i = 0; i < 13; i++) {
 		const sets = [[0, 2], [1, 3]];
 		if (i % 2 === 1) {
@@ -54,7 +55,7 @@ export function reverseGame(game, drawCount) {
 
 		const plan = [sets[0][0], sets[1][0], sets[0][1], sets[1][1]];
 		for (let j = 0; j < 4; j++) {
-			completeStacks[j].push(completeSuits[plan[j]].pop());
+			completeStacks[j].push(completeSuits[plan[j]].pop()!);
 		}
 	}
 
@@ -62,7 +63,7 @@ export function reverseGame(game, drawCount) {
 	const notFullTableauDecks = [0, 1, 2, 3, 4, 5, 6];
 	while (completeStacks.length > 0) {
 		const stackIndex = Math.floor(Math.random() * completeStacks.length);
-		const card = completeStacks[stackIndex].pop();
+		const card = completeStacks[stackIndex].pop()!;
 		if (completeStacks[stackIndex].length === 0) {
 			completeStacks.splice(stackIndex, 1);
 		}
@@ -88,7 +89,7 @@ export function reverseGame(game, drawCount) {
 
 	for (const foundation of Object.values(game.foundations)) {
 		while (foundation.length > 0) {
-			const card = foundation.pop();
+			const card = foundation.pop()!;
 			if (notFullTableauDecks.length > 0) {
 				const notFullIndex = Math.floor(Math.random() * notFullTableauDecks.length);
 				const tableauIndex = notFullTableauDecks[notFullIndex];
@@ -106,7 +107,7 @@ export function reverseGame(game, drawCount) {
 	while (notFullTableauDecks.length > 0) {
 		const notFullIndex = Math.floor(Math.random() * notFullTableauDecks.length);
 		const tableauIndex = notFullTableauDecks[notFullIndex];
-		game.tableau[tableauIndex].push(game.drawPile.pop());
+		game.tableau[tableauIndex].push(game.drawPile.pop()!);
 		if (game.tableau[tableauIndex].length === tableauIndex + 1) {
 			notFullTableauDecks.splice(notFullIndex, 1);
 		}
