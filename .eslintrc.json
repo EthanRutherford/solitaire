@@ -4,5 +4,9 @@
 	"extends": [
 		"@rutherford",
 		"plugin:@typescript-eslint/recommended"
-	]
+	],
+	"rules": {
+		"@typescript-eslint/no-non-null-assertion": 0,
+  		"react/jsx-filename-extension": [1, { "extensions": [".jsx", ".tsx"] }]
+	}
 }

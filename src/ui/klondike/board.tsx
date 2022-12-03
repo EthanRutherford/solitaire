@@ -4,7 +4,7 @@ import Spade from "../../../images/spade";
 import Diamond from "../../../images/diamond";
 import Club from "../../../images/club";
 import Heart from "../../../images/heart";
-import {suits} from "../../logic/deck";
+import {Suit} from "../../logic/deck";
 import {Game} from "../../logic/klondike/game";
 import {CardRenderer, renderPile, renderStack} from "../shared/card-renderer";
 import {EmptyZone} from "../shared/empty-zone";
@@ -193,28 +193,28 @@ export const Board = sizerated(7, 5, function Board() {
 				</EmptyZone>
 				<EmptyZone
 					slot={{x: 3, y: 0}}
-					context={game.foundations[suits.spades]}
+					context={game.foundations[Suit.Spades]}
 					onTap={targetTap}
 				>
 					<Spade />
 				</EmptyZone>
 				<EmptyZone
 					slot={{x: 4, y: 0}}
-					context={game.foundations[suits.diamonds]}
+					context={game.foundations[Suit.Diamonds]}
 					onTap={targetTap}
 				>
 					<Diamond />
 				</EmptyZone>
 				<EmptyZone
 					slot={{x: 5, y: 0}}
-					context={game.foundations[suits.clubs]}
+					context={game.foundations[Suit.Clubs]}
 					onTap={targetTap}
 				>
 					<Club />
 				</EmptyZone>
 				<EmptyZone
 					slot={{x: 6, y: 0}}
-					context={game.foundations[suits.hearts]}
+					context={game.foundations[Suit.Hearts]}
 					onTap={targetTap}
 				>
 					<Heart />
@@ -237,16 +237,16 @@ export const Board = sizerated(7, 5, function Board() {
 					onDoubleTap: playableDoubleTap,
 					getDragCards: playableGetCards,
 				}, game.drawCount)}
-				{renderPile({x: 3, y: 0}, game.foundations[suits.spades], {
+				{renderPile({x: 3, y: 0}, game.foundations[Suit.Spades], {
 					onTap: foundationTap,
 				})}
-				{renderPile({x: 4, y: 0}, game.foundations[suits.diamonds], {
+				{renderPile({x: 4, y: 0}, game.foundations[Suit.Diamonds], {
 					onTap: foundationTap,
 				})}
-				{renderPile({x: 5, y: 0}, game.foundations[suits.clubs], {
+				{renderPile({x: 5, y: 0}, game.foundations[Suit.Clubs], {
 					onTap: foundationTap,
 				})}
-				{renderPile({x: 6, y: 0}, game.foundations[suits.hearts], {
+				{renderPile({x: 6, y: 0}, game.foundations[Suit.Hearts], {
 					onTap: foundationTap,
 				})}
 				{game.tableau.map((deck, i) => renderStack({x: i, y: 1}, deck, {

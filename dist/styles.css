@@ -25,112 +25,6 @@
 	width: calc(var(--card-width) * .5);
 }
 
-/*!******************************************************************************************************!*\
-  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[0].use[1]!./src/ui/shared/card.css ***!
-  \******************************************************************************************************/
-.card__card-front--_X9Ha, .card__card-back--uRv_U {
-	position: absolute;
-	width: var(--card-width);
-	height: var(--card-height);
-	cursor: pointer;
-	transition: left ease-in-out .2s, top ease-in-out .2s, filter linear .1s;
-	will-change: left, top, transform, filter;
-}
-
-.card__card-front--_X9Ha {
-	border: 1px solid var(--ash);
-	border-radius: calc(var(--card-width) * .05);
-	background-color: white;
-	font-family: 'K2D';
-	font-weight: bold;
-}
-
-.card__card-front--_X9Ha:focus {
-	box-shadow: 0 0 2px 2px var(--baby-dark);
-}
-
-.card__card-back--uRv_U > svg {
-	width: 100%;
-	height: 100%;
-}
-
-.card__drop-shadow--CRgTz, .card__flip-ltr-a--WhXPr, .card__flip-rtl-a--uXpWe {
-	filter: drop-shadow(2px 2px 2px var(--shadow-color));
-}
-
-.card__flip-ltr-a--WhXPr {
-	animation: card__flipUp--YBpdn .1s linear;
-}
-.card__flip-ltr-b--Qld41 {
-	animation: card__flipDown--_koSr .1s linear;
-}
-.card__flip-rtl-a--uXpWe {
-	animation: card__flipDown--_koSr .1s linear reverse;
-}
-.card__flip-rtl-b--MS3fU {
-	animation: card__flipUp--YBpdn .1s linear reverse;
-}
-
-.card__black--F18hb {
-	color: var(--carbon);
-}
-
-.card__red--kGtwS {
-	color: var(--scarlet);
-}
-
-.card__top-corner--sC8iJ, .card__bottom-corner--_HdjH {
-	position: absolute;
-	width: max(calc(var(--card-width) * .12), 8px);
-	text-align: center;
-	font-size: max(calc(var(--card-width) * .15), 12px);
-	line-height: 1;
-}
-.card__top-corner--sC8iJ > :nth-child(1), .card__bottom-corner--_HdjH > :nth-child(1) {
-	position: absolute;
-	left: 50%;
-	transform: translateX(-50%);
-}
-.card__top-corner--sC8iJ > :nth-child(2), .card__bottom-corner--_HdjH > :nth-child(2) {
-	position: absolute;
-	top: max(calc(var(--card-height) * .11), 12px);
-	left: 50%;
-	transform: translateX(-50%);
-}
-
-.card__top-corner--sC8iJ {
-	top: calc(var(--card-width) * .02);
-	left: calc(var(--card-width) * .05);
-}
-
-.card__bottom-corner--_HdjH {
-	bottom: calc(var(--card-width) * .02);
-	right: calc(var(--card-width) * .05);
-	transform: rotate(180deg);
-}
-
-.card__suit--gyhFJ {
-	width: max(calc(var(--card-width) * .12), 8px);
-}
-
-@keyframes card__flipUp--YBpdn {
-	from {
-		transform: perspective(800px) translateZ(0px) rotateY(0deg);
-	}
-	to {
-		transform: perspective(800px) translateZ(50px) rotateY(90deg);
-	}
-}
-
-@keyframes card__flipDown--_koSr {
-	from {
-		transform: perspective(800px) translateZ(50px) rotateY(-90deg);
-	}
-	to {
-		transform: perspective(800px) translateZ(0px) rotateY(0deg);
-	}
-}
-
 /*!***********************************************************************************************************!*\
   !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[0].use[1]!./src/ui/shared/card-face.css ***!
   \***********************************************************************************************************/
@@ -271,6 +165,112 @@
 	left: 80%;
 	top: 90%;
 	transform: translate(-50%, -50%) rotate(180deg);
+}
+
+/*!******************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[0].use[1]!./src/ui/shared/card.css ***!
+  \******************************************************************************************************/
+.card__card-front--_X9Ha, .card__card-back--uRv_U {
+	position: absolute;
+	width: var(--card-width);
+	height: var(--card-height);
+	cursor: pointer;
+	transition: left ease-in-out .2s, top ease-in-out .2s, filter linear .1s;
+	will-change: left, top, transform, filter;
+}
+
+.card__card-front--_X9Ha {
+	border: 1px solid var(--ash);
+	border-radius: calc(var(--card-width) * .05);
+	background-color: white;
+	font-family: 'K2D';
+	font-weight: bold;
+}
+
+.card__card-front--_X9Ha:focus {
+	box-shadow: 0 0 2px 2px var(--baby-dark);
+}
+
+.card__card-back--uRv_U > svg {
+	width: 100%;
+	height: 100%;
+}
+
+.card__drop-shadow--CRgTz, .card__flip-ltr-a--WhXPr, .card__flip-rtl-a--uXpWe {
+	filter: drop-shadow(2px 2px 2px var(--shadow-color));
+}
+
+.card__flip-ltr-a--WhXPr {
+	animation: card__flipUp--YBpdn .1s linear;
+}
+.card__flip-ltr-b--Qld41 {
+	animation: card__flipDown--_koSr .1s linear;
+}
+.card__flip-rtl-a--uXpWe {
+	animation: card__flipDown--_koSr .1s linear reverse;
+}
+.card__flip-rtl-b--MS3fU {
+	animation: card__flipUp--YBpdn .1s linear reverse;
+}
+
+.card__black--F18hb {
+	color: var(--carbon);
+}
+
+.card__red--kGtwS {
+	color: var(--scarlet);
+}
+
+.card__top-corner--sC8iJ, .card__bottom-corner--_HdjH {
+	position: absolute;
+	width: max(calc(var(--card-width) * .12), 8px);
+	text-align: center;
+	font-size: max(calc(var(--card-width) * .15), 12px);
+	line-height: 1;
+}
+.card__top-corner--sC8iJ > :nth-child(1), .card__bottom-corner--_HdjH > :nth-child(1) {
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
+}
+.card__top-corner--sC8iJ > :nth-child(2), .card__bottom-corner--_HdjH > :nth-child(2) {
+	position: absolute;
+	top: max(calc(var(--card-height) * .11), 12px);
+	left: 50%;
+	transform: translateX(-50%);
+}
+
+.card__top-corner--sC8iJ {
+	top: calc(var(--card-width) * .02);
+	left: calc(var(--card-width) * .05);
+}
+
+.card__bottom-corner--_HdjH {
+	bottom: calc(var(--card-width) * .02);
+	right: calc(var(--card-width) * .05);
+	transform: rotate(180deg);
+}
+
+.card__suit--gyhFJ {
+	width: max(calc(var(--card-width) * .12), 8px);
+}
+
+@keyframes card__flipUp--YBpdn {
+	from {
+		transform: perspective(800px) translateZ(0px) rotateY(0deg);
+	}
+	to {
+		transform: perspective(800px) translateZ(50px) rotateY(90deg);
+	}
+}
+
+@keyframes card__flipDown--_koSr {
+	from {
+		transform: perspective(800px) translateZ(50px) rotateY(-90deg);
+	}
+	to {
+		transform: perspective(800px) translateZ(0px) rotateY(0deg);
+	}
 }
 
 /*!*************************************************************************************************************!*\

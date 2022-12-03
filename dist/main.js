@@ -380,9 +380,9 @@ module.exports = SvgUndo;
 
 /***/ }),
 
-/***/ "./src/logic/deck.js":
+/***/ "./src/logic/deck.ts":
 /*!***************************!*\
-  !*** ./src/logic/deck.js ***!
+  !*** ./src/logic/deck.ts ***!
   \***************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -391,25 +391,27 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Card": () => (/* binding */ Card),
 /* harmony export */   "Deck": () => (/* binding */ Deck),
-/* harmony export */   "suits": () => (/* binding */ suits)
+/* harmony export */   "Suit": () => (/* binding */ Suit)
 /* harmony export */ });
-/* harmony import */ var _undo_stack__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./undo-stack */ "./src/logic/undo-stack.js");
+/* harmony import */ var _undo_stack__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./undo-stack */ "./src/logic/undo-stack.ts");
 
-const suits = {
-  spades: 0,
-  diamonds: 1,
-  clubs: 2,
-  hearts: 3
-};
+let Suit;
+
+(function (Suit) {
+  Suit[Suit["Spades"] = 0] = "Spades";
+  Suit[Suit["Diamonds"] = 1] = "Diamonds";
+  Suit[Suit["Clubs"] = 2] = "Clubs";
+  Suit[Suit["Hearts"] = 3] = "Hearts";
+})(Suit || (Suit = {}));
+
 const faces = ["NIL", "A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
 let nextId = 0;
 class Card {
   constructor(suit, value, faceUp = false) {
-    this.id = nextId++;
     this.suit = suit;
     this.value = value;
     this.faceUp = faceUp;
-    this.meta = {};
+    this.id = nextId++;
   }
 
   get label() {
@@ -430,14 +432,33 @@ class Card {
   }
 
   static deserialize = (0,_undo_stack__WEBPACK_IMPORTED_MODULE_0__.validatedDelta)((input, card) => {
-    card ??= new Card();
+    card ??= new Card(0, 1);
     card.suit = input.s ?? card.suit;
     card.value = input.v ?? card.value;
     card.faceUp = input.f ?? card.faceUp;
     card.id = input.i ?? card.id;
     return card;
   });
+  meta = {};
 }
+const coreDeckDeserialize = (0,_undo_stack__WEBPACK_IMPORTED_MODULE_0__.validatedDelta)((input, deck) => {
+  const {
+    length,
+    ...rest
+  } = input;
+  deck ??= new Deck();
+  deck.length = length ?? deck.length;
+
+  for (const key of Object.keys(rest)) {
+    const index = Number.parseInt(key, 10);
+
+    if (index < deck.length) {
+      deck[index] = Card.deserialize(rest[index], deck[index]);
+    }
+  }
+
+  return deck;
+});
 class Deck extends Array {
   shuffle() {
     const copy = [...this];
@@ -458,38 +479,41 @@ class Deck extends Array {
     return this[this.length - number - 1];
   }
 
-  serialize() {
-    return this.map(c => c?.serialize());
+  map(mapper) {
+    return super.map(mapper);
   }
 
-  static deserialize = (0,_undo_stack__WEBPACK_IMPORTED_MODULE_0__.validatedDelta)((input, deck) => {
-    const {
-      length,
-      ...rest
-    } = input;
-    deck ??= new Deck();
-    deck.length = length ?? deck.length;
+  filter(mapper) {
+    return super.filter(mapper);
+  }
 
-    for (const [key, value] of Object.entries(rest)) {
-      if (key < deck.length) {
-        deck[key] = Card.deserialize(value, deck[key]);
-      }
-    }
+  concat(other) {
+    return super.concat(other);
+  }
 
-    return deck;
-  });
+  reverse() {
+    return super.reverse();
+  }
+
+  serialize() {
+    return this.map(c => c?.serialize() ?? null);
+  }
+
+  static deserialize(input, deck) {
+    return coreDeckDeserialize(input, deck);
+  }
 
   static full() {
     const deck = new Deck(52);
     let i = 0;
 
-    for (const suit of [suits.spades, suits.diamonds]) {
+    for (const suit of [Suit.Spades, Suit.Diamonds]) {
       for (let v = 1; v <= 13; v++) {
         deck[i++] = new Card(suit, v);
       }
     }
 
-    for (const suit of [suits.clubs, suits.hearts]) {
+    for (const suit of [Suit.Clubs, Suit.Hearts]) {
       for (let v = 13; v > 0; v--) {
         deck[i++] = new Card(suit, v);
       }
@@ -512,9 +536,9 @@ class Deck extends Array {
 
 /***/ }),
 
-/***/ "./src/logic/free-cell/game.js":
+/***/ "./src/logic/free-cell/game.ts":
 /*!*************************************!*\
-  !*** ./src/logic/free-cell/game.js ***!
+  !*** ./src/logic/free-cell/game.ts ***!
   \*************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -523,22 +547,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Game": () => (/* binding */ Game)
 /* harmony export */ });
-/* harmony import */ var _deck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../deck */ "./src/logic/deck.js");
-/* harmony import */ var _undo_stack__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../undo-stack */ "./src/logic/undo-stack.js");
+/* harmony import */ var _util_tupleof__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../util/tupleof */ "./src/util/tupleof.ts");
+/* harmony import */ var _deck__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../deck */ "./src/logic/deck.ts");
+/* harmony import */ var _undo_stack__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../undo-stack */ "./src/logic/undo-stack.ts");
+
 
 
 class Game {
-  constructor() {
-    this.tableau = new Array(8).fill(0).map(() => new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck());
-    this.freeCells = new Array(4).fill(0).map(() => new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck());
-    this.foundations = {
-      [_deck__WEBPACK_IMPORTED_MODULE_0__.suits.spades]: new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck(),
-      [_deck__WEBPACK_IMPORTED_MODULE_0__.suits.diamonds]: new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck(),
-      [_deck__WEBPACK_IMPORTED_MODULE_0__.suits.clubs]: new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck(),
-      [_deck__WEBPACK_IMPORTED_MODULE_0__.suits.hearts]: new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck()
-    };
-  }
-
   setContexts() {
     const contexts = [...this.tableau, ...this.freeCells, ...Object.values(this.foundations)];
 
@@ -609,8 +624,9 @@ class Game {
     const freeCellCount = this.freeCells.filter(c => c.length === 0).length;
     const freeTableauCount = this.tableau.filter(t => t !== target && t.length === 0).length;
     const maxStackSize = (freeCellCount + 1) * (freeTableauCount + 1);
+    const context = card.meta.context;
 
-    if (card.meta.context.length - card.meta.context.indexOf(card) > maxStackSize) {
+    if (context.length - context.indexOf(card) > maxStackSize) {
       return false;
     }
 
@@ -623,7 +639,8 @@ class Game {
     } else if (this.tableau.includes(target)) {
       return this.canMoveStack(card, target);
     } else if (this.freeCells.includes(target)) {
-      return card === card.meta.context.fromTop() && target.length === 0;
+      const context = card.meta.context;
+      return card === context.fromTop() && target.length === 0;
     }
 
     return false;
@@ -644,7 +661,9 @@ class Game {
   }
 
   tryGetMoveTarget(card) {
-    if (card === card.meta.context.fromTop()) {
+    const context = card.meta.context;
+
+    if (card === context.fromTop()) {
       const foundation = this.foundations[card.suit];
 
       if (this.canMoveToFoundation(card, foundation)) {
@@ -716,44 +735,44 @@ class Game {
     };
   }
 
-  static deserialize = (0,_undo_stack__WEBPACK_IMPORTED_MODULE_1__.validatedDelta)((input, game) => {
+  static deserialize = (0,_undo_stack__WEBPACK_IMPORTED_MODULE_2__.validatedDelta)((input, game) => {
     game ??= new Game();
     const tableau = game.tableau;
 
     for (let i = 0; i < 8; i++) {
-      tableau[i] = _deck__WEBPACK_IMPORTED_MODULE_0__.Deck.deserialize(input.t?.[i], tableau[i]);
+      tableau[i] = _deck__WEBPACK_IMPORTED_MODULE_1__.Deck.deserialize(input.t?.[i], tableau[i]);
     }
 
     const freeCells = game.freeCells;
 
     for (let i = 0; i < 4; i++) {
-      freeCells[i] = _deck__WEBPACK_IMPORTED_MODULE_0__.Deck.deserialize(input.c?.[i], freeCells[i]);
+      freeCells[i] = _deck__WEBPACK_IMPORTED_MODULE_1__.Deck.deserialize(input.c?.[i], freeCells[i]);
     }
 
     const foundations = game.foundations;
 
-    for (const k of Object.values(_deck__WEBPACK_IMPORTED_MODULE_0__.suits)) {
-      foundations[k] = _deck__WEBPACK_IMPORTED_MODULE_0__.Deck.deserialize(input.f?.[k], foundations[k]);
+    for (const k of [_deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Spades, _deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Diamonds, _deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Clubs, _deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Hearts]) {
+      foundations[k] = _deck__WEBPACK_IMPORTED_MODULE_1__.Deck.deserialize(input.f?.[k], foundations[k]);
     }
 
     return game.setContexts();
   });
 
   static fromScratch(game) {
-    const deck = _deck__WEBPACK_IMPORTED_MODULE_0__.Deck.full().shuffle();
+    const deck = _deck__WEBPACK_IMPORTED_MODULE_1__.Deck.full().shuffle();
     game.tableau.splice(0, game.tableau.length);
     game.freeCells.splice(0, game.freeCells.length);
 
     for (let i = 0; i < 8; i++) {
-      game.tableau.push(new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck());
+      game.tableau.push(new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck());
     }
 
     for (let i = 0; i < 4; i++) {
-      game.freeCells.push(new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck());
+      game.freeCells.push(new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck());
     }
 
-    for (const k of Object.values(_deck__WEBPACK_IMPORTED_MODULE_0__.suits)) {
-      game.foundations[k] = new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck();
+    for (const k of [_deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Spades, _deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Diamonds, _deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Clubs, _deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Hearts]) {
+      game.foundations[k] = new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck();
     }
 
     for (let i = 0; i < deck.length; i++) {
@@ -764,13 +783,21 @@ class Game {
     return game.setContexts();
   }
 
+  tableau = [new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck()];
+  freeCells = [new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck()];
+  foundations = {
+    [_deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Spades]: new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(),
+    [_deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Diamonds]: new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(),
+    [_deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Clubs]: new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(),
+    [_deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Hearts]: new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck()
+  };
 }
 
 /***/ }),
 
-/***/ "./src/logic/game-db.js":
+/***/ "./src/logic/game-db.ts":
 /*!******************************!*\
-  !*** ./src/logic/game-db.js ***!
+  !*** ./src/logic/game-db.ts ***!
   \******************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -792,8 +819,8 @@ function openDatabase() {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open("solitaire", 1);
 
-    request.onupgradeneeded = function (event) {
-      const database = event.target.result; // drop existing tables
+    request.onupgradeneeded = function () {
+      const database = this.result; // drop existing tables
 
       for (const name of database.objectStoreNames) {
         database.deleteObjectStore(name);
@@ -823,8 +850,8 @@ function getCore(objectStore, id) {
     const request = objectStore.get(id);
     request.onerror = reject;
 
-    request.onsuccess = function (event) {
-      resolve(event.target.result);
+    request.onsuccess = function () {
+      resolve(this.result);
     };
   });
 }
@@ -835,8 +862,8 @@ function listCore(objectStore) {
     request.onerror = reject;
     const list = [];
 
-    request.onsuccess = function (event) {
-      const cursor = event.target.result;
+    request.onsuccess = function () {
+      const cursor = this.result;
 
       if (cursor) {
         list.push({
@@ -856,8 +883,8 @@ function addCore(objectStore, object) {
     const request = objectStore.add(object);
     request.onerror = reject;
 
-    request.onsuccess = function (event) {
-      resolve(event.target.result);
+    request.onsuccess = function () {
+      resolve(this.result);
     };
   });
 }
@@ -867,8 +894,8 @@ function putCore(objectStore, object, id) {
     const request = objectStore.put(object, id);
     request.onerror = reject;
 
-    request.onsuccess = function (event) {
-      resolve(event.target.result);
+    request.onsuccess = function () {
+      resolve(this.result);
     };
   });
 }
@@ -909,9 +936,9 @@ async function remove(tableName, id) {
 
 /***/ }),
 
-/***/ "./src/logic/klondike/game.js":
+/***/ "./src/logic/klondike/game.ts":
 /*!************************************!*\
-  !*** ./src/logic/klondike/game.js ***!
+  !*** ./src/logic/klondike/game.ts ***!
   \************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -920,26 +947,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Game": () => (/* binding */ Game)
 /* harmony export */ });
-/* harmony import */ var _deck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../deck */ "./src/logic/deck.js");
-/* harmony import */ var _undo_stack__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../undo-stack */ "./src/logic/undo-stack.js");
-/* harmony import */ var _generator__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./generator */ "./src/logic/klondike/generator.js");
+/* harmony import */ var _util_tupleof__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../util/tupleof */ "./src/util/tupleof.ts");
+/* harmony import */ var _deck__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../deck */ "./src/logic/deck.ts");
+/* harmony import */ var _undo_stack__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../undo-stack */ "./src/logic/undo-stack.ts");
+/* harmony import */ var _generator__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./generator */ "./src/logic/klondike/generator.ts");
+
 
 
 
 class Game {
-  constructor() {
-    this.drawCount = 1;
-    this.drawPile = new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck();
-    this.discardPile = new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck();
-    this.tableau = new Array(7).fill(0).map(() => new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck());
-    this.foundations = {
-      [_deck__WEBPACK_IMPORTED_MODULE_0__.suits.spades]: new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck(),
-      [_deck__WEBPACK_IMPORTED_MODULE_0__.suits.diamonds]: new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck(),
-      [_deck__WEBPACK_IMPORTED_MODULE_0__.suits.clubs]: new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck(),
-      [_deck__WEBPACK_IMPORTED_MODULE_0__.suits.hearts]: new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck()
-    };
-  }
-
   setContexts() {
     const contexts = [this.drawPile, this.discardPile, ...this.tableau, ...Object.values(this.foundations)];
 
@@ -1047,7 +1063,9 @@ class Game {
   }
 
   tryGetMoveTarget(card) {
-    if (card === card.meta.context.fromTop()) {
+    const context = card.meta.context;
+
+    if (card === context.fromTop()) {
       const foundation = this.foundations[card.suit];
 
       if (this.canMoveToFoundation(card, foundation)) {
@@ -1117,38 +1135,48 @@ class Game {
     return Object.values(this.foundations).every(d => d.length === 13);
   }
 
-  static deserialize = (0,_undo_stack__WEBPACK_IMPORTED_MODULE_1__.validatedDelta)((input, game) => {
+  static deserialize = (0,_undo_stack__WEBPACK_IMPORTED_MODULE_2__.validatedDelta)((input, game) => {
     game ??= new Game();
     game.drawCount = input.dc ?? game.drawCount;
-    game.drawPile = _deck__WEBPACK_IMPORTED_MODULE_0__.Deck.deserialize(input.dr, game.drawPile);
-    game.discardPile = _deck__WEBPACK_IMPORTED_MODULE_0__.Deck.deserialize(input.di, game.discardPile);
+    game.drawPile = _deck__WEBPACK_IMPORTED_MODULE_1__.Deck.deserialize(input.dr, game.drawPile);
+    game.discardPile = _deck__WEBPACK_IMPORTED_MODULE_1__.Deck.deserialize(input.di, game.discardPile);
     const tableau = game.tableau;
 
     for (let i = 0; i < 7; i++) {
-      tableau[i] = _deck__WEBPACK_IMPORTED_MODULE_0__.Deck.deserialize(input.t?.[i], tableau[i]);
+      tableau[i] = _deck__WEBPACK_IMPORTED_MODULE_1__.Deck.deserialize(input.t?.[i], tableau[i]);
     }
 
     const foundations = game.foundations;
 
-    for (const k of Object.values(_deck__WEBPACK_IMPORTED_MODULE_0__.suits)) {
-      foundations[k] = _deck__WEBPACK_IMPORTED_MODULE_0__.Deck.deserialize(input.f?.[k], foundations[k]);
+    for (const k of [_deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Spades, _deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Diamonds, _deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Clubs, _deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Hearts]) {
+      foundations[k] = _deck__WEBPACK_IMPORTED_MODULE_1__.Deck.deserialize(input.f?.[k], foundations[k]);
     }
 
     return game.setContexts();
   });
 
   static fromScratch(game, settings) {
-    const generator = [_generator__WEBPACK_IMPORTED_MODULE_2__.randomShuffle, _generator__WEBPACK_IMPORTED_MODULE_2__.reverseGame][settings.generator];
+    const generator = [_generator__WEBPACK_IMPORTED_MODULE_3__.randomShuffle, _generator__WEBPACK_IMPORTED_MODULE_3__.reverseGame][settings.generator];
     return generator(game, settings.drawCount);
   }
 
+  drawCount = 1;
+  drawPile = new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck();
+  discardPile = new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck();
+  tableau = [new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck()];
+  foundations = {
+    [_deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Spades]: new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(),
+    [_deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Diamonds]: new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(),
+    [_deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Clubs]: new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(),
+    [_deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Hearts]: new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck()
+  };
 }
 
 /***/ }),
 
-/***/ "./src/logic/klondike/generator.js":
+/***/ "./src/logic/klondike/generator.ts":
 /*!*****************************************!*\
-  !*** ./src/logic/klondike/generator.js ***!
+  !*** ./src/logic/klondike/generator.ts ***!
   \*****************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -1158,7 +1186,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "randomShuffle": () => (/* binding */ randomShuffle),
 /* harmony export */   "reverseGame": () => (/* binding */ reverseGame)
 /* harmony export */ });
-/* harmony import */ var _deck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../deck */ "./src/logic/deck.js");
+/* harmony import */ var _deck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../deck */ "./src/logic/deck.ts");
+/* harmony import */ var _game__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./game */ "./src/logic/klondike/game.ts");
+
 
 function randomShuffle(game, drawCount) {
   game.drawCount = drawCount;
@@ -1170,7 +1200,7 @@ function randomShuffle(game, drawCount) {
     game.tableau.push(game.drawPile.draw(i + 1));
   }
 
-  for (const k of Object.values(_deck__WEBPACK_IMPORTED_MODULE_0__.suits)) {
+  for (const k of [_deck__WEBPACK_IMPORTED_MODULE_0__.Suit.Spades, _deck__WEBPACK_IMPORTED_MODULE_0__.Suit.Diamonds, _deck__WEBPACK_IMPORTED_MODULE_0__.Suit.Clubs, _deck__WEBPACK_IMPORTED_MODULE_0__.Suit.Hearts]) {
     game.foundations[k] = new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck();
   }
 
@@ -1192,7 +1222,7 @@ function reverseGame(game, drawCount) {
     game.tableau.push(new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck());
   }
 
-  for (const k of Object.values(_deck__WEBPACK_IMPORTED_MODULE_0__.suits)) {
+  for (const k of [_deck__WEBPACK_IMPORTED_MODULE_0__.Suit.Spades, _deck__WEBPACK_IMPORTED_MODULE_0__.Suit.Diamonds, _deck__WEBPACK_IMPORTED_MODULE_0__.Suit.Clubs, _deck__WEBPACK_IMPORTED_MODULE_0__.Suit.Hearts]) {
     game.foundations[k] = new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck();
   } // build a "completed" game
 
@@ -1298,9 +1328,9 @@ function reverseGame(game, drawCount) {
 
 /***/ }),
 
-/***/ "./src/logic/pyramid/game.js":
+/***/ "./src/logic/pyramid/game.ts":
 /*!***********************************!*\
-  !*** ./src/logic/pyramid/game.js ***!
+  !*** ./src/logic/pyramid/game.ts ***!
   \***********************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -1310,9 +1340,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "Game": () => (/* binding */ Game),
 /* harmony export */   "getChildIndices": () => (/* binding */ getChildIndices)
 /* harmony export */ });
-/* harmony import */ var _deck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../deck */ "./src/logic/deck.js");
-/* harmony import */ var _undo_stack__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../undo-stack */ "./src/logic/undo-stack.js");
-/* harmony import */ var _generator__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./generator */ "./src/logic/pyramid/generator.js");
+/* harmony import */ var _deck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../deck */ "./src/logic/deck.ts");
+/* harmony import */ var _undo_stack__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../undo-stack */ "./src/logic/undo-stack.ts");
+/* harmony import */ var _generator__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./generator */ "./src/logic/pyramid/generator.ts");
 
 
 
@@ -1327,14 +1357,6 @@ function getChildIndices(index) {
   return [nextRow + rowOffset, nextRow + rowOffset + 1];
 }
 class Game {
-  constructor() {
-    this.tree = new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck();
-    this.drawPile = new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck();
-    this.discardPile = new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck();
-    this.completed = new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck();
-    this.remainingFlips = 0;
-  }
-
   setContexts() {
     const contexts = [this.tree, this.drawPile, this.discardPile, this.completed];
 
@@ -1394,7 +1416,8 @@ class Game {
       const index = this.tree.indexOf(card);
       this.tree[index] = null;
     } else if (card.meta.context !== this.completed) {
-      card.meta.context.splice(card.meta.context.indexOf(card), 1);
+      const context = card.meta.context;
+      context.splice(context.indexOf(card), 1);
     } else {
       return;
     }
@@ -1456,13 +1479,18 @@ class Game {
     return generator(game);
   }
 
+  tree = new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck();
+  drawPile = new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck();
+  discardPile = new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck();
+  completed = new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck();
+  remainingFlips = 0;
 }
 
 /***/ }),
 
-/***/ "./src/logic/pyramid/generator.js":
+/***/ "./src/logic/pyramid/generator.ts":
 /*!****************************************!*\
-  !*** ./src/logic/pyramid/generator.js ***!
+  !*** ./src/logic/pyramid/generator.ts ***!
   \****************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -1473,8 +1501,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "reverseGame": () => (/* binding */ reverseGame),
 /* harmony export */   "validatedShuffle": () => (/* binding */ validatedShuffle)
 /* harmony export */ });
-/* harmony import */ var _deck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../deck */ "./src/logic/deck.js");
-/* harmony import */ var _game__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./game */ "./src/logic/pyramid/game.js");
+/* harmony import */ var _deck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../deck */ "./src/logic/deck.ts");
+/* harmony import */ var _game__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./game */ "./src/logic/pyramid/game.ts");
 
  // shuffles a deck and deals cards onto the pyramid
 
@@ -1729,9 +1757,9 @@ function reverseGame(game) {
 
 /***/ }),
 
-/***/ "./src/logic/spider/game.js":
+/***/ "./src/logic/spider/game.ts":
 /*!**********************************!*\
-  !*** ./src/logic/spider/game.js ***!
+  !*** ./src/logic/spider/game.ts ***!
   \**********************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -1740,34 +1768,36 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Game": () => (/* binding */ Game)
 /* harmony export */ });
-/* harmony import */ var _deck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../deck */ "./src/logic/deck.js");
-/* harmony import */ var _undo_stack__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../undo-stack */ "./src/logic/undo-stack.js");
+/* harmony import */ var _util_tupleof__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../util/tupleof */ "./src/util/tupleof.ts");
+/* harmony import */ var _deck__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../deck */ "./src/logic/deck.ts");
+/* harmony import */ var _undo_stack__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../undo-stack */ "./src/logic/undo-stack.ts");
+
 
 
 
 function getOneSuitDeck() {
-  const deck = new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck();
+  const deck = new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck();
 
   for (let i = 0; i < 8; i++) {
-    deck.push(..._deck__WEBPACK_IMPORTED_MODULE_0__.Deck.ofSuit(_deck__WEBPACK_IMPORTED_MODULE_0__.suits.spades));
+    deck.push(..._deck__WEBPACK_IMPORTED_MODULE_1__.Deck.ofSuit(_deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Spades));
   }
 
   return deck;
 }
 
 function getTwoSuitDeck() {
-  const deck = new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck();
+  const deck = new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck();
 
   for (let i = 0; i < 4; i++) {
-    deck.push(..._deck__WEBPACK_IMPORTED_MODULE_0__.Deck.ofSuit(_deck__WEBPACK_IMPORTED_MODULE_0__.suits.spades));
-    deck.push(..._deck__WEBPACK_IMPORTED_MODULE_0__.Deck.ofSuit(_deck__WEBPACK_IMPORTED_MODULE_0__.suits.hearts));
+    deck.push(..._deck__WEBPACK_IMPORTED_MODULE_1__.Deck.ofSuit(_deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Spades));
+    deck.push(..._deck__WEBPACK_IMPORTED_MODULE_1__.Deck.ofSuit(_deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Hearts));
   }
 
   return deck;
 }
 
 function getFourSuitDeck() {
-  return _deck__WEBPACK_IMPORTED_MODULE_0__.Deck.full().concat(_deck__WEBPACK_IMPORTED_MODULE_0__.Deck.full());
+  return _deck__WEBPACK_IMPORTED_MODULE_1__.Deck.full().concat(_deck__WEBPACK_IMPORTED_MODULE_1__.Deck.full());
 }
 
 function getDeck(suitCount) {
@@ -1787,12 +1817,6 @@ function getDeck(suitCount) {
 }
 
 class Game {
-  constructor() {
-    this.drawPile = new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck();
-    this.tableau = new Array(10).fill(0).map(() => new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck());
-    this.foundation = [];
-  }
-
   setContexts() {
     const contexts = [this.drawPile, ...this.tableau, ...this.foundation];
 
@@ -1932,27 +1956,21 @@ class Game {
     };
   }
 
-  static deserialize = (0,_undo_stack__WEBPACK_IMPORTED_MODULE_1__.validatedDelta)((input, game) => {
+  static deserialize = (0,_undo_stack__WEBPACK_IMPORTED_MODULE_2__.validatedDelta)((input, game) => {
     game ??= new Game();
-    game.drawPile = _deck__WEBPACK_IMPORTED_MODULE_0__.Deck.deserialize(input.d, game.drawPile);
+    game.drawPile = _deck__WEBPACK_IMPORTED_MODULE_1__.Deck.deserialize(input.d, game.drawPile);
     const tableau = game.tableau;
 
     for (let i = 0; i < 10; i++) {
-      tableau[i] = _deck__WEBPACK_IMPORTED_MODULE_0__.Deck.deserialize(input.t?.[i], tableau[i]);
+      tableau[i] = _deck__WEBPACK_IMPORTED_MODULE_1__.Deck.deserialize(input.t?.[i], tableau[i]);
     }
 
     if (input.f != null) {
-      const {
-        length,
-        ...rest
-      } = input.f;
       const foundation = game.foundation;
-      foundation.length = length ?? foundation.length;
+      foundation.length = input.f.length ?? foundation.length;
 
-      for (const [key, value] of Object.entries(rest)) {
-        if (key < foundation.length) {
-          foundation[key] = _deck__WEBPACK_IMPORTED_MODULE_0__.Deck.deserialize(value, foundation[key]);
-        }
+      for (let i = 0; i < foundation.length; i++) {
+        foundation[i] = _deck__WEBPACK_IMPORTED_MODULE_1__.Deck.deserialize(input.f[i], foundation[i]);
       }
     }
 
@@ -1979,13 +1997,16 @@ class Game {
     return game.setContexts();
   }
 
+  drawPile = new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck();
+  tableau = [new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck()];
+  foundation = [];
 }
 
 /***/ }),
 
-/***/ "./src/logic/undo-stack.js":
+/***/ "./src/logic/undo-stack.ts":
 /*!*********************************!*\
-  !*** ./src/logic/undo-stack.js ***!
+  !*** ./src/logic/undo-stack.ts ***!
   \*********************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -2014,29 +2035,33 @@ class Delta {
 
   static compute(prevState, nextState) {
     const from = prevState == null ? null : {};
-    const to = nextState == null ? null : {};
+    const to = nextState == null ? null : {}; // cast to record so typescript doesn't complain about string indexes
+
+    const prevRecord = prevState;
+    const nextRecord = nextState;
     const allKeys = new Set(Object.getOwnPropertyNames(prevState ?? {}).concat(Object.getOwnPropertyNames(nextState ?? {})));
 
     for (const key of allKeys) {
-      const prev = prevState?.[key] ?? null;
-      const next = nextState?.[key] ?? null;
+      const prev = prevRecord?.[key] ?? null;
+      const next = nextRecord?.[key] ?? null;
 
       if (prev === next) {
         continue;
       }
 
-      if (typeof (prev ?? next) !== "object") {
-        from != null && (from[key] = prev);
-        to != null && (to[key] = next);
+      if (typeof prev === "object" && typeof next === "object") {
+        const result = Delta.compute(prev, next);
+
+        if (result != null) {
+          from != null && (from[key] = result.from);
+          to != null && (to[key] = result.to);
+        }
+
         continue;
       }
 
-      const result = Delta.compute(prev, next);
-
-      if (result != null) {
-        from != null && (from[key] = result.from);
-        to != null && (to[key] = result.to);
-      }
+      from != null && (from[key] = prev);
+      to != null && (to[key] = next);
     }
 
     if (Object.keys(from ?? {}).length + Object.keys(to ?? {}).length === 0) {
@@ -2049,13 +2074,15 @@ class Delta {
 }
 
 function validatedDelta(action) {
-  return function (delta, object = null) {
+  function validator(delta, object = null) {
     if (delta == null) {
       return delta === undefined ? object : null;
     }
 
     return action(delta, object);
-  };
+  }
+
+  return validator;
 }
 class UndoStack {
   constructor(undo = [], redo = []) {
@@ -2117,68 +2144,84 @@ class UndoStack {
     };
   }
 
-  static deserialize = validatedDelta((input, undoStack) => {
-    undoStack ??= new UndoStack();
+  static deserialize = (input, undoStack) => {
+    // stupid workaround to function wrappers not being able to use generic types
+    // with function wrappers
+    return validatedDelta((input, undoStack) => {
+      undoStack ??= new UndoStack();
 
-    if (input.u != null) {
-      const {
-        length,
-        ...rest
-      } = input.u;
-      const stack = undoStack.undoStack;
-      stack.length = length ?? stack.length;
+      if (input.u != null) {
+        const {
+          length,
+          ...rest
+        } = input.u;
+        const stack = undoStack.undoStack;
+        stack.length = length ?? stack.length;
 
-      for (const [key, value] of Object.entries(rest)) {
-        if (key < stack.length) {
-          stack[key] = value.map(d => Delta.deserialize(d));
+        for (const key of Object.keys(rest)) {
+          const index = Number.parseInt(key, 10);
+
+          if (index < stack.length) {
+            stack[index] = rest[index].map(d => Delta.deserialize(d));
+          }
         }
       }
-    }
 
-    if (input.r != null) {
-      const {
-        length,
-        ...rest
-      } = input.r;
-      const stack = undoStack.redoStack;
-      stack.length = length ?? stack.length;
+      if (input.r != null) {
+        const {
+          length,
+          ...rest
+        } = input.r;
+        const stack = undoStack.redoStack;
+        stack.length = length ?? stack.length;
 
-      for (const [key, value] of Object.entries(rest)) {
-        if (key < stack.length) {
-          stack[key] = value.map(d => Delta.deserialize(d));
+        for (const key of Object.keys(rest)) {
+          const index = Number.parseInt(key, 10);
+
+          if (index < stack.length) {
+            stack[index] = rest[index].map(d => Delta.deserialize(d));
+          }
         }
       }
-    }
 
-    return undoStack;
-  });
+      return undoStack;
+    })(input, undoStack);
+  };
+  undoStack = [];
+  redoStack = [];
+  lock = false;
 }
 
 /***/ }),
 
-/***/ "./src/logic/wish/game.js":
+/***/ "./src/logic/wish/game.ts":
 /*!********************************!*\
-  !*** ./src/logic/wish/game.js ***!
+  !*** ./src/logic/wish/game.ts ***!
   \********************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Game": () => (/* binding */ Game)
+/* harmony export */   "Game": () => (/* binding */ Game),
+/* harmony export */   "GameGenerator": () => (/* binding */ GameGenerator)
 /* harmony export */ });
-/* harmony import */ var _deck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../deck */ "./src/logic/deck.js");
-/* harmony import */ var _undo_stack__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../undo-stack */ "./src/logic/undo-stack.js");
-/* harmony import */ var _generator__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./generator */ "./src/logic/wish/generator.js");
+/* harmony import */ var _util_tupleof__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../util/tupleof */ "./src/util/tupleof.ts");
+/* harmony import */ var _deck__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../deck */ "./src/logic/deck.ts");
+/* harmony import */ var _undo_stack__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../undo-stack */ "./src/logic/undo-stack.ts");
+/* harmony import */ var _generator__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./generator */ "./src/logic/wish/generator.ts");
 
 
+
+
+let GameGenerator;
+
+(function (GameGenerator) {
+  GameGenerator[GameGenerator["Random"] = 0] = "Random";
+  GameGenerator[GameGenerator["Solveable"] = 1] = "Solveable";
+})(GameGenerator || (GameGenerator = {}));
 
 class Game {
-  constructor() {
-    this.tableau = new Array(8).fill(0).map(() => new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck());
-    this.completed = new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck();
-  }
-
   setContexts() {
     const contexts = [...this.tableau, this.completed];
 
@@ -2225,7 +2268,8 @@ class Game {
       return false;
     }
 
-    return card === card.meta.context.fromTop();
+    const context = card.meta.context;
+    return card === context.fromTop();
   }
 
   canClearCards(cardA, cardB) {
@@ -2247,30 +2291,32 @@ class Game {
     };
   }
 
-  static deserialize = (0,_undo_stack__WEBPACK_IMPORTED_MODULE_1__.validatedDelta)((input, game) => {
+  static deserialize = (0,_undo_stack__WEBPACK_IMPORTED_MODULE_2__.validatedDelta)((input, game) => {
     game ??= new Game();
     const tableau = game.tableau;
 
     for (let i = 0; i < 8; i++) {
-      tableau[i] = _deck__WEBPACK_IMPORTED_MODULE_0__.Deck.deserialize(input.t?.[i], tableau[i]);
+      tableau[i] = _deck__WEBPACK_IMPORTED_MODULE_1__.Deck.deserialize(input.t?.[i], tableau[i]);
     }
 
-    game.completed = _deck__WEBPACK_IMPORTED_MODULE_0__.Deck.deserialize(input.c, game.completed);
+    game.completed = _deck__WEBPACK_IMPORTED_MODULE_1__.Deck.deserialize(input.c, game.completed);
     return game.setContexts();
   });
 
   static fromScratch(game, settings) {
-    const generator = [_generator__WEBPACK_IMPORTED_MODULE_2__.randomShuffle, _generator__WEBPACK_IMPORTED_MODULE_2__.reverseGame][settings.generator];
+    const generator = [_generator__WEBPACK_IMPORTED_MODULE_3__.randomShuffle, _generator__WEBPACK_IMPORTED_MODULE_3__.reverseGame][settings.generator];
     return generator(game);
   }
 
+  tableau = [new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck()];
+  completed = new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck();
 }
 
 /***/ }),
 
-/***/ "./src/logic/wish/generator.js":
+/***/ "./src/logic/wish/generator.ts":
 /*!*************************************!*\
-  !*** ./src/logic/wish/generator.js ***!
+  !*** ./src/logic/wish/generator.ts ***!
   \*************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -2280,7 +2326,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "randomShuffle": () => (/* binding */ randomShuffle),
 /* harmony export */   "reverseGame": () => (/* binding */ reverseGame)
 /* harmony export */ });
-/* harmony import */ var _deck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../deck */ "./src/logic/deck.js");
+/* harmony import */ var _deck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../deck */ "./src/logic/deck.ts");
+/* harmony import */ var _game__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./game */ "./src/logic/wish/game.ts");
+
 
 function randomShuffle(game) {
   game.tableau.splice(0, game.tableau.length);
@@ -2367,9 +2415,9 @@ function reverseGame(game) {
 
 /***/ }),
 
-/***/ "./src/ui/animations/animation-step.js":
+/***/ "./src/ui/animations/animation-step.ts":
 /*!*********************************************!*\
-  !*** ./src/ui/animations/animation-step.js ***!
+  !*** ./src/ui/animations/animation-step.ts ***!
   \*********************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -2389,7 +2437,9 @@ class AnimationStep {
     this.step(delta);
   }
 
-  step() {}
+  step(delta) {
+    throw new Error(`you shouldn't be here ${delta}`);
+  }
 
   progress = 0;
 }
@@ -2404,6 +2454,7 @@ class Action extends AnimationStep {
     this.done = this.func(this.progress, delta) ?? false;
   }
 
+  done = false;
 }
 
 function wrapStep(step) {
@@ -2418,7 +2469,6 @@ class Sequence extends AnimationStep {
   constructor(steps) {
     super();
     this.steps = steps.map(wrapStep);
-    this.stepIndex = 0;
   }
 
   step(delta) {
@@ -2433,12 +2483,13 @@ class Sequence extends AnimationStep {
     return this.stepIndex === this.steps.length;
   }
 
+  stepIndex = 0;
 }
 class Parallel extends AnimationStep {
   constructor(steps, race = false) {
     super();
-    this.steps = steps.map(wrapStep);
     this.race = race;
+    this.steps = steps.map(wrapStep);
   }
 
   step(delta) {
@@ -2463,17 +2514,17 @@ class Parallel extends AnimationStep {
 class Loop extends AnimationStep {
   constructor(createStep, until = () => false) {
     super();
+    this.until = until;
 
     this.create = () => wrapStep(createStep());
 
     this.curStep = this.create();
-    this.until = until;
   }
 
   step(delta) {
-    this.curStep.advance(delta);
+    this.curStep?.advance(delta);
 
-    if (this.curStep.done) {
+    if (this.curStep?.done) {
       if (this.until()) {
         this.curStep = null;
       } else {
@@ -2490,8 +2541,8 @@ class Loop extends AnimationStep {
 class Delayed extends AnimationStep {
   constructor(step, delay) {
     super();
-    this.substep = wrapStep(step);
     this.delay = delay;
+    this.substep = wrapStep(step);
   }
 
   step(delta) {
@@ -2535,9 +2586,9 @@ class Eased extends AnimationStep {
 
 /***/ }),
 
-/***/ "./src/ui/animations/animator.js":
+/***/ "./src/ui/animations/animator.ts":
 /*!***************************************!*\
-  !*** ./src/ui/animations/animator.js ***!
+  !*** ./src/ui/animations/animator.ts ***!
   \***************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -2547,17 +2598,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "useAnimator": () => (/* binding */ useAnimator)
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var _shared_sizerator__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../shared/sizerator */ "./src/ui/shared/sizerator.jsx");
+/* harmony import */ var _shared_sizerator__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../shared/sizerator */ "./src/ui/shared/sizerator.tsx");
 
 
 function useAnimator() {
-  const animData = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => ({}), []);
   const sizes = (0,_shared_sizerator__WEBPACK_IMPORTED_MODULE_1__.useSizes)();
-  animData.animate = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(time => {
-    const delta = time - (animData.prevTime ?? time);
-    animData.prevTime = time;
-    animData.animation.advance(delta / 1000, sizes);
-    animData.frame = requestAnimationFrame(animData.animate);
+  const animData = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => {
+    return {
+      animate(time) {
+        const delta = time - (animData.prevTime ?? time);
+        animData.prevTime = time;
+        animData.animation?.advance(delta / 1000, sizes);
+        animData.frame = requestAnimationFrame(animData.animate);
+      }
+
+    };
   }, [sizes]);
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => () => {
     cancelAnimationFrame(animData.frame);
@@ -2576,9 +2631,9 @@ function useAnimator() {
 
 /***/ }),
 
-/***/ "./src/ui/animations/card-ring.js":
+/***/ "./src/ui/animations/card-ring.ts":
 /*!****************************************!*\
-  !*** ./src/ui/animations/card-ring.js ***!
+  !*** ./src/ui/animations/card-ring.ts ***!
   \****************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -2587,7 +2642,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "CardRingAnimation": () => (/* binding */ CardRingAnimation)
 /* harmony export */ });
-/* harmony import */ var _animation_step__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./animation-step */ "./src/ui/animations/animation-step.js");
+/* harmony import */ var _logic_deck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../logic/deck */ "./src/logic/deck.ts");
+/* harmony import */ var _shared_sizerator__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../shared/sizerator */ "./src/ui/shared/sizerator.tsx");
+/* harmony import */ var _animation_step__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./animation-step */ "./src/ui/animations/animation-step.ts");
+
+
 
 
 function getTransform(z, degrees, radius) {
@@ -2616,6 +2675,8 @@ function getCoprimeAround(value, desired) {
   throw new Error("This should *definitely* not happen");
 }
 
+const getAnimMeta = card => card.meta.anim;
+
 class CardRingAnimation {
   constructor(...decks) {
     this.cards = decks.flatMap(d => [...d]);
@@ -2632,23 +2693,21 @@ class CardRingAnimation {
     }
 
     const rps = .5;
-    this.baseAngle = 0;
-    this.spinAnimation = new _animation_step__WEBPACK_IMPORTED_MODULE_0__.Loop(() => progress => {
+    this.spinAnimation = new _animation_step__WEBPACK_IMPORTED_MODULE_2__.Loop(() => progress => {
       this.baseRotation = progress * rps % 1;
     });
-    this.radius = 1.1;
-    this.sequence = new _animation_step__WEBPACK_IMPORTED_MODULE_0__.Sequence([new _animation_step__WEBPACK_IMPORTED_MODULE_0__.Parallel([// pulse
-    new _animation_step__WEBPACK_IMPORTED_MODULE_0__.Loop(() => new _animation_step__WEBPACK_IMPORTED_MODULE_0__.Sequence([new _animation_step__WEBPACK_IMPORTED_MODULE_0__.Eased(progress => {
+    this.sequence = new _animation_step__WEBPACK_IMPORTED_MODULE_2__.Sequence([new _animation_step__WEBPACK_IMPORTED_MODULE_2__.Parallel([// pulse
+    new _animation_step__WEBPACK_IMPORTED_MODULE_2__.Loop(() => new _animation_step__WEBPACK_IMPORTED_MODULE_2__.Sequence([new _animation_step__WEBPACK_IMPORTED_MODULE_2__.Eased(progress => {
       const offset = (progress - .5) * .2;
       this.radius = 1 - offset;
-    }, 1), new _animation_step__WEBPACK_IMPORTED_MODULE_0__.Eased(progress => {
+    }, 1), new _animation_step__WEBPACK_IMPORTED_MODULE_2__.Eased(progress => {
       const offset = (progress - .5) * .2;
       this.radius = 1 + offset;
-    }, 1)]), () => this.cards.every(card => card.meta.anim.easeProgress === 1)), // move cards into ring
-    ...this.cards.map((card, i) => new _animation_step__WEBPACK_IMPORTED_MODULE_0__.Delayed(new _animation_step__WEBPACK_IMPORTED_MODULE_0__.Eased(progress => {
-      card.meta.anim.easeProgress = progress;
+    }, 1)]), () => this.cards.every(card => getAnimMeta(card).easeProgress === 1)), // move cards into ring
+    ...this.cards.map((card, i) => new _animation_step__WEBPACK_IMPORTED_MODULE_2__.Delayed(new _animation_step__WEBPACK_IMPORTED_MODULE_2__.Eased(progress => {
+      getAnimMeta(card).easeProgress = progress;
     }, .25), i * .1))]), // shrink
-    new _animation_step__WEBPACK_IMPORTED_MODULE_0__.Eased(progress => {
+    new _animation_step__WEBPACK_IMPORTED_MODULE_2__.Eased(progress => {
       this.radius = 1.1 - progress * .6;
     }, 1), // fly out
     () => {
@@ -2662,19 +2721,19 @@ class CardRingAnimation {
     const left = sizes.boardWidth / 2;
     const top = sizes.boardHeight / 2;
 
-    for (let i = 0; i < this.cards.filter(c => c.meta.anim.easeProgress > 0).length; i++) {
+    for (let i = 0; i < this.cards.filter(c => getAnimMeta(c).easeProgress > 0).length; i++) {
       const card = this.cards[i];
       const style = card.meta.elem.style;
       const cardOffset = i * this.coprime % this.totalCards / this.totalCards;
       const degrees = (this.baseRotation + cardOffset) * 360;
       style.transition = "unset";
 
-      if (card.meta.anim.easeProgress !== 1) {
-        const diffLeft = left - card.meta.anim.left;
-        const diffTop = top - card.meta.anim.top;
-        const fraction = card.meta.anim.easeProgress;
-        style.left = `${card.meta.anim.left + diffLeft * fraction}px`;
-        style.top = `${card.meta.anim.top + diffTop * fraction}px`;
+      if (getAnimMeta(card).easeProgress !== 1) {
+        const diffLeft = left - getAnimMeta(card).left;
+        const diffTop = top - getAnimMeta(card).top;
+        const fraction = getAnimMeta(card).easeProgress;
+        style.left = `${getAnimMeta(card).left + diffLeft * fraction}px`;
+        style.top = `${getAnimMeta(card).top + diffTop * fraction}px`;
         style.transform = getTransform(2000, degrees * fraction, this.radius * fraction * fraction);
       } else {
         style.left = `${left}px`;
@@ -2684,13 +2743,15 @@ class CardRingAnimation {
     }
   }
 
+  baseRotation = 0;
+  radius = 1.1;
 }
 
 /***/ }),
 
-/***/ "./src/ui/free-cell/board.jsx":
+/***/ "./src/ui/free-cell/board.tsx":
 /*!************************************!*\
-  !*** ./src/ui/free-cell/board.jsx ***!
+  !*** ./src/ui/free-cell/board.tsx ***!
   \************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -2708,14 +2769,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _images_club__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_images_club__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _images_heart__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../images/heart */ "./images/heart.svg");
 /* harmony import */ var _images_heart__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_images_heart__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _logic_deck__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../logic/deck */ "./src/logic/deck.js");
-/* harmony import */ var _logic_free_cell_game__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../logic/free-cell/game */ "./src/logic/free-cell/game.js");
-/* harmony import */ var _shared_card_renderer__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../shared/card-renderer */ "./src/ui/shared/card-renderer.jsx");
-/* harmony import */ var _shared_empty_zone__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../shared/empty-zone */ "./src/ui/shared/empty-zone.jsx");
-/* harmony import */ var _shared_get_context__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../shared/get-context */ "./src/ui/shared/get-context.js");
-/* harmony import */ var _shared_sizerator__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../shared/sizerator */ "./src/ui/shared/sizerator.jsx");
-/* harmony import */ var _animations_card_ring__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../animations/card-ring */ "./src/ui/animations/card-ring.js");
-/* harmony import */ var _shared_board__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../shared/board */ "./src/ui/shared/board.jsx");
+/* harmony import */ var _logic_deck__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../logic/deck */ "./src/logic/deck.ts");
+/* harmony import */ var _logic_free_cell_game__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../logic/free-cell/game */ "./src/logic/free-cell/game.ts");
+/* harmony import */ var _shared_card_renderer__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../shared/card-renderer */ "./src/ui/shared/card-renderer.tsx");
+/* harmony import */ var _shared_empty_zone__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../shared/empty-zone */ "./src/ui/shared/empty-zone.tsx");
+/* harmony import */ var _shared_get_context__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../shared/get-context */ "./src/ui/shared/get-context.ts");
+/* harmony import */ var _shared_sizerator__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../shared/sizerator */ "./src/ui/shared/sizerator.tsx");
+/* harmony import */ var _animations_card_ring__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../animations/card-ring */ "./src/ui/animations/card-ring.ts");
+/* harmony import */ var _shared_board__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../shared/board */ "./src/ui/shared/board.tsx");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 
 
@@ -2863,7 +2924,7 @@ const Board = (0,_shared_sizerator__WEBPACK_IMPORTED_MODULE_10__.sizerated)(8, 5
           x: 4,
           y: 0
         },
-        context: game.foundations[_logic_deck__WEBPACK_IMPORTED_MODULE_5__.suits.spades],
+        context: game.foundations[_logic_deck__WEBPACK_IMPORTED_MODULE_5__.Suit.Spades],
         onTap: targetTap,
         children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)((_images_spade__WEBPACK_IMPORTED_MODULE_1___default()), {})
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_8__.EmptyZone, {
@@ -2871,7 +2932,7 @@ const Board = (0,_shared_sizerator__WEBPACK_IMPORTED_MODULE_10__.sizerated)(8, 5
           x: 5,
           y: 0
         },
-        context: game.foundations[_logic_deck__WEBPACK_IMPORTED_MODULE_5__.suits.diamonds],
+        context: game.foundations[_logic_deck__WEBPACK_IMPORTED_MODULE_5__.Suit.Diamonds],
         onTap: targetTap,
         children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)((_images_diamond__WEBPACK_IMPORTED_MODULE_2___default()), {})
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_8__.EmptyZone, {
@@ -2879,7 +2940,7 @@ const Board = (0,_shared_sizerator__WEBPACK_IMPORTED_MODULE_10__.sizerated)(8, 5
           x: 6,
           y: 0
         },
-        context: game.foundations[_logic_deck__WEBPACK_IMPORTED_MODULE_5__.suits.clubs],
+        context: game.foundations[_logic_deck__WEBPACK_IMPORTED_MODULE_5__.Suit.Clubs],
         onTap: targetTap,
         children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)((_images_club__WEBPACK_IMPORTED_MODULE_3___default()), {})
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_8__.EmptyZone, {
@@ -2887,7 +2948,7 @@ const Board = (0,_shared_sizerator__WEBPACK_IMPORTED_MODULE_10__.sizerated)(8, 5
           x: 7,
           y: 0
         },
-        context: game.foundations[_logic_deck__WEBPACK_IMPORTED_MODULE_5__.suits.hearts],
+        context: game.foundations[_logic_deck__WEBPACK_IMPORTED_MODULE_5__.Suit.Hearts],
         onTap: targetTap,
         children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)((_images_heart__WEBPACK_IMPORTED_MODULE_4___default()), {})
       }), game.tableau.map((stack, i) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_8__.EmptyZone, {
@@ -2911,22 +2972,22 @@ const Board = (0,_shared_sizerator__WEBPACK_IMPORTED_MODULE_10__.sizerated)(8, 5
       })), (0,_shared_card_renderer__WEBPACK_IMPORTED_MODULE_7__.renderPile)({
         x: 4,
         y: 0
-      }, game.foundations[_logic_deck__WEBPACK_IMPORTED_MODULE_5__.suits.spades], {
+      }, game.foundations[_logic_deck__WEBPACK_IMPORTED_MODULE_5__.Suit.Spades], {
         onTap: foundationTap
       }), (0,_shared_card_renderer__WEBPACK_IMPORTED_MODULE_7__.renderPile)({
         x: 5,
         y: 0
-      }, game.foundations[_logic_deck__WEBPACK_IMPORTED_MODULE_5__.suits.diamonds], {
+      }, game.foundations[_logic_deck__WEBPACK_IMPORTED_MODULE_5__.Suit.Diamonds], {
         onTap: foundationTap
       }), (0,_shared_card_renderer__WEBPACK_IMPORTED_MODULE_7__.renderPile)({
         x: 6,
         y: 0
-      }, game.foundations[_logic_deck__WEBPACK_IMPORTED_MODULE_5__.suits.clubs], {
+      }, game.foundations[_logic_deck__WEBPACK_IMPORTED_MODULE_5__.Suit.Clubs], {
         onTap: foundationTap
       }), (0,_shared_card_renderer__WEBPACK_IMPORTED_MODULE_7__.renderPile)({
         x: 7,
         y: 0
-      }, game.foundations[_logic_deck__WEBPACK_IMPORTED_MODULE_5__.suits.hearts], {
+      }, game.foundations[_logic_deck__WEBPACK_IMPORTED_MODULE_5__.Suit.Hearts], {
         onTap: foundationTap
       }), game.tableau.map((deck, i) => (0,_shared_card_renderer__WEBPACK_IMPORTED_MODULE_7__.renderStack)({
         x: i,
@@ -2942,9 +3003,9 @@ const Board = (0,_shared_sizerator__WEBPACK_IMPORTED_MODULE_10__.sizerated)(8, 5
 
 /***/ }),
 
-/***/ "./src/ui/klondike/board.jsx":
+/***/ "./src/ui/klondike/board.tsx":
 /*!***********************************!*\
-  !*** ./src/ui/klondike/board.jsx ***!
+  !*** ./src/ui/klondike/board.tsx ***!
   \***********************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -2964,15 +3025,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _images_club__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_images_club__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var _images_heart__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../images/heart */ "./images/heart.svg");
 /* harmony import */ var _images_heart__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_images_heart__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _logic_deck__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../logic/deck */ "./src/logic/deck.js");
-/* harmony import */ var _logic_klondike_game__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../logic/klondike/game */ "./src/logic/klondike/game.js");
-/* harmony import */ var _shared_card_renderer__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../shared/card-renderer */ "./src/ui/shared/card-renderer.jsx");
-/* harmony import */ var _shared_empty_zone__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../shared/empty-zone */ "./src/ui/shared/empty-zone.jsx");
-/* harmony import */ var _shared_get_context__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../shared/get-context */ "./src/ui/shared/get-context.js");
-/* harmony import */ var _shared_sizerator__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../shared/sizerator */ "./src/ui/shared/sizerator.jsx");
-/* harmony import */ var _shared_board__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../shared/board */ "./src/ui/shared/board.jsx");
-/* harmony import */ var _animations_card_ring__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../animations/card-ring */ "./src/ui/animations/card-ring.js");
-/* harmony import */ var _newgame_modal__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./newgame-modal */ "./src/ui/klondike/newgame-modal.jsx");
+/* harmony import */ var _logic_deck__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../logic/deck */ "./src/logic/deck.ts");
+/* harmony import */ var _logic_klondike_game__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../logic/klondike/game */ "./src/logic/klondike/game.ts");
+/* harmony import */ var _shared_card_renderer__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../shared/card-renderer */ "./src/ui/shared/card-renderer.tsx");
+/* harmony import */ var _shared_empty_zone__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../shared/empty-zone */ "./src/ui/shared/empty-zone.tsx");
+/* harmony import */ var _shared_get_context__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../shared/get-context */ "./src/ui/shared/get-context.ts");
+/* harmony import */ var _shared_sizerator__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../shared/sizerator */ "./src/ui/shared/sizerator.tsx");
+/* harmony import */ var _shared_board__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../shared/board */ "./src/ui/shared/board.tsx");
+/* harmony import */ var _animations_card_ring__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../animations/card-ring */ "./src/ui/animations/card-ring.ts");
+/* harmony import */ var _newgame_modal__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./newgame-modal */ "./src/ui/klondike/newgame-modal.tsx");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 
 
@@ -3177,7 +3238,7 @@ const Board = (0,_shared_sizerator__WEBPACK_IMPORTED_MODULE_11__.sizerated)(7, 5
           x: 3,
           y: 0
         },
-        context: game.foundations[_logic_deck__WEBPACK_IMPORTED_MODULE_6__.suits.spades],
+        context: game.foundations[_logic_deck__WEBPACK_IMPORTED_MODULE_6__.Suit.Spades],
         onTap: targetTap,
         children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)((_images_spade__WEBPACK_IMPORTED_MODULE_2___default()), {})
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_9__.EmptyZone, {
@@ -3185,7 +3246,7 @@ const Board = (0,_shared_sizerator__WEBPACK_IMPORTED_MODULE_11__.sizerated)(7, 5
           x: 4,
           y: 0
         },
-        context: game.foundations[_logic_deck__WEBPACK_IMPORTED_MODULE_6__.suits.diamonds],
+        context: game.foundations[_logic_deck__WEBPACK_IMPORTED_MODULE_6__.Suit.Diamonds],
         onTap: targetTap,
         children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)((_images_diamond__WEBPACK_IMPORTED_MODULE_3___default()), {})
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_9__.EmptyZone, {
@@ -3193,7 +3254,7 @@ const Board = (0,_shared_sizerator__WEBPACK_IMPORTED_MODULE_11__.sizerated)(7, 5
           x: 5,
           y: 0
         },
-        context: game.foundations[_logic_deck__WEBPACK_IMPORTED_MODULE_6__.suits.clubs],
+        context: game.foundations[_logic_deck__WEBPACK_IMPORTED_MODULE_6__.Suit.Clubs],
         onTap: targetTap,
         children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)((_images_club__WEBPACK_IMPORTED_MODULE_4___default()), {})
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_9__.EmptyZone, {
@@ -3201,7 +3262,7 @@ const Board = (0,_shared_sizerator__WEBPACK_IMPORTED_MODULE_11__.sizerated)(7, 5
           x: 6,
           y: 0
         },
-        context: game.foundations[_logic_deck__WEBPACK_IMPORTED_MODULE_6__.suits.hearts],
+        context: game.foundations[_logic_deck__WEBPACK_IMPORTED_MODULE_6__.Suit.Hearts],
         onTap: targetTap,
         children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)((_images_heart__WEBPACK_IMPORTED_MODULE_5___default()), {})
       }), game.tableau.map((stack, i) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_9__.EmptyZone, {
@@ -3230,22 +3291,22 @@ const Board = (0,_shared_sizerator__WEBPACK_IMPORTED_MODULE_11__.sizerated)(7, 5
       }, game.drawCount), (0,_shared_card_renderer__WEBPACK_IMPORTED_MODULE_8__.renderPile)({
         x: 3,
         y: 0
-      }, game.foundations[_logic_deck__WEBPACK_IMPORTED_MODULE_6__.suits.spades], {
+      }, game.foundations[_logic_deck__WEBPACK_IMPORTED_MODULE_6__.Suit.Spades], {
         onTap: foundationTap
       }), (0,_shared_card_renderer__WEBPACK_IMPORTED_MODULE_8__.renderPile)({
         x: 4,
         y: 0
-      }, game.foundations[_logic_deck__WEBPACK_IMPORTED_MODULE_6__.suits.diamonds], {
+      }, game.foundations[_logic_deck__WEBPACK_IMPORTED_MODULE_6__.Suit.Diamonds], {
         onTap: foundationTap
       }), (0,_shared_card_renderer__WEBPACK_IMPORTED_MODULE_8__.renderPile)({
         x: 5,
         y: 0
-      }, game.foundations[_logic_deck__WEBPACK_IMPORTED_MODULE_6__.suits.clubs], {
+      }, game.foundations[_logic_deck__WEBPACK_IMPORTED_MODULE_6__.Suit.Clubs], {
         onTap: foundationTap
       }), (0,_shared_card_renderer__WEBPACK_IMPORTED_MODULE_8__.renderPile)({
         x: 6,
         y: 0
-      }, game.foundations[_logic_deck__WEBPACK_IMPORTED_MODULE_6__.suits.hearts], {
+      }, game.foundations[_logic_deck__WEBPACK_IMPORTED_MODULE_6__.Suit.Hearts], {
         onTap: foundationTap
       }), game.tableau.map((deck, i) => (0,_shared_card_renderer__WEBPACK_IMPORTED_MODULE_8__.renderStack)({
         x: i,
@@ -3262,9 +3323,9 @@ const Board = (0,_shared_sizerator__WEBPACK_IMPORTED_MODULE_11__.sizerated)(7, 5
 
 /***/ }),
 
-/***/ "./src/ui/klondike/newgame-modal.jsx":
+/***/ "./src/ui/klondike/newgame-modal.tsx":
 /*!*******************************************!*\
-  !*** ./src/ui/klondike/newgame-modal.jsx ***!
+  !*** ./src/ui/klondike/newgame-modal.tsx ***!
   \*******************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -3275,8 +3336,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "useNewGame": () => (/* binding */ useNewGame)
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var _logic_game_db__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../logic/game-db */ "./src/logic/game-db.js");
-/* harmony import */ var _shared_modal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../shared/modal */ "./src/ui/shared/modal.jsx");
+/* harmony import */ var _logic_game_db__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../logic/game-db */ "./src/logic/game-db.ts");
+/* harmony import */ var _shared_modal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../shared/modal */ "./src/ui/shared/modal.tsx");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 
 
@@ -3360,9 +3421,9 @@ function NewgameModal({
 
 /***/ }),
 
-/***/ "./src/ui/menu.jsx":
+/***/ "./src/ui/menu.tsx":
 /*!*************************!*\
-  !*** ./src/ui/menu.jsx ***!
+  !*** ./src/ui/menu.tsx ***!
   \*************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -3371,8 +3432,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Menu": () => (/* binding */ Menu)
 /* harmony export */ });
-/* harmony import */ var _util_install_prompt__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../util/install-prompt */ "./src/util/install-prompt.js");
-/* harmony import */ var _shared_app_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./shared/app-router */ "./src/ui/shared/app-router.jsx");
+/* harmony import */ var _util_install_prompt__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../util/install-prompt */ "./src/util/install-prompt.ts");
+/* harmony import */ var _shared_app_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./shared/app-router */ "./src/ui/shared/app-router.tsx");
 /* harmony import */ var _menu_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./menu.css */ "./src/ui/menu.css");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 
@@ -3429,9 +3490,9 @@ function Menu() {
 
 /***/ }),
 
-/***/ "./src/ui/pyramid/board.jsx":
+/***/ "./src/ui/pyramid/board.tsx":
 /*!**********************************!*\
-  !*** ./src/ui/pyramid/board.jsx ***!
+  !*** ./src/ui/pyramid/board.tsx ***!
   \**********************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -3444,14 +3505,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var _images_draw_svg__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../images/draw.svg */ "./images/draw.svg");
 /* harmony import */ var _images_draw_svg__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_images_draw_svg__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _logic_pyramid_game__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../logic/pyramid/game */ "./src/logic/pyramid/game.js");
-/* harmony import */ var _shared_card_renderer__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../shared/card-renderer */ "./src/ui/shared/card-renderer.jsx");
-/* harmony import */ var _shared_empty_zone__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../shared/empty-zone */ "./src/ui/shared/empty-zone.jsx");
-/* harmony import */ var _shared_get_context__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../shared/get-context */ "./src/ui/shared/get-context.js");
-/* harmony import */ var _shared_sizerator__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../shared/sizerator */ "./src/ui/shared/sizerator.jsx");
-/* harmony import */ var _shared_board__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../shared/board */ "./src/ui/shared/board.jsx");
-/* harmony import */ var _animations_card_ring__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../animations/card-ring */ "./src/ui/animations/card-ring.js");
-/* harmony import */ var _newgame_modal__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./newgame-modal */ "./src/ui/pyramid/newgame-modal.jsx");
+/* harmony import */ var _logic_pyramid_game__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../logic/pyramid/game */ "./src/logic/pyramid/game.ts");
+/* harmony import */ var _shared_card_renderer__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../shared/card-renderer */ "./src/ui/shared/card-renderer.tsx");
+/* harmony import */ var _shared_empty_zone__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../shared/empty-zone */ "./src/ui/shared/empty-zone.tsx");
+/* harmony import */ var _shared_get_context__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../shared/get-context */ "./src/ui/shared/get-context.ts");
+/* harmony import */ var _shared_sizerator__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../shared/sizerator */ "./src/ui/shared/sizerator.tsx");
+/* harmony import */ var _shared_board__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../shared/board */ "./src/ui/shared/board.tsx");
+/* harmony import */ var _animations_card_ring__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../animations/card-ring */ "./src/ui/animations/card-ring.ts");
+/* harmony import */ var _newgame_modal__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./newgame-modal */ "./src/ui/pyramid/newgame-modal.tsx");
 /* harmony import */ var _board_css__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./board.css */ "./src/ui/pyramid/board.css");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 
@@ -3678,9 +3739,9 @@ const Board = (0,_shared_sizerator__WEBPACK_IMPORTED_MODULE_6__.sizerated)(7, 5,
 
 /***/ }),
 
-/***/ "./src/ui/pyramid/newgame-modal.jsx":
+/***/ "./src/ui/pyramid/newgame-modal.tsx":
 /*!******************************************!*\
-  !*** ./src/ui/pyramid/newgame-modal.jsx ***!
+  !*** ./src/ui/pyramid/newgame-modal.tsx ***!
   \******************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -3691,8 +3752,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "useNewGame": () => (/* binding */ useNewGame)
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var _logic_game_db__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../logic/game-db */ "./src/logic/game-db.js");
-/* harmony import */ var _shared_modal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../shared/modal */ "./src/ui/shared/modal.jsx");
+/* harmony import */ var _logic_game_db__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../logic/game-db */ "./src/logic/game-db.ts");
+/* harmony import */ var _shared_modal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../shared/modal */ "./src/ui/shared/modal.tsx");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 
 
@@ -3762,9 +3823,9 @@ function NewgameModal({
 
 /***/ }),
 
-/***/ "./src/ui/shared/app-router.jsx":
+/***/ "./src/ui/shared/app-router.tsx":
 /*!**************************************!*\
-  !*** ./src/ui/shared/app-router.jsx ***!
+  !*** ./src/ui/shared/app-router.tsx ***!
   \**************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -3779,6 +3840,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _util_use_rerender__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../util/use-rerender */ "./src/util/use-rerender.ts");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 
+
  // sort of a stripped down, barebones react router clone
 
 
@@ -3790,7 +3852,7 @@ function useHistory() {
   if (history.state == null) {
     history.replaceState({
       crumb: ["/"]
-    }, null, "/");
+    }, "", "/");
   }
 
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
@@ -3806,7 +3868,7 @@ function useHistory() {
     } else {
       history.pushState({
         crumb: history.state.crumb.concat(route)
-      }, null, "/");
+      }, "", "/");
     }
 
     rerender();
@@ -3825,7 +3887,9 @@ function useHistory() {
   return (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => ({
     useRoute: route => (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
       routes.add(route);
-      return () => routes.delete(route);
+      return () => {
+        routes.delete(route);
+      };
     }, []),
     methods: {
       go,
@@ -3835,7 +3899,7 @@ function useHistory() {
   }), []);
 }
 
-const routerContext = /*#__PURE__*/(0,react__WEBPACK_IMPORTED_MODULE_0__.createContext)();
+const routerContext = /*#__PURE__*/(0,react__WEBPACK_IMPORTED_MODULE_0__.createContext)(null);
 function AppRouter({
   children
 }) {
@@ -3852,8 +3916,8 @@ function Route({
 }) {
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useContext)(routerContext).useRoute((0,_util_use_rerender__WEBPACK_IMPORTED_MODULE_1__.useRerender)());
   const crumb = history.state.crumb;
-  const urlPath = new URL(crumb[crumb.length - 1], location).pathname;
-  const defPath = new URL(path, location).pathname;
+  const urlPath = new URL(crumb[crumb.length - 1], location.href).pathname;
+  const defPath = new URL(path, location.href).pathname;
 
   if (exact) {
     if (defPath !== urlPath) {
@@ -3878,9 +3942,9 @@ function useRouter() {
 
 /***/ }),
 
-/***/ "./src/ui/shared/board.jsx":
+/***/ "./src/ui/shared/board.tsx":
 /*!*********************************!*\
-  !*** ./src/ui/shared/board.jsx ***!
+  !*** ./src/ui/shared/board.tsx ***!
   \*********************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -3891,12 +3955,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "useGameCore": () => (/* binding */ useGameCore)
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var _logic_undo_stack__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../logic/undo-stack */ "./src/logic/undo-stack.js");
-/* harmony import */ var _logic_game_db__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../logic/game-db */ "./src/logic/game-db.js");
+/* harmony import */ var _logic_undo_stack__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../logic/undo-stack */ "./src/logic/undo-stack.ts");
+/* harmony import */ var _logic_game_db__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../logic/game-db */ "./src/logic/game-db.ts");
 /* harmony import */ var _util_use_rerender__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/use-rerender */ "./src/util/use-rerender.ts");
-/* harmony import */ var _util_use_action_queue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../util/use-action-queue */ "./src/util/use-action-queue.js");
-/* harmony import */ var _animations_animator__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../animations/animator */ "./src/ui/animations/animator.js");
-/* harmony import */ var _control_bar__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./control-bar */ "./src/ui/shared/control-bar.jsx");
+/* harmony import */ var _util_use_action_queue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../util/use-action-queue */ "./src/util/use-action-queue.ts");
+/* harmony import */ var _animations_animator__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../animations/animator */ "./src/ui/animations/animator.ts");
+/* harmony import */ var _control_bar__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./control-bar */ "./src/ui/shared/control-bar.tsx");
 /* harmony import */ var _board_css__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./board.css */ "./src/ui/shared/board.css");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 
@@ -3913,11 +3977,11 @@ __webpack_require__.r(__webpack_exports__);
 function useGameCore(Game, key) {
   const [isAnimating, setAnimation] = (0,_animations_animator__WEBPACK_IMPORTED_MODULE_5__.useAnimator)();
   const game = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => new Game(), []);
-  const undoStack = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => new _logic_undo_stack__WEBPACK_IMPORTED_MODULE_1__.UndoStack());
+  const undoStack = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => new _logic_undo_stack__WEBPACK_IMPORTED_MODULE_1__.UndoStack(), []);
   const enqueueAction = (0,_util_use_action_queue__WEBPACK_IMPORTED_MODULE_4__.useActionQueue)();
   const rerender = (0,_util_use_rerender__WEBPACK_IMPORTED_MODULE_3__.useRerender)();
   const saveGame = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(() => (0,_logic_game_db__WEBPACK_IMPORTED_MODULE_2__.put)(_logic_game_db__WEBPACK_IMPORTED_MODULE_2__.saveGameTable, {
-    key: key,
+    key,
     game: game.serialize(),
     undoStack: undoStack.serialize()
   }), []);
@@ -3929,17 +3993,19 @@ function useGameCore(Game, key) {
     rerender();
     saveGame();
   }, []);
-  const useSetup = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(start => (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => (async () => {
-    const save = await (0,_logic_game_db__WEBPACK_IMPORTED_MODULE_2__.get)(_logic_game_db__WEBPACK_IMPORTED_MODULE_2__.saveGameTable, key);
+  const useSetup = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(start => (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    (async () => {
+      const save = await (0,_logic_game_db__WEBPACK_IMPORTED_MODULE_2__.get)(_logic_game_db__WEBPACK_IMPORTED_MODULE_2__.saveGameTable, key);
 
-    if (save != null) {
-      Game.deserialize(save.game, game);
-      _logic_undo_stack__WEBPACK_IMPORTED_MODULE_1__.UndoStack.deserialize(save.undoStack, undoStack);
-      rerender();
-    } else {
-      start();
-    }
-  })(), []), []);
+      if (save != null) {
+        Game.deserialize(save.game, game);
+        _logic_undo_stack__WEBPACK_IMPORTED_MODULE_1__.UndoStack.deserialize(save.undoStack, undoStack);
+        rerender();
+      } else {
+        start();
+      }
+    })();
+  }, []), []);
   const tryFinish = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(() => {
     if (game.hasWon()) {
       undoStack.reset();
@@ -3949,7 +4015,7 @@ function useGameCore(Game, key) {
     }
 
     return false;
-  });
+  }, []);
   const undo = enqueueAction(function* () {
     const deltas = undoStack.undo();
 
@@ -4028,9 +4094,9 @@ BoardCore.Background = function ({
 
 /***/ }),
 
-/***/ "./src/ui/shared/card-face.jsx":
+/***/ "./src/ui/shared/card-face.tsx":
 /*!*************************************!*\
-  !*** ./src/ui/shared/card-face.jsx ***!
+  !*** ./src/ui/shared/card-face.tsx ***!
   \*************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -4040,15 +4106,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "CardFace": () => (/* binding */ CardFace)
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var _images_faces_jack_hat__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../images/faces/jack-hat */ "./images/faces/jack-hat.svg");
-/* harmony import */ var _images_faces_jack_hat__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_images_faces_jack_hat__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _images_faces_queen_hat__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../images/faces/queen-hat */ "./images/faces/queen-hat.svg");
-/* harmony import */ var _images_faces_queen_hat__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_images_faces_queen_hat__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _images_faces_king_hat__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../images/faces/king-hat */ "./images/faces/king-hat.svg");
-/* harmony import */ var _images_faces_king_hat__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_images_faces_king_hat__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _sizerator__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./sizerator */ "./src/ui/shared/sizerator.jsx");
-/* harmony import */ var _card_face_css__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./card-face.css */ "./src/ui/shared/card-face.css");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var _images_faces_jack_hat_svg__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../images/faces/jack-hat.svg */ "./images/faces/jack-hat.svg");
+/* harmony import */ var _images_faces_jack_hat_svg__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_images_faces_jack_hat_svg__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _images_faces_queen_hat_svg__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../images/faces/queen-hat.svg */ "./images/faces/queen-hat.svg");
+/* harmony import */ var _images_faces_queen_hat_svg__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_images_faces_queen_hat_svg__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _images_faces_king_hat_svg__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../images/faces/king-hat.svg */ "./images/faces/king-hat.svg");
+/* harmony import */ var _images_faces_king_hat_svg__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_images_faces_king_hat_svg__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _logic_deck__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../logic/deck */ "./src/logic/deck.ts");
+/* harmony import */ var _sizerator__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./sizerator */ "./src/ui/shared/sizerator.tsx");
+/* harmony import */ var _card_face_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./card-face.css */ "./src/ui/shared/card-face.css");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 
 
 
@@ -4058,15 +4125,16 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const hats = [(_images_faces_jack_hat__WEBPACK_IMPORTED_MODULE_1___default()), (_images_faces_queen_hat__WEBPACK_IMPORTED_MODULE_2___default()), (_images_faces_king_hat__WEBPACK_IMPORTED_MODULE_3___default())];
+
+const hats = [(_images_faces_jack_hat_svg__WEBPACK_IMPORTED_MODULE_1___default()), (_images_faces_queen_hat_svg__WEBPACK_IMPORTED_MODULE_2___default()), (_images_faces_king_hat_svg__WEBPACK_IMPORTED_MODULE_3___default())];
 
 function renderFaceCard(Icon, value, smallCard) {
-  const className = `${_card_face_css__WEBPACK_IMPORTED_MODULE_5__["default"].cardFace} ${_card_face_css__WEBPACK_IMPORTED_MODULE_5__["default"][`c${value}`]}`;
+  const className = `${_card_face_css__WEBPACK_IMPORTED_MODULE_6__["default"].cardFace} ${_card_face_css__WEBPACK_IMPORTED_MODULE_6__["default"][`c${value}`]}`;
   const HatIcon = hats[value - 11];
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
     className: className,
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(HatIcon, {}), !smallCard && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.Fragment, {
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(Icon, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(Icon, {})]
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(HatIcon, {}), !smallCard && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.Fragment, {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(Icon, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(Icon, {})]
     })]
   });
 }
@@ -4075,11 +4143,11 @@ function renderNumberCard(Icon, value) {
   const icons = [];
 
   for (let i = 0; i < value; i++) {
-    icons.push( /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(Icon, {}, i));
+    icons.push( /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(Icon, {}, i));
   }
 
-  const className = `${_card_face_css__WEBPACK_IMPORTED_MODULE_5__["default"].cardFace} ${_card_face_css__WEBPACK_IMPORTED_MODULE_5__["default"][`c${value}`]}`;
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+  const className = `${_card_face_css__WEBPACK_IMPORTED_MODULE_6__["default"].cardFace} ${_card_face_css__WEBPACK_IMPORTED_MODULE_6__["default"][`c${value}`]}`;
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
     className: className,
     children: icons
   });
@@ -4091,7 +4159,7 @@ function CardFace({
 }) {
   const {
     cardWidth
-  } = (0,_sizerator__WEBPACK_IMPORTED_MODULE_4__.useSizes)();
+  } = (0,_sizerator__WEBPACK_IMPORTED_MODULE_5__.useSizes)();
   const smallCard = cardWidth < 50;
   const output = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => {
     if (value > 10) {
@@ -4105,9 +4173,9 @@ function CardFace({
 
 /***/ }),
 
-/***/ "./src/ui/shared/card-renderer.jsx":
+/***/ "./src/ui/shared/card-renderer.tsx":
 /*!*****************************************!*\
-  !*** ./src/ui/shared/card-renderer.jsx ***!
+  !*** ./src/ui/shared/card-renderer.tsx ***!
   \*****************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -4118,11 +4186,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "renderPile": () => (/* binding */ renderPile),
 /* harmony export */   "renderStack": () => (/* binding */ renderStack)
 /* harmony export */ });
-/* harmony import */ var _card_jsx__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./card.jsx */ "./src/ui/shared/card.jsx");
-/* harmony import */ var _pointer_manager_jsx__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./pointer-manager.jsx */ "./src/ui/shared/pointer-manager.jsx");
-/* harmony import */ var _sizerator_jsx__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./sizerator.jsx */ "./src/ui/shared/sizerator.jsx");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var _logic_deck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../logic/deck */ "./src/logic/deck.ts");
+/* harmony import */ var _card__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./card */ "./src/ui/shared/card.tsx");
+/* harmony import */ var _pointer_manager__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./pointer-manager */ "./src/ui/shared/pointer-manager.tsx");
+/* harmony import */ var _sizerator__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./sizerator */ "./src/ui/shared/sizerator.tsx");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+
 
 
  // in order for css animations and transitions to work, the cards
@@ -4136,23 +4206,23 @@ __webpack_require__.r(__webpack_exports__);
 
 function CardRenderer({
   onDrop,
-  children,
-  isAnimating
+  isAnimating,
+  children
 }) {
-  const sizes = (0,_sizerator_jsx__WEBPACK_IMPORTED_MODULE_2__.useSizes)();
+  const sizes = (0,_sizerator__WEBPACK_IMPORTED_MODULE_3__.useSizes)();
   const {
     margins,
     cardOffsetX,
     cardOffsetY
   } = sizes;
-  const functions = children.flat(2);
+  const functions = (children instanceof Array ? children : [children]).flat(2);
   const defs = functions.flatMap(f => f(sizes)).sort((a, b) => a.card.id - b.card.id);
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_pointer_manager_jsx__WEBPACK_IMPORTED_MODULE_1__.PointerManager, {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_pointer_manager__WEBPACK_IMPORTED_MODULE_2__.PointerManager, {
     onDrop: onDrop,
-    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
       style: isAnimating ? {
         transformStyle: "preserve-3d"
-      } : null,
+      } : undefined,
       children: defs.map(({
         card,
         slot,
@@ -4160,7 +4230,7 @@ function CardRenderer({
         offsetY,
         offsetZ,
         handlers
-      }) => /*#__PURE__*/(0,react__WEBPACK_IMPORTED_MODULE_3__.createElement)(_card_jsx__WEBPACK_IMPORTED_MODULE_0__.Card, {
+      }) => /*#__PURE__*/(0,react__WEBPACK_IMPORTED_MODULE_4__.createElement)(_card__WEBPACK_IMPORTED_MODULE_1__.Card, {
         card: card,
         pos: {
           x: margins + slot.x * cardOffsetX + (offsetX ?? 0),
@@ -4180,15 +4250,13 @@ function showOffset(showCount, cardCount, i) {
 
 const renderPile = (slot, cards, handlers, showCount = 1) => ({
   cardWidth
-}) => {
-  return cards.map((card, i) => ({
-    card,
-    slot,
-    offsetX: Math.floor(i * .1) * 2 + showOffset(showCount, cards.length, i) * cardWidth * .2,
-    offsetZ: (slot.z ?? 0) + i,
-    handlers
-  }));
-};
+}) => cards.map((card, i) => ({
+  card,
+  slot,
+  offsetX: Math.floor(i * .1) * 2 + showOffset(showCount, cards.length, i) * cardWidth * .2,
+  offsetZ: (slot.z ?? 0) + i,
+  handlers
+}));
 const renderStack = (slot, cards, handlers) => sizes => {
   const {
     margins,
@@ -4223,9 +4291,9 @@ const renderStack = (slot, cards, handlers) => sizes => {
 
 /***/ }),
 
-/***/ "./src/ui/shared/card.jsx":
+/***/ "./src/ui/shared/card.tsx":
 /*!********************************!*\
-  !*** ./src/ui/shared/card.jsx ***!
+  !*** ./src/ui/shared/card.tsx ***!
   \********************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -4235,22 +4303,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "Card": () => (/* binding */ Card)
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var _images_backs_brown__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../images/backs/brown */ "./images/backs/brown.svg");
-/* harmony import */ var _images_backs_brown__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_images_backs_brown__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _images_spade__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../images/spade */ "./images/spade.svg");
-/* harmony import */ var _images_spade__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_images_spade__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _images_diamond__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../images/diamond */ "./images/diamond.svg");
-/* harmony import */ var _images_diamond__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_images_diamond__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _images_club__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../images/club */ "./images/club.svg");
-/* harmony import */ var _images_club__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_images_club__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _images_heart__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../images/heart */ "./images/heart.svg");
-/* harmony import */ var _images_heart__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_images_heart__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _images_backs_brown_svg__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../images/backs/brown.svg */ "./images/backs/brown.svg");
+/* harmony import */ var _images_backs_brown_svg__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_images_backs_brown_svg__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _images_spade_svg__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../images/spade.svg */ "./images/spade.svg");
+/* harmony import */ var _images_spade_svg__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_images_spade_svg__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _images_diamond_svg__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../images/diamond.svg */ "./images/diamond.svg");
+/* harmony import */ var _images_diamond_svg__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_images_diamond_svg__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _images_club_svg__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../images/club.svg */ "./images/club.svg");
+/* harmony import */ var _images_club_svg__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_images_club_svg__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _images_heart_svg__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../images/heart.svg */ "./images/heart.svg");
+/* harmony import */ var _images_heart_svg__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_images_heart_svg__WEBPACK_IMPORTED_MODULE_5__);
 /* harmony import */ var _util_use_value_changed__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../util/use-value-changed */ "./src/util/use-value-changed.ts");
 /* harmony import */ var _util_use_rerender__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../util/use-rerender */ "./src/util/use-rerender.ts");
-/* harmony import */ var _logic_deck__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../logic/deck */ "./src/logic/deck.js");
-/* harmony import */ var _pointer_manager__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./pointer-manager */ "./src/ui/shared/pointer-manager.jsx");
-/* harmony import */ var _card_css__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./card.css */ "./src/ui/shared/card.css");
-/* harmony import */ var _card_face__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./card-face */ "./src/ui/shared/card-face.jsx");
+/* harmony import */ var _logic_deck__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../logic/deck */ "./src/logic/deck.ts");
+/* harmony import */ var _pointer_manager__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./pointer-manager */ "./src/ui/shared/pointer-manager.tsx");
+/* harmony import */ var _card_face__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./card-face */ "./src/ui/shared/card-face.tsx");
+/* harmony import */ var _card_css__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./card.css */ "./src/ui/shared/card.css");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 
 
@@ -4267,16 +4335,16 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const suitSvgs = {
-  [_logic_deck__WEBPACK_IMPORTED_MODULE_8__.suits.spades]: (_images_spade__WEBPACK_IMPORTED_MODULE_2___default()),
-  [_logic_deck__WEBPACK_IMPORTED_MODULE_8__.suits.diamonds]: (_images_diamond__WEBPACK_IMPORTED_MODULE_3___default()),
-  [_logic_deck__WEBPACK_IMPORTED_MODULE_8__.suits.clubs]: (_images_club__WEBPACK_IMPORTED_MODULE_4___default()),
-  [_logic_deck__WEBPACK_IMPORTED_MODULE_8__.suits.hearts]: (_images_heart__WEBPACK_IMPORTED_MODULE_5___default())
+  [_logic_deck__WEBPACK_IMPORTED_MODULE_8__.Suit.Spades]: (_images_spade_svg__WEBPACK_IMPORTED_MODULE_2___default()),
+  [_logic_deck__WEBPACK_IMPORTED_MODULE_8__.Suit.Diamonds]: (_images_diamond_svg__WEBPACK_IMPORTED_MODULE_3___default()),
+  [_logic_deck__WEBPACK_IMPORTED_MODULE_8__.Suit.Clubs]: (_images_club_svg__WEBPACK_IMPORTED_MODULE_4___default()),
+  [_logic_deck__WEBPACK_IMPORTED_MODULE_8__.Suit.Hearts]: (_images_heart_svg__WEBPACK_IMPORTED_MODULE_5___default())
 };
 const suitColors = {
-  [_logic_deck__WEBPACK_IMPORTED_MODULE_8__.suits.spades]: _card_css__WEBPACK_IMPORTED_MODULE_10__["default"].black,
-  [_logic_deck__WEBPACK_IMPORTED_MODULE_8__.suits.diamonds]: _card_css__WEBPACK_IMPORTED_MODULE_10__["default"].red,
-  [_logic_deck__WEBPACK_IMPORTED_MODULE_8__.suits.clubs]: _card_css__WEBPACK_IMPORTED_MODULE_10__["default"].black,
-  [_logic_deck__WEBPACK_IMPORTED_MODULE_8__.suits.hearts]: _card_css__WEBPACK_IMPORTED_MODULE_10__["default"].red
+  [_logic_deck__WEBPACK_IMPORTED_MODULE_8__.Suit.Spades]: _card_css__WEBPACK_IMPORTED_MODULE_11__["default"].black,
+  [_logic_deck__WEBPACK_IMPORTED_MODULE_8__.Suit.Diamonds]: _card_css__WEBPACK_IMPORTED_MODULE_11__["default"].red,
+  [_logic_deck__WEBPACK_IMPORTED_MODULE_8__.Suit.Clubs]: _card_css__WEBPACK_IMPORTED_MODULE_11__["default"].black,
+  [_logic_deck__WEBPACK_IMPORTED_MODULE_8__.Suit.Hearts]: _card_css__WEBPACK_IMPORTED_MODULE_11__["default"].red
 };
 
 const trueMod = (v, m) => (v % m + m) % m;
@@ -4293,8 +4361,9 @@ function usePosition(card, pos) {
     const styles = {};
 
     if (card.meta.dragPos != null) {
-      styles.left = card.meta.dragPos.x;
-      styles.top = card.meta.dragPos.y;
+      const dragPos = card.meta.dragPos;
+      styles.left = dragPos.x;
+      styles.top = dragPos.y;
       styles.pointerEvents = "none";
       styles.transition = "unset";
       styles.zIndex = 10000 + trueMod(pos.z, 1000);
@@ -4330,11 +4399,11 @@ function useFlip(card, pos) {
       });
     } else {
       setState({
-        flipClass: state.faceUp ? _card_css__WEBPACK_IMPORTED_MODULE_10__["default"].flipRtlA : _card_css__WEBPACK_IMPORTED_MODULE_10__["default"].flipLtrA,
+        flipClass: state.faceUp ? _card_css__WEBPACK_IMPORTED_MODULE_11__["default"].flipRtlA : _card_css__WEBPACK_IMPORTED_MODULE_11__["default"].flipLtrA,
         faceUp: state.faceUp,
         z: 1000 - trueMod(pos.z, 1000),
         animationEnd: () => setState({
-          flipClass: card.faceUp ? _card_css__WEBPACK_IMPORTED_MODULE_10__["default"].flipLtrB : _card_css__WEBPACK_IMPORTED_MODULE_10__["default"].flipRtlB,
+          flipClass: card.faceUp ? _card_css__WEBPACK_IMPORTED_MODULE_11__["default"].flipLtrB : _card_css__WEBPACK_IMPORTED_MODULE_11__["default"].flipRtlB,
           faceUp: card.faceUp,
           z: trueMod(pos.z, 1000),
           animationEnd: () => setState({
@@ -4350,7 +4419,7 @@ function useFlip(card, pos) {
 
 function useDropShadow(card) {
   if (card.meta.grabPos != null) {
-    return _card_css__WEBPACK_IMPORTED_MODULE_10__["default"].dropShadow;
+    return _card_css__WEBPACK_IMPORTED_MODULE_11__["default"].dropShadow;
   }
 
   return null;
@@ -4358,13 +4427,13 @@ function useDropShadow(card) {
 
 const cns = (...names) => names.filter(x => x).join(" ");
 
-function Card({
+const Card = ({
   card,
   pos,
   onTap,
   onDoubleTap,
   getDragCards
-}) {
+}) => {
   card.meta.rerender = (0,_util_use_rerender__WEBPACK_IMPORTED_MODULE_7__.useRerender)();
   const onPointerDown = (0,_pointer_manager__WEBPACK_IMPORTED_MODULE_9__.usePointers)(card, onTap, onDoubleTap, getDragCards);
   const {
@@ -4382,7 +4451,7 @@ function Card({
   const zIndex = style.zIndex ?? (z ?? pos.z) + (moving ? 2000 : 0);
 
   if (!faceUp) {
-    const className = cns(_card_css__WEBPACK_IMPORTED_MODULE_10__["default"].cardBack, flipClass, shadowClass);
+    const className = cns(_card_css__WEBPACK_IMPORTED_MODULE_11__["default"].cardBack, flipClass, shadowClass);
     return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)("div", {
       className: className,
       onPointerDown: onPointerDown,
@@ -4392,11 +4461,11 @@ function Card({
         zIndex
       },
       ref: elem => card.meta.elem = elem,
-      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)((_images_backs_brown__WEBPACK_IMPORTED_MODULE_1___default()), {})
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)((_images_backs_brown_svg__WEBPACK_IMPORTED_MODULE_1___default()), {})
     });
   }
 
-  const className = cns(_card_css__WEBPACK_IMPORTED_MODULE_10__["default"].cardFront, suitColors[card.suit], flipClass, shadowClass);
+  const className = cns(_card_css__WEBPACK_IMPORTED_MODULE_11__["default"].cardFront, suitColors[card.suit], flipClass, shadowClass);
   const SuitSvg = suitSvgs[card.suit];
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)("div", {
     className: className,
@@ -4409,31 +4478,31 @@ function Card({
     tabIndex: -1,
     ref: elem => card.meta.elem = elem,
     children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)("div", {
-      className: _card_css__WEBPACK_IMPORTED_MODULE_10__["default"].topCorner,
+      className: _card_css__WEBPACK_IMPORTED_MODULE_11__["default"].topCorner,
       children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)("div", {
         children: card.label
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(SuitSvg, {
-        className: _card_css__WEBPACK_IMPORTED_MODULE_10__["default"].suit
+        className: _card_css__WEBPACK_IMPORTED_MODULE_11__["default"].suit
       })]
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_card_face__WEBPACK_IMPORTED_MODULE_11__.CardFace, {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_card_face__WEBPACK_IMPORTED_MODULE_10__.CardFace, {
       Icon: SuitSvg,
       value: card.value
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)("div", {
-      className: _card_css__WEBPACK_IMPORTED_MODULE_10__["default"].bottomCorner,
+      className: _card_css__WEBPACK_IMPORTED_MODULE_11__["default"].bottomCorner,
       children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)("div", {
         children: card.label
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(SuitSvg, {
-        className: _card_css__WEBPACK_IMPORTED_MODULE_10__["default"].suit
+        className: _card_css__WEBPACK_IMPORTED_MODULE_11__["default"].suit
       })]
     })]
   });
-}
+};
 
 /***/ }),
 
-/***/ "./src/ui/shared/control-bar.jsx":
+/***/ "./src/ui/shared/control-bar.tsx":
 /*!***************************************!*\
-  !*** ./src/ui/shared/control-bar.jsx ***!
+  !*** ./src/ui/shared/control-bar.tsx ***!
   \***************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -4442,16 +4511,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "ControlBar": () => (/* binding */ ControlBar)
 /* harmony export */ });
-/* harmony import */ var _images_back__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../images/back */ "./images/back.svg");
-/* harmony import */ var _images_back__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_images_back__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _images_plus__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../images/plus */ "./images/plus.svg");
-/* harmony import */ var _images_plus__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_images_plus__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _images_undo__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../images/undo */ "./images/undo.svg");
-/* harmony import */ var _images_undo__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_images_undo__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _images_redo__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../images/redo */ "./images/redo.svg");
-/* harmony import */ var _images_redo__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_images_redo__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _images_back_svg__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../images/back.svg */ "./images/back.svg");
+/* harmony import */ var _images_back_svg__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_images_back_svg__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _images_plus_svg__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../images/plus.svg */ "./images/plus.svg");
+/* harmony import */ var _images_plus_svg__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_images_plus_svg__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _images_undo_svg__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../images/undo.svg */ "./images/undo.svg");
+/* harmony import */ var _images_undo_svg__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_images_undo_svg__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _images_redo_svg__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../images/redo.svg */ "./images/redo.svg");
+/* harmony import */ var _images_redo_svg__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_images_redo_svg__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _control_bar_css__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./control-bar.css */ "./src/ui/shared/control-bar.css");
-/* harmony import */ var _app_router__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./app-router */ "./src/ui/shared/app-router.jsx");
+/* harmony import */ var _app_router__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./app-router */ "./src/ui/shared/app-router.tsx");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 
 
@@ -4478,22 +4547,22 @@ function ControlBar({
         children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("button", {
           className: _control_bar_css__WEBPACK_IMPORTED_MODULE_4__["default"].button,
           onClick: home,
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)((_images_back__WEBPACK_IMPORTED_MODULE_0___default()), {})
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)((_images_back_svg__WEBPACK_IMPORTED_MODULE_0___default()), {})
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("button", {
           className: _control_bar_css__WEBPACK_IMPORTED_MODULE_4__["default"].button,
           onClick: newGame,
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)((_images_plus__WEBPACK_IMPORTED_MODULE_1___default()), {})
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)((_images_plus_svg__WEBPACK_IMPORTED_MODULE_1___default()), {})
         })]
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
         className: _control_bar_css__WEBPACK_IMPORTED_MODULE_4__["default"].buttons,
         children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("button", {
           className: _control_bar_css__WEBPACK_IMPORTED_MODULE_4__["default"].button,
           onClick: undo,
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)((_images_undo__WEBPACK_IMPORTED_MODULE_2___default()), {})
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)((_images_undo_svg__WEBPACK_IMPORTED_MODULE_2___default()), {})
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("button", {
           className: _control_bar_css__WEBPACK_IMPORTED_MODULE_4__["default"].button,
           onClick: redo,
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)((_images_redo__WEBPACK_IMPORTED_MODULE_3___default()), {})
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)((_images_redo_svg__WEBPACK_IMPORTED_MODULE_3___default()), {})
         })]
       })]
     })
@@ -4502,9 +4571,9 @@ function ControlBar({
 
 /***/ }),
 
-/***/ "./src/ui/shared/empty-zone.jsx":
+/***/ "./src/ui/shared/empty-zone.tsx":
 /*!**************************************!*\
-  !*** ./src/ui/shared/empty-zone.jsx ***!
+  !*** ./src/ui/shared/empty-zone.tsx ***!
   \**************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -4513,10 +4582,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "EmptyZone": () => (/* binding */ EmptyZone)
 /* harmony export */ });
-/* harmony import */ var react_cjs_react_development__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react/cjs/react.development */ "./node_modules/react/cjs/react.development.js");
-/* harmony import */ var _empty_zone_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./empty-zone.css */ "./src/ui/shared/empty-zone.css");
-/* harmony import */ var _sizerator__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./sizerator */ "./src/ui/shared/sizerator.jsx");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var _logic_deck__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../logic/deck */ "./src/logic/deck.ts");
+/* harmony import */ var _empty_zone_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./empty-zone.css */ "./src/ui/shared/empty-zone.css");
+/* harmony import */ var _sizerator__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./sizerator */ "./src/ui/shared/sizerator.tsx");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+
 
 
 
@@ -4531,15 +4602,15 @@ function EmptyZone({
     margins,
     cardOffsetX,
     cardOffsetY
-  } = (0,_sizerator__WEBPACK_IMPORTED_MODULE_2__.useSizes)();
-  const onMouseDown = (0,react_cjs_react_development__WEBPACK_IMPORTED_MODULE_0__.useCallback)(event => event.preventDefault(), []);
-  const onClick = (0,react_cjs_react_development__WEBPACK_IMPORTED_MODULE_0__.useCallback)(() => onTap(context), []);
+  } = (0,_sizerator__WEBPACK_IMPORTED_MODULE_3__.useSizes)();
+  const onMouseDown = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(event => event.preventDefault(), []);
+  const onClick = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(() => onTap(context), []);
   const style = {
     left: margins + slot.x * cardOffsetX,
     top: margins + slot.y * cardOffsetY
   };
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("div", {
-    className: _empty_zone_css__WEBPACK_IMPORTED_MODULE_1__["default"].emptyZone,
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+    className: _empty_zone_css__WEBPACK_IMPORTED_MODULE_2__["default"].emptyZone,
     style: style,
     onMouseDown: onMouseDown,
     onClick: onClick,
@@ -4549,9 +4620,9 @@ function EmptyZone({
 
 /***/ }),
 
-/***/ "./src/ui/shared/get-context.js":
+/***/ "./src/ui/shared/get-context.ts":
 /*!**************************************!*\
-  !*** ./src/ui/shared/get-context.js ***!
+  !*** ./src/ui/shared/get-context.ts ***!
   \**************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -4561,8 +4632,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "getCard": () => (/* binding */ getCard),
 /* harmony export */   "getContextAndCard": () => (/* binding */ getContextAndCard)
 /* harmony export */ });
-/* harmony import */ var _card__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./card */ "./src/ui/shared/card.jsx");
-/* harmony import */ var _empty_zone__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./empty-zone */ "./src/ui/shared/empty-zone.jsx");
+/* harmony import */ var _logic_deck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../logic/deck */ "./src/logic/deck.ts");
+/* harmony import */ var _card__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./card */ "./src/ui/shared/card.tsx");
+/* harmony import */ var _empty_zone__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./empty-zone */ "./src/ui/shared/empty-zone.tsx");
+
 
 
 
@@ -4581,7 +4654,7 @@ function getComponentFiber(elem, acceptTypes) {
 }
 
 function getCard(elem) {
-  const fiber = getComponentFiber(elem, [_card__WEBPACK_IMPORTED_MODULE_0__.Card]);
+  const fiber = getComponentFiber(elem, [_card__WEBPACK_IMPORTED_MODULE_1__.Card]);
 
   if (fiber != null) {
     return fiber.memoizedProps.card;
@@ -4590,13 +4663,13 @@ function getCard(elem) {
   return null;
 }
 function getContextAndCard(elem) {
-  const fiber = getComponentFiber(elem, [_card__WEBPACK_IMPORTED_MODULE_0__.Card, _empty_zone__WEBPACK_IMPORTED_MODULE_1__.EmptyZone]);
+  const fiber = getComponentFiber(elem, [_card__WEBPACK_IMPORTED_MODULE_1__.Card, _empty_zone__WEBPACK_IMPORTED_MODULE_2__.EmptyZone]);
 
-  if (fiber?.type === _card__WEBPACK_IMPORTED_MODULE_0__.Card) {
+  if (fiber?.type === _card__WEBPACK_IMPORTED_MODULE_1__.Card) {
     return [fiber.memoizedProps.card.meta.context, fiber.memoizedProps.card];
   }
 
-  if (fiber?.type === _empty_zone__WEBPACK_IMPORTED_MODULE_1__.EmptyZone) {
+  if (fiber?.type === _empty_zone__WEBPACK_IMPORTED_MODULE_2__.EmptyZone) {
     return [fiber.memoizedProps.context];
   }
 
@@ -4605,9 +4678,9 @@ function getContextAndCard(elem) {
 
 /***/ }),
 
-/***/ "./src/ui/shared/modal.jsx":
+/***/ "./src/ui/shared/modal.tsx":
 /*!*********************************!*\
-  !*** ./src/ui/shared/modal.jsx ***!
+  !*** ./src/ui/shared/modal.tsx ***!
   \*********************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -4622,8 +4695,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "ModalLabel": () => (/* binding */ ModalLabel),
 /* harmony export */   "ModalRadio": () => (/* binding */ ModalRadio)
 /* harmony export */ });
-/* harmony import */ var _modal_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modal.css */ "./src/ui/shared/modal.css");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var _modal_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modal.css */ "./src/ui/shared/modal.css");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+
 
 
 
@@ -4636,16 +4711,16 @@ function takeWhere(array, predicate) {
 function Modal({
   children
 }) {
-  children = [...children];
-  const header = takeWhere(children, c => c.type === ModalHeader);
-  const footer = takeWhere(children, c => c.type === ModalFooter);
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
-    className: _modal_css__WEBPACK_IMPORTED_MODULE_0__["default"].modalBackdrop,
-    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
-      className: _modal_css__WEBPACK_IMPORTED_MODULE_0__["default"].modal,
-      children: [header, /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
-        className: _modal_css__WEBPACK_IMPORTED_MODULE_0__["default"].body,
-        children: children
+  const wrapped = children instanceof Array ? [...children] : [children];
+  const header = takeWhere(wrapped, c => c.type === ModalHeader);
+  const footer = takeWhere(wrapped, c => c.type === ModalFooter);
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
+    className: _modal_css__WEBPACK_IMPORTED_MODULE_1__["default"].modalBackdrop,
+    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
+      className: _modal_css__WEBPACK_IMPORTED_MODULE_1__["default"].modal,
+      children: [header, /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
+        className: _modal_css__WEBPACK_IMPORTED_MODULE_1__["default"].body,
+        children: wrapped
       }), footer]
     })
   });
@@ -4653,30 +4728,30 @@ function Modal({
 function ModalHeader({
   children
 }) {
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
-    className: _modal_css__WEBPACK_IMPORTED_MODULE_0__["default"].header,
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
+    className: _modal_css__WEBPACK_IMPORTED_MODULE_1__["default"].header,
     children: children
   });
 }
 function ModalFooter({
   children
 }) {
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
-    className: _modal_css__WEBPACK_IMPORTED_MODULE_0__["default"].footer,
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
+    className: _modal_css__WEBPACK_IMPORTED_MODULE_1__["default"].footer,
     children: children
   });
 }
 function ModalLabel({
   children
 }) {
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
-    className: _modal_css__WEBPACK_IMPORTED_MODULE_0__["default"].label,
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
+    className: _modal_css__WEBPACK_IMPORTED_MODULE_1__["default"].label,
     children: children
   });
 }
 function ModalButton(props) {
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("button", {
-    className: _modal_css__WEBPACK_IMPORTED_MODULE_0__["default"].button,
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("button", {
+    className: _modal_css__WEBPACK_IMPORTED_MODULE_1__["default"].button,
     ...props
   });
 }
@@ -4686,11 +4761,11 @@ function RadioButton({
   isSelected,
   onClick
 }) {
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("button", {
-    className: _modal_css__WEBPACK_IMPORTED_MODULE_0__["default"].radioButton,
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("button", {
+    className: _modal_css__WEBPACK_IMPORTED_MODULE_1__["default"].radioButton,
     onClick: onClick,
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
-      className: `${_modal_css__WEBPACK_IMPORTED_MODULE_0__["default"].radioCircle} ${isSelected ? _modal_css__WEBPACK_IMPORTED_MODULE_0__["default"].selected : ""}`
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
+      className: `${_modal_css__WEBPACK_IMPORTED_MODULE_1__["default"].radioCircle} ${isSelected ? _modal_css__WEBPACK_IMPORTED_MODULE_1__["default"].selected : ""}`
     }), label]
   });
 }
@@ -4703,7 +4778,7 @@ function ModalRadio({
   return options.map(({
     label,
     key
-  }) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(RadioButton, {
+  }) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(RadioButton, {
     label: label,
     isSelected: key === selected,
     onClick: () => onSelection(key)
@@ -4712,17 +4787,17 @@ function ModalRadio({
 function ModalDisclaimer({
   children
 }) {
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
-    className: _modal_css__WEBPACK_IMPORTED_MODULE_0__["default"].disclaimer,
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
+    className: _modal_css__WEBPACK_IMPORTED_MODULE_1__["default"].disclaimer,
     children: ["* ", children]
   });
 }
 
 /***/ }),
 
-/***/ "./src/ui/shared/pointer-manager.jsx":
+/***/ "./src/ui/shared/pointer-manager.tsx":
 /*!*******************************************!*\
-  !*** ./src/ui/shared/pointer-manager.jsx ***!
+  !*** ./src/ui/shared/pointer-manager.tsx ***!
   \*******************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -4733,33 +4808,32 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "usePointers": () => (/* binding */ usePointers)
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var _get_context__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./get-context */ "./src/ui/shared/get-context.js");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var _logic_deck__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../logic/deck */ "./src/logic/deck.ts");
+/* harmony import */ var _get_context__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./get-context */ "./src/ui/shared/get-context.ts");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+
 
 
 
 
 function getContextAtPoint(pointer) {
+  const cardElem = pointer.card.meta.elem;
   const {
     left,
     top,
     width,
     height
-  } = pointer.card.meta.elem.getBoundingClientRect();
+  } = cardElem.getBoundingClientRect();
   const elem = document.elementFromPoint(left + width / 2, top + height / 2);
-  return (0,_get_context__WEBPACK_IMPORTED_MODULE_1__.getContextAndCard)(elem);
+  return (0,_get_context__WEBPACK_IMPORTED_MODULE_2__.getContextAndCard)(elem);
 }
 
-const pointerContext = /*#__PURE__*/(0,react__WEBPACK_IMPORTED_MODULE_0__.createContext)([]);
+const pointerContext = /*#__PURE__*/(0,react__WEBPACK_IMPORTED_MODULE_0__.createContext)({});
 function PointerManager({
-  onDrag,
   onDrop,
   children
 }) {
-  const pointers = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => ({
-    current: null,
-    previous: null
-  }), []);
+  const pointers = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => ({}), []);
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useLayoutEffect)(() => {
     const pointerMove = event => {
       event.preventDefault();
@@ -4781,14 +4855,14 @@ function PointerManager({
         if (distSqr > 25 ** 2 || timeSince > 250) {
           pointers.current.dragging = true;
           dragCard.card.meta.dragPos = newPos;
-          dragCard.card.meta.rerender();
+          dragCard.card.meta.rerender?.();
         }
       }
     };
 
     document.addEventListener("pointermove", pointerMove);
     return () => document.removeEventListener("pointermove", pointerMove);
-  }, [onDrag]);
+  }, []);
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useLayoutEffect)(() => {
     const pointerUp = event => {
       event.preventDefault();
@@ -4805,9 +4879,9 @@ function PointerManager({
       pointers.previous = null;
 
       if (current.dragging) {
-        onDrop(current, ...getContextAtPoint(current, event));
+        onDrop(current, ...getContextAtPoint(current));
 
-        for (const dragCard of current.dragCards) {
+        for (const dragCard of current?.dragCards ?? []) {
           dragCard.card.meta.dragPos = null;
           dragCard.card.meta.rerender();
         }
@@ -4838,7 +4912,7 @@ function PointerManager({
       document.removeEventListener("pointercancel", pointerUp);
     };
   }, [onDrop]);
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(pointerContext.Provider, {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(pointerContext.Provider, {
     value: pointers,
     children: children
   });
@@ -4853,6 +4927,7 @@ function usePointers(card, onTap, onDoubleTap, getDragCards) {
         id: event.pointerId,
         timeStamp: event.timeStamp,
         card,
+        dragging: false,
         onTap,
         onDoubleTap,
         dragCards: getDragCards?.(card)?.map(card => ({
@@ -4873,9 +4948,9 @@ function usePointers(card, onTap, onDoubleTap, getDragCards) {
 
 /***/ }),
 
-/***/ "./src/ui/shared/sizerator.jsx":
+/***/ "./src/ui/shared/sizerator.tsx":
 /*!*************************************!*\
-  !*** ./src/ui/shared/sizerator.jsx ***!
+  !*** ./src/ui/shared/sizerator.tsx ***!
   \*************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -4889,7 +4964,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 
 
-const SizeContext = /*#__PURE__*/(0,react__WEBPACK_IMPORTED_MODULE_0__.createContext)({});
+const SizeContext = /*#__PURE__*/(0,react__WEBPACK_IMPORTED_MODULE_0__.createContext)({
+  margins: 0,
+  cardWidth: 0,
+  cardHeight: 0,
+  cardOffsetX: 0,
+  cardOffsetY: 0,
+  boardWidth: 0,
+  boardHeight: 0,
+  barHeight: 0
+});
 const cardRatio = 1.5;
 function sizerated(cardsAcross, cardsTall, Component) {
   return function Sizerator(props) {
@@ -4934,6 +5018,7 @@ function sizerated(cardsAcross, cardsTall, Component) {
         style: {
           width: "100%",
           height: "100%",
+          // @ts-expect-error css variables are totally valid, morons
           "--margin": `${sizes.margins}px`,
           "--card-width": `${sizes.cardWidth}px`,
           "--card-height": `${sizes.cardHeight}px`,
@@ -4952,9 +5037,9 @@ function useSizes() {
 
 /***/ }),
 
-/***/ "./src/ui/spider/board.jsx":
+/***/ "./src/ui/spider/board.tsx":
 /*!*********************************!*\
-  !*** ./src/ui/spider/board.jsx ***!
+  !*** ./src/ui/spider/board.tsx ***!
   \*********************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -4964,15 +5049,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "Board": () => (/* binding */ Board)
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var _logic_deck__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../logic/deck */ "./src/logic/deck.js");
-/* harmony import */ var _logic_spider_game__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../logic/spider/game */ "./src/logic/spider/game.js");
-/* harmony import */ var _shared_card_renderer__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../shared/card-renderer */ "./src/ui/shared/card-renderer.jsx");
-/* harmony import */ var _shared_empty_zone__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../shared/empty-zone */ "./src/ui/shared/empty-zone.jsx");
-/* harmony import */ var _shared_get_context__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../shared/get-context */ "./src/ui/shared/get-context.js");
-/* harmony import */ var _shared_sizerator__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../shared/sizerator */ "./src/ui/shared/sizerator.jsx");
-/* harmony import */ var _shared_board__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../shared/board */ "./src/ui/shared/board.jsx");
-/* harmony import */ var _animations_card_ring__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../animations/card-ring */ "./src/ui/animations/card-ring.js");
-/* harmony import */ var _newgame_modal__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./newgame-modal */ "./src/ui/spider/newgame-modal.jsx");
+/* harmony import */ var _logic_deck__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../logic/deck */ "./src/logic/deck.ts");
+/* harmony import */ var _logic_spider_game__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../logic/spider/game */ "./src/logic/spider/game.ts");
+/* harmony import */ var _shared_card_renderer__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../shared/card-renderer */ "./src/ui/shared/card-renderer.tsx");
+/* harmony import */ var _shared_empty_zone__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../shared/empty-zone */ "./src/ui/shared/empty-zone.tsx");
+/* harmony import */ var _shared_get_context__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../shared/get-context */ "./src/ui/shared/get-context.ts");
+/* harmony import */ var _shared_sizerator__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../shared/sizerator */ "./src/ui/shared/sizerator.tsx");
+/* harmony import */ var _shared_board__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../shared/board */ "./src/ui/shared/board.tsx");
+/* harmony import */ var _animations_card_ring__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../animations/card-ring */ "./src/ui/animations/card-ring.ts");
+/* harmony import */ var _newgame_modal__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./newgame-modal */ "./src/ui/spider/newgame-modal.tsx");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 
 
@@ -5173,9 +5258,9 @@ const Board = (0,_shared_sizerator__WEBPACK_IMPORTED_MODULE_6__.sizerated)(10, 5
 
 /***/ }),
 
-/***/ "./src/ui/spider/newgame-modal.jsx":
+/***/ "./src/ui/spider/newgame-modal.tsx":
 /*!*****************************************!*\
-  !*** ./src/ui/spider/newgame-modal.jsx ***!
+  !*** ./src/ui/spider/newgame-modal.tsx ***!
   \*****************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -5186,8 +5271,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "useNewGame": () => (/* binding */ useNewGame)
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var _logic_game_db__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../logic/game-db */ "./src/logic/game-db.js");
-/* harmony import */ var _shared_modal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../shared/modal */ "./src/ui/shared/modal.jsx");
+/* harmony import */ var _logic_game_db__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../logic/game-db */ "./src/logic/game-db.ts");
+/* harmony import */ var _shared_modal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../shared/modal */ "./src/ui/shared/modal.tsx");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 
 
@@ -5258,9 +5343,9 @@ function NewgameModal({
 
 /***/ }),
 
-/***/ "./src/ui/wish/board.jsx":
+/***/ "./src/ui/wish/board.tsx":
 /*!*******************************!*\
-  !*** ./src/ui/wish/board.jsx ***!
+  !*** ./src/ui/wish/board.tsx ***!
   \*******************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -5270,14 +5355,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "Board": () => (/* binding */ Board)
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var _logic_wish_game__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../logic/wish/game */ "./src/logic/wish/game.js");
-/* harmony import */ var _shared_card_renderer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../shared/card-renderer */ "./src/ui/shared/card-renderer.jsx");
-/* harmony import */ var _shared_empty_zone__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../shared/empty-zone */ "./src/ui/shared/empty-zone.jsx");
-/* harmony import */ var _shared_get_context__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../shared/get-context */ "./src/ui/shared/get-context.js");
-/* harmony import */ var _shared_sizerator__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../shared/sizerator */ "./src/ui/shared/sizerator.jsx");
-/* harmony import */ var _shared_board__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../shared/board */ "./src/ui/shared/board.jsx");
-/* harmony import */ var _animations_card_ring__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../animations/card-ring */ "./src/ui/animations/card-ring.js");
-/* harmony import */ var _newgame_modal__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./newgame-modal */ "./src/ui/wish/newgame-modal.jsx");
+/* harmony import */ var _logic_wish_game__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../logic/wish/game */ "./src/logic/wish/game.ts");
+/* harmony import */ var _shared_card_renderer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../shared/card-renderer */ "./src/ui/shared/card-renderer.tsx");
+/* harmony import */ var _shared_empty_zone__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../shared/empty-zone */ "./src/ui/shared/empty-zone.tsx");
+/* harmony import */ var _shared_get_context__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../shared/get-context */ "./src/ui/shared/get-context.ts");
+/* harmony import */ var _shared_sizerator__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../shared/sizerator */ "./src/ui/shared/sizerator.tsx");
+/* harmony import */ var _shared_board__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../shared/board */ "./src/ui/shared/board.tsx");
+/* harmony import */ var _animations_card_ring__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../animations/card-ring */ "./src/ui/animations/card-ring.ts");
+/* harmony import */ var _newgame_modal__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./newgame-modal */ "./src/ui/wish/newgame-modal.tsx");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 
 
@@ -5402,9 +5487,9 @@ const Board = (0,_shared_sizerator__WEBPACK_IMPORTED_MODULE_5__.sizerated)(8, 5,
 
 /***/ }),
 
-/***/ "./src/ui/wish/newgame-modal.jsx":
+/***/ "./src/ui/wish/newgame-modal.tsx":
 /*!***************************************!*\
-  !*** ./src/ui/wish/newgame-modal.jsx ***!
+  !*** ./src/ui/wish/newgame-modal.tsx ***!
   \***************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -5415,8 +5500,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "useNewGame": () => (/* binding */ useNewGame)
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var _logic_game_db__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../logic/game-db */ "./src/logic/game-db.js");
-/* harmony import */ var _shared_modal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../shared/modal */ "./src/ui/shared/modal.jsx");
+/* harmony import */ var _logic_game_db__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../logic/game-db */ "./src/logic/game-db.ts");
+/* harmony import */ var _shared_modal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../shared/modal */ "./src/ui/shared/modal.tsx");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 
 
@@ -5484,9 +5569,9 @@ function NewgameModal({
 
 /***/ }),
 
-/***/ "./src/util/install-prompt.js":
+/***/ "./src/util/install-prompt.ts":
 /*!************************************!*\
-  !*** ./src/util/install-prompt.js ***!
+  !*** ./src/util/install-prompt.ts ***!
   \************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -5508,14 +5593,16 @@ window.addEventListener("beforeinstallprompt", event => {
   }
 });
 function useInstallPrompt() {
-  const [canPrompt, setCanPrompt] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+  const [canPrompt, setCanPrompt] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     listeners.add(setCanPrompt);
-    return () => listeners.delete(setCanPrompt);
+    return () => {
+      listeners.delete(setCanPrompt);
+    };
   }, []);
   const promptForInstall = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(() => {
-    deferredPrompt.prompt();
-    return deferredPrompt.userChoice.then(choiceResult => {
+    deferredPrompt?.prompt();
+    return deferredPrompt?.userChoice.then(choiceResult => {
       deferredPrompt = null;
 
       for (const listener of listeners) {
@@ -5533,9 +5620,21 @@ function useInstallPrompt() {
 
 /***/ }),
 
-/***/ "./src/util/use-action-queue.js":
+/***/ "./src/util/tupleof.ts":
+/*!*****************************!*\
+  !*** ./src/util/tupleof.ts ***!
+  \*****************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+
+
+/***/ }),
+
+/***/ "./src/util/use-action-queue.ts":
 /*!**************************************!*\
-  !*** ./src/util/use-action-queue.js ***!
+  !*** ./src/util/use-action-queue.ts ***!
   \**************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -5551,9 +5650,13 @@ function useActionQueue() {
   const working = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
   const enqueuedAction = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => {
     function begin() {
-      const [func, args, token] = queue.shift();
-      working.current = token;
-      perform(func(...args), token);
+      if (queue.length > 0) {
+        const [func, args, token] = queue.shift();
+        working.current = token;
+        perform(func(...args), token);
+      } else {
+        working.current = null;
+      }
     }
 
     function perform(gen, token) {
@@ -5562,13 +5665,7 @@ function useActionQueue() {
       if (working.current !== token) return;
 
       if (result.done) {
-        setTimeout(() => {
-          if (queue.length === 0) {
-            working.current = null;
-          } else {
-            begin();
-          }
-        }, result.value);
+        setTimeout(() => begin(), result.value);
         return;
       }
 
@@ -36929,18 +37026,18 @@ var __webpack_exports__ = {};
 (() => {
 "use strict";
 /*!**********************!*\
-  !*** ./src/main.jsx ***!
+  !*** ./src/main.tsx ***!
   \**********************/
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
-/* harmony import */ var _ui_shared_app_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ui/shared/app-router */ "./src/ui/shared/app-router.jsx");
-/* harmony import */ var _ui_klondike_board__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ui/klondike/board */ "./src/ui/klondike/board.jsx");
-/* harmony import */ var _ui_spider_board__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./ui/spider/board */ "./src/ui/spider/board.jsx");
-/* harmony import */ var _ui_free_cell_board__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./ui/free-cell/board */ "./src/ui/free-cell/board.jsx");
-/* harmony import */ var _ui_pyramid_board__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./ui/pyramid/board */ "./src/ui/pyramid/board.jsx");
-/* harmony import */ var _ui_wish_board__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./ui/wish/board */ "./src/ui/wish/board.jsx");
+/* harmony import */ var _ui_shared_app_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ui/shared/app-router */ "./src/ui/shared/app-router.tsx");
+/* harmony import */ var _ui_klondike_board__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ui/klondike/board */ "./src/ui/klondike/board.tsx");
+/* harmony import */ var _ui_spider_board__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./ui/spider/board */ "./src/ui/spider/board.tsx");
+/* harmony import */ var _ui_free_cell_board__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./ui/free-cell/board */ "./src/ui/free-cell/board.tsx");
+/* harmony import */ var _ui_pyramid_board__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./ui/pyramid/board */ "./src/ui/pyramid/board.tsx");
+/* harmony import */ var _ui_wish_board__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./ui/wish/board */ "./src/ui/wish/board.tsx");
 /* harmony import */ var _main_css__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./main.css */ "./src/main.css");
-/* harmony import */ var _ui_menu__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./ui/menu */ "./src/ui/menu.jsx");
+/* harmony import */ var _ui_menu__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./ui/menu */ "./src/ui/menu.tsx");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 
 

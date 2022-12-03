@@ -1,13 +1,14 @@
-import {useMemo} from "react";
-import JackHat from "../../../images/faces/jack-hat";
-import QueenHat from "../../../images/faces/queen-hat";
-import KingHat from "../../../images/faces/king-hat";
+import {ComponentType, useMemo} from "react";
+import JackHat from "../../../images/faces/jack-hat.svg";
+import QueenHat from "../../../images/faces/queen-hat.svg";
+import KingHat from "../../../images/faces/king-hat.svg";
+import {CardValue} from "../../logic/deck";
 import {useSizes} from "./sizerator";
 import styles from "./card-face.css";
 
 const hats = [JackHat, QueenHat, KingHat];
 
-function renderFaceCard(Icon, value, smallCard) {
+function renderFaceCard(Icon: ComponentType, value: CardValue, smallCard: boolean) {
 	const className = `${styles.cardFace} ${styles[`c${value}`]}`;
 	const HatIcon = hats[value - 11];
 
@@ -19,7 +20,7 @@ function renderFaceCard(Icon, value, smallCard) {
 	);
 }
 
-function renderNumberCard(Icon, value) {
+function renderNumberCard(Icon: ComponentType, value: CardValue) {
 	const icons = [];
 	for (let i = 0; i < value; i++) {
 		icons.push(<Icon key={i} />);
@@ -31,7 +32,7 @@ function renderNumberCard(Icon, value) {
 	);
 }
 
-export function CardFace({Icon, value}) {
+export function CardFace({Icon, value}: {Icon: ComponentType, value: CardValue}) {
 	const {cardWidth} = useSizes();
 	const smallCard = cardWidth < 50;
 	const output = useMemo(() => {
