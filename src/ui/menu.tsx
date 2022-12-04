@@ -21,10 +21,10 @@ export function Menu() {
 			)}
 			<a
 				className={styles.version}
-				href="https://github.com/EthanRutherford/solitaire/projects/1"
+				href="https://github.com/users/EthanRutherford/projects/1"
 				target="_blank" rel="noreferrer"
 			>
-				v0.3
+				v0.4
 			</a>
 		</div>
 	);
