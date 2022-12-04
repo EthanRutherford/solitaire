@@ -1,10 +1,10 @@
 import {MutableRefObject, useCallback, useMemo, useRef} from "react";
 
-type Action = (...args: unknown[]) => Generator<number>;
-type ActionRecord = [Action, unknown[], symbol];
+type Action<T extends unknown[]> = (...args: T) => Generator<number>;
+type ActionRecord<T extends unknown[]> = [Action<T>, T, symbol];
 
 export function useActionQueue() {
-	const queue: ActionRecord[] = useMemo(() => [], []);
+	const queue: ActionRecord<any>[] = useMemo(() => [], []);
 	const working: MutableRefObject<symbol|null> = useRef(null);
 
 	const enqueuedAction = useMemo(() => {
@@ -31,7 +31,7 @@ export function useActionQueue() {
 			setTimeout(() => perform(gen, token), result.value);
 		}
 
-		const make = (generatorFunc: Action) => useCallback((...args: unknown[]) => {
+		const make = <T extends unknown[]>(generatorFunc: Action<T>) => useCallback((...args: T) => {
 			queue.push([generatorFunc, args, Symbol("unique token")]);
 			if (!working.current) {
 				begin();

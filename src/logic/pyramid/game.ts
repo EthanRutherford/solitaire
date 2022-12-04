@@ -16,7 +16,7 @@ export function getChildIndices(index: number) {
 	return [nextRow + rowOffset, nextRow + rowOffset + 1];
 }
 
-export interface SerializedGame {
+export type SerializedGame = {
 	t: SerializedNullableDeck,
 	dr: SerializedDeck,
 	di: SerializedDeck,

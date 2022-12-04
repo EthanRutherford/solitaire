@@ -66,20 +66,20 @@ function RadioButton({label, isSelected, onClick}: RadioButtonProps) {
 	);
 }
 
-interface ModalRadioProps {
-	options: {label: string, key: string}[],
-	selected: string,
-	onSelection: (key: string) => void,
+interface ModalRadioProps<KeyType> {
+	options: {label: string, key: KeyType}[],
+	selected: KeyType,
+	onSelection: (key: KeyType) => void,
 }
-export function ModalRadio({options, selected, onSelection}: ModalRadioProps) {
+export function ModalRadio<KeyType>({options, selected, onSelection}: ModalRadioProps<KeyType>) {
 	return options.map(({label, key}) => (
 		<RadioButton
 			label={label}
 			isSelected={key === selected}
 			onClick={() => onSelection(key)}
-			key={key}
+			key={`${key}`}
 		/>
-	));
+	)) as any;
 }
 
 export function ModalDisclaimer({children}: {children: ReactNode}) {

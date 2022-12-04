@@ -452,6 +452,44 @@
 	background-color: rgba(255, 255, 255, .2);
 }
 
+/*!***********************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[0].use[1]!./src/ui/menu.css ***!
+  \***********************************************************************************************/
+.menu__menu--VxifX {
+	position: relative;
+	margin: 0 auto;
+	padding: 20px;
+	width: 800px;
+	max-width: 100%;
+	height: 100%;
+}
+
+.menu__title--Bf9_7 {
+	margin-bottom: 20px;
+	color: white;
+	font: bold var(--mega) 'K2D';
+	text-shadow: 2px 2px rgba(0, 0, 0, .8);
+}
+
+.menu__button--jMY8v {
+	display: block;
+	margin: 10px 0;
+	border: 2px solid var(--carbon);
+	border-radius: 5px;
+	padding: 5px;
+	width: 200px;
+	background: rgba(255, 255, 255, .5);
+}
+
+.menu__version--Bq1q5 {
+	position: absolute;
+	bottom: 20px;
+	right: 20px;
+	color: white;
+	font: bold var(--huge) 'K2D';
+	text-shadow: 2px 2px rgba(0, 0, 0, .8);
+}
+
 /*!************************************************************************************************!*\
   !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[0].use[1]!./src/main.css (1) ***!
   \************************************************************************************************/
@@ -549,44 +587,6 @@ html, body, .root {
 
 	/* drop shadow color */
 	--shadow-color: rgba(0, 0, 0, .2);
-}
-
-/*!***********************************************************************************************!*\
-  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[0].use[1]!./src/ui/menu.css ***!
-  \***********************************************************************************************/
-.menu__menu--VxifX {
-	position: relative;
-	margin: 0 auto;
-	padding: 20px;
-	width: 800px;
-	max-width: 100%;
-	height: 100%;
-}
-
-.menu__title--Bf9_7 {
-	margin-bottom: 20px;
-	color: white;
-	font: bold var(--mega) 'K2D';
-	text-shadow: 2px 2px rgba(0, 0, 0, .8);
-}
-
-.menu__button--jMY8v {
-	display: block;
-	margin: 10px 0;
-	border: 2px solid var(--carbon);
-	border-radius: 5px;
-	padding: 5px;
-	width: 200px;
-	background: rgba(255, 255, 255, .5);
-}
-
-.menu__version--Bq1q5 {
-	position: absolute;
-	bottom: 20px;
-	right: 20px;
-	color: white;
-	font: bold var(--huge) 'K2D';
-	text-shadow: 2px 2px rgba(0, 0, 0, .8);
 }
 
 

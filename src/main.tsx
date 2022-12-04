@@ -5,8 +5,8 @@ import {Board as Spider} from "./ui/spider/board";
 import {Board as FreeCell} from "./ui/free-cell/board";
 import {Board as Pyramid} from "./ui/pyramid/board";
 import {Board as Wish} from "./ui/wish/board";
-import styles from "./main.css";
 import {Menu} from "./ui/menu";
+import styles from "./main.css";
 
 // register service worker
 if ("serviceWorker" in navigator) {

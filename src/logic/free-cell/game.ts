@@ -2,7 +2,7 @@ import {TupleOf} from "../../util/tupleof";
 import {Card, Deck, Suit, SerializedDeck} from "../deck";
 import {validatedDelta} from "../undo-stack";
 
-export interface SerializedGame {
+export type SerializedGame = {
 	t: SerializedDeck[],
 	c: SerializedDeck[],
 	f: Record<string, SerializedDeck>,

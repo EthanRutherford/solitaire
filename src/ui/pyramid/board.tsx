@@ -1,6 +1,6 @@
 import {useCallback} from "react";
 import Draw from "../../../images/draw.svg";
-import {Game} from "../../logic/pyramid/game";
+import {Game, SerializedGame} from "../../logic/pyramid/game";
 import {CardRenderer, renderPile} from "../shared/card-renderer";
 import {EmptyZone} from "../shared/empty-zone";
 import {getCard} from "../shared/get-context";
@@ -9,6 +9,8 @@ import {BoardCore, useGameCore} from "../shared/board";
 import {CardRingAnimation} from "../animations/card-ring";
 import {NewgameModal, useNewGame} from "./newgame-modal";
 import styles from "./board.css";
+import { Card, Deck } from "../../logic/deck";
+import { Pointer } from "../shared/pointer-manager";
 
 function useGame() {
 	const {
@@ -24,11 +26,11 @@ function useGame() {
 		tryFinish,
 		undo,
 		redo,
-	} = useGameCore(Game, "pyramid");
+	} = useGameCore<Game, SerializedGame>(Game, "pyramid");
 	const newGame = useNewGame("pyramid", newGameCore);
 	useSetup(newGame.openModal);
 
-	const finishCards = enqueueAction(function*(...cards) {
+	const finishCards = enqueueAction(function*(...cards: Card[]) {
 		for (const card of cards.reverse()) {
 			game.clearCard(card);
 			rerender();
@@ -39,11 +41,11 @@ function useGame() {
 		rerender();
 	});
 
-	const doClearCards = enqueueAction(function*(...cards) {
+	const doClearCards = enqueueAction(function*(...cards: Card[]) {
 		const commit = undoStack.record(game);
 		for (const card of cards) {
 			game.clearCard(card);
-			card.meta.elem.blur();
+			card.meta.elem?.blur();
 		}
 
 		rerender();
@@ -55,11 +57,11 @@ function useGame() {
 		} else {
 			finishCards(...game.drawPile, ...game.discardPile);
 		}
-	}, []);
+	});
 
-	const onDrop = useCallback((pointer, _, targetCard) => {
-		if (targetCard != null && game.canClearCards(pointer.card, targetCard)) {
-			doClearCards(pointer.card, targetCard);
+	const onDrop = useCallback((pointer: Pointer, _: unknown, targetCard: unknown) => {
+		if (targetCard != null && game.canClearCards(pointer.card, targetCard as Card)) {
+			doClearCards(pointer.card, targetCard as Card);
 		}
 	}, []);
 
@@ -81,7 +83,8 @@ function useGame() {
 	});
 
 	const drawPileDraw = enqueueAction(function*() {
-		document.activeElement.blur();
+		const activeElement = document.activeElement as HTMLElement;
+		activeElement.blur();
 		const commit = undoStack.record(game);
 		if (game.drawPile.length > 0) {
 			game.drawCard();
@@ -94,26 +97,27 @@ function useGame() {
 		}
 	});
 
-	const playableGetCards = useCallback((card) => game.getMovableCards(card), []);
+	const playableGetCards = useCallback((card: Card) => game.getMovableCards(card), []);
 
-	const playableTap = useCallback((pointer) => {
-		const activeCard = getCard(document.activeElement);
+	const playableTap = useCallback((pointer: Pointer) => {
+		const activeElement = document.activeElement as HTMLElement;
+		const activeCard = getCard(activeElement);
 		if (activeCard != null && game.canClearCards(activeCard, pointer.card)) {
 			doClearCards(activeCard, pointer.card);
 			return;
 		}
 
-		document.activeElement.blur();
+		activeElement.blur();
 		if (pointer.dragCards != null) {
-			pointer.card.meta.elem.focus();
+			pointer.card.meta.elem?.focus();
 		}
 	}, []);
 
-	const playableDoubleTap = useCallback((pointer) => {
+	const playableDoubleTap = useCallback((pointer: Pointer) => {
 		if (game.canClearCards(pointer.card, pointer.card)) {
 			doClearCards(pointer.card);
 		}
-	});
+	}, []);
 
 	return {
 		game,
@@ -130,7 +134,7 @@ function useGame() {
 	};
 }
 
-export const renderPyramid = (cards, handlers) => () => {
+export const renderPyramid = (cards: Deck<Card|null>, handlers: Record<string, unknown>) => () => {
 	const results = [];
 	for (let i = 0, j = 0; j < cards.length; i++, j += i) {
 		const rowSize = i + 1;
@@ -139,7 +143,7 @@ export const renderPyramid = (cards, handlers) => () => {
 			const card = cards[j + k];
 			if (card != null) {
 				results.push({
-					card: cards[j + k],
+					card,
 					slot: {x: startX + k, y: i / 2},
 					offsetZ: i,
 					handlers,
@@ -169,7 +173,7 @@ export const Board = sizerated(7, 5, function Board() {
 	return (
 		<BoardCore newGame={newGame.openModal} undo={undo} redo={redo}>
 			<BoardCore.Background>
-				<EmptyZone slot={{x: 2, y: 4}} onClick={flipDiscard}>
+				<EmptyZone slot={{x: 2, y: 4}} onTap={flipDiscard}>
 					{game.remainingFlips}
 				</EmptyZone>
 				<EmptyZone slot={{x: 4, y: 4}} />

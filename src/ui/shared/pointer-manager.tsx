@@ -34,7 +34,7 @@ function getContextAtPoint(pointer: Pointer) {
 interface PointerContext {current?: Pointer|null, previous?: Pointer|null}
 const pointerContext = createContext<PointerContext>({});
 
-interface PointerManagerProps {
+export interface PointerManagerProps {
 	onDrop: (pointer: Pointer, context?: unknown, card?: Card) => void,
 	children: ReactNode
 }

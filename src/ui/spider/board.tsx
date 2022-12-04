@@ -1,6 +1,6 @@
 import {useCallback} from "react";
-import {Deck} from "../../logic/deck";
-import {Game} from "../../logic/spider/game";
+import {Card, Deck} from "../../logic/deck";
+import {Game, SerializedGame} from "../../logic/spider/game";
 import {CardRenderer, renderPile, renderStack} from "../shared/card-renderer";
 import {EmptyZone} from "../shared/empty-zone";
 import {getCard} from "../shared/get-context";
@@ -8,6 +8,7 @@ import {sizerated} from "../shared/sizerator";
 import {BoardCore, useGameCore} from "../shared/board";
 import {CardRingAnimation} from "../animations/card-ring";
 import {NewgameModal, useNewGame} from "./newgame-modal";
+import { Pointer } from "../shared/pointer-manager";
 
 function useGame() {
 	const {
@@ -23,13 +24,13 @@ function useGame() {
 		tryFinish,
 		undo,
 		redo,
-	} = useGameCore(Game, "spider");
+	} = useGameCore<Game, SerializedGame>(Game, "spider");
 	const newGame = useNewGame("spider", newGameCore);
 	useSetup(newGame.openModal);
 
-	const tryCompleteStack = enqueueAction(function*(deck, commit) {
+	const tryCompleteStack = enqueueAction(function*(deck: Deck<Card>, commit: () => void) {
 		if (game.canCompleteStack(deck)) {
-			const foundation = new Deck();
+			const foundation = new Deck<Card>();
 			game.foundation.push(foundation);
 			for (let i = 0; i < 13; i++) {
 				game.moveCards(deck.draw(1), foundation);
@@ -54,10 +55,10 @@ function useGame() {
 		}
 	});
 
-	const doMoveCards = enqueueAction(function*(card, targetContext) {
-		card.meta.elem.blur();
+	const doMoveCards = enqueueAction(function*(card: Card, targetContext: Deck<Card>) {
+		card.meta.elem?.blur();
 		const commit = undoStack.record(game);
-		const originDeck = card.meta.context;
+		const originDeck = card.meta.context as Deck<Card>;
 		game.transferCards(card, targetContext);
 		rerender();
 		commit();
@@ -73,14 +74,15 @@ function useGame() {
 		yield 100;
 	});
 
-	const onDrop = useCallback((pointer, targetContext) => {
-		if (game.canMoveCards(pointer.card, targetContext)) {
-			doMoveCards(pointer.card, targetContext);
+	const onDrop = useCallback((pointer: Pointer, targetContext: unknown) => {
+		if (game.canMoveCards(pointer.card, targetContext as Deck<Card>)) {
+			doMoveCards(pointer.card, targetContext as Deck<Card>);
 		}
 	}, []);
 
 	const drawPileTap = enqueueAction(function*() {
-		document.activeElement.blur();
+		const activeElement = document.activeElement as HTMLElement;
+		activeElement.blur();
 
 		if (game.tableau.every((d) => d.length > 0)) {
 			const commit = undoStack.record(game);
@@ -98,38 +100,39 @@ function useGame() {
 		}
 	});
 
-	const playableGetCards = useCallback((card) => game.getMovableCards(card), []);
+	const playableGetCards = useCallback((card: Card) => game.getMovableCards(card), []);
 
-	const targetTap = useCallback((targetContext) => {
-		const activeCard = getCard(document.activeElement);
+	const targetTap = useCallback((targetContext: Deck<Card>) => {
+		const activeElement = document.activeElement as HTMLElement;
+		const activeCard = getCard(activeElement);
 		if (activeCard != null && game.canMoveCards(activeCard, targetContext)) {
 			doMoveCards(activeCard, targetContext);
 			return true;
 		}
 
-		document.activeElement.blur();
+		activeElement.blur();
 		return false;
-	});
+	}, []);
 
-	const playableTap = useCallback((pointer) => {
-		const targetContext = pointer.card.meta.context;
+	const playableTap = useCallback((pointer: Pointer) => {
+		const targetContext = pointer.card.meta.context as Deck<Card>;
 		if (targetTap(targetContext)) {
 			return;
 		}
 
 		if (pointer.dragCards != null) {
-			pointer.card.meta.elem.focus();
+			pointer.card.meta.elem?.focus();
 		}
 	}, []);
 
-	const playableDoubleTap = useCallback((pointer) => {
+	const playableDoubleTap = useCallback((pointer: Pointer) => {
 		if (pointer.dragCards != null) {
 			const target = game.tryGetMoveTarget(pointer.card);
 			if (game.canMoveCards(pointer.card, target)) {
 				doMoveCards(pointer.card, target);
 			}
 		}
-	});
+	}, []);
 
 	return {
 		game,

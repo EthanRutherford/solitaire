@@ -3,7 +3,7 @@ import {Card, Deck, Suit, SerializedDeck} from "../deck";
 import {validatedDelta} from "../undo-stack";
 import {randomShuffle, reverseGame} from "./generator";
 
-export interface SerializedGame {
+export type SerializedGame = {
 	dc: number,
 	dr: SerializedDeck,
 	di: SerializedDeck,

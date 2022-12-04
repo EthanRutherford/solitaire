@@ -4,10 +4,10 @@ import styles from "./empty-zone.css";
 import {useSizes} from "./sizerator";
 
 interface EmptyZonePropTypes {
-	context: Deck<Card>,
+	context?: Deck<Card>,
 	slot: {x: number, y: number},
-	onTap: (deck: Deck<Card>) => void,
-	children: ReactNode,
+	onTap?: (deck: Deck<Card>) => void,
+	children?: ReactNode,
 }
 
 export function EmptyZone({context, slot, onTap, children}: EmptyZonePropTypes) {
@@ -17,7 +17,7 @@ export function EmptyZone({context, slot, onTap, children}: EmptyZonePropTypes) 
 		[],
 	);
 
-	const onClick = useCallback(() => onTap(context), []);
+	const onClick = useCallback(() => onTap?.(context!), []);
 
 	const style = {
 		left: margins + slot.x * cardOffsetX,

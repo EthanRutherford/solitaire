@@ -1,5 +1,5 @@
 import {ReactFragment, ReactNode, useCallback, useEffect, useMemo} from "react";
-import {SerializedUndoStack, UndoStack} from "../../logic/undo-stack";
+import {SerializedUndoStack, UndoStack, validatedDelta} from "../../logic/undo-stack";
 import {get, put, remove, saveGameTable} from "../../logic/game-db";
 import {useRerender} from "../../util/use-rerender";
 import {useActionQueue} from "../../util/use-action-queue";
@@ -11,10 +11,10 @@ interface Gamelike<Serialized> {
 	hasWon: () => boolean,
 	serialize: () => Serialized,
 }
-interface StaticGamelike<Serialized> {
-	new(): Gamelike<Serialized>,
-	deserialize: (saveGame: Serialized, game: Gamelike<Serialized>) => Gamelike<Serialized>,
-	fromScratch: (game: Gamelike<Serialized>, ...args: unknown[]) => Gamelike<Serialized>,
+interface StaticGame<T extends Gamelike<S>, S, P extends unknown[]> {
+	new(): T,
+	deserialize: ReturnType<typeof validatedDelta<S, T>>,
+	fromScratch: (game: T, ...args: P) => T,
 }
 interface SaveGame<Serialized> {
 	key: IDBValidKey,
@@ -22,7 +22,11 @@ interface SaveGame<Serialized> {
 	undoStack: SerializedUndoStack,
 }
 
-export function useGameCore<Serialized>(Game: StaticGamelike<Serialized>, key: IDBValidKey) {
+export function useGameCore<
+	GameType extends Gamelike<Serialized>,
+	GameArgs extends unknown[],
+	Serialized,
+>(Game: StaticGame<GameType, Serialized, GameArgs>, key: IDBValidKey) {
 	const [isAnimating, setAnimation] = useAnimator();
 	const game = useMemo(() => new Game(), []);
 	const undoStack = useMemo(() => new UndoStack<Serialized>(), []);
@@ -33,7 +37,7 @@ export function useGameCore<Serialized>(Game: StaticGamelike<Serialized>, key: I
 		game: game.serialize(),
 		undoStack: undoStack.serialize(),
 	}), []);
-	const newGame = useCallback((...args: unknown[]) => {
+	const newGame = useCallback((...args: GameArgs) => {
 		setAnimation(null);
 		Game.fromScratch(game, ...args);
 		undoStack.reset();
@@ -137,5 +141,6 @@ export function BoardCore({newGame, undo, redo, children}: BoardCoreProps) {
 }
 
 BoardCore.Background = function({children}: {children: ReactNode}) {
-	return children;
+	// shut up typescript
+	return children as any;
 };

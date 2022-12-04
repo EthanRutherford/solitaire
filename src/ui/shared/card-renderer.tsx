@@ -1,6 +1,6 @@
 import {Card as CardType} from "../../logic/deck";
 import {Card} from "./card";
-import {PointerManager} from "./pointer-manager";
+import {PointerManager, PointerManagerProps} from "./pointer-manager";
 import {useSizes} from "./sizerator";
 
 // in order for css animations and transitions to work, the cards
@@ -11,20 +11,21 @@ import {useSizes} from "./sizerator";
 // which return arrays of elements, which we concat together and render.
 
 type Sizes = ReturnType<typeof useSizes>;
-interface SlotPosition {x: number, y: number, z: number}
+interface SlotPosition {x: number, y: number, z?: number}
 interface CardRendererSlot {
 	card: CardType,
 	slot: SlotPosition,
-	offsetX: number,
-	offsetY: number,
+	offsetX?: number,
+	offsetY?: number,
 	offsetZ: number,
-	handlers: Record<string, unknown>,
+	handlers?: Record<string, unknown>,
 }
 
+type CardRenderChild = (sizes: Sizes) => CardRendererSlot[];
 interface CardRendererProps {
-	onDrop: () => void,
+	onDrop: PointerManagerProps['onDrop'],
 	isAnimating: boolean,
-	children: ((sizes: Sizes) => CardRendererSlot)[],
+	children: (CardRenderChild|CardRenderChild[])[],
 }
 export function CardRenderer({onDrop, isAnimating, children}: CardRendererProps) {
 	const sizes = useSizes();
@@ -60,9 +61,9 @@ function showOffset(showCount: number, cardCount: number, i: number) {
 export const renderPile = (
 	slot: SlotPosition,
 	cards: CardType[],
-	handlers: Record<string, unknown>,
+	handlers?: Record<string, unknown>,
 	showCount = 1,
-) => ({cardWidth}: {cardWidth: number}) => cards.map((card, i) => ({
+) => ({cardWidth}: Sizes) => cards.map((card, i) => ({
 	card,
 	slot,
 	offsetX: Math.floor(i * .1) * 2 + showOffset(showCount, cards.length, i) * cardWidth * .2,
@@ -73,10 +74,8 @@ export const renderPile = (
 export const renderStack = (
 	slot: SlotPosition,
 	cards: CardType[],
-	handlers: Record<string, unknown>,
-) => (sizes: Sizes) => {
-	const {margins, cardWidth, cardHeight} = sizes;
-
+	handlers?: Record<string, unknown>,
+) => ({margins, cardWidth, cardHeight}: Sizes) => {
 	let acc = 0;
 	const result = cards.map((card, i) => {
 		const offsetY = acc;

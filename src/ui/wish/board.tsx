@@ -1,5 +1,5 @@
 import {useCallback} from "react";
-import {Game} from "../../logic/wish/game";
+import {Game, SerializedGame} from "../../logic/wish/game";
 import {CardRenderer, renderPile, renderStack} from "../shared/card-renderer";
 import {EmptyZone} from "../shared/empty-zone";
 import {getCard} from "../shared/get-context";
@@ -7,6 +7,8 @@ import {sizerated} from "../shared/sizerator";
 import {BoardCore, useGameCore} from "../shared/board";
 import {CardRingAnimation} from "../animations/card-ring";
 import {NewgameModal, useNewGame} from "./newgame-modal";
+import { Card } from "../../logic/deck";
+import { Pointer } from "../shared/pointer-manager";
 
 function useGame() {
 	const {
@@ -22,15 +24,15 @@ function useGame() {
 		tryFinish,
 		undo,
 		redo,
-	} = useGameCore(Game, "wish");
+	} = useGameCore<Game, SerializedGame>(Game, "wish");
 	const newGame = useNewGame("wish", newGameCore);
 	useSetup(newGame.openModal);
 
-	const doClearCards = enqueueAction(function*(...cards) {
+	const doClearCards = enqueueAction(function*(...cards: Card[]) {
 		const commit = undoStack.record(game);
 		for (const card of cards) {
 			game.clearCard(card);
-			card.meta.elem.blur();
+			card.meta.elem?.blur();
 		}
 
 		rerender();
@@ -43,26 +45,27 @@ function useGame() {
 			setAnimation(new CardRingAnimation(game.completed));
 			rerender();
 		}
-	}, []);
+	});
 
-	const onDrop = useCallback((pointer, _, targetCard) => {
+	const onDrop = useCallback((pointer: Pointer, _: unknown, targetCard?: Card) => {
 		if (targetCard != null && game.canClearCards(pointer.card, targetCard)) {
 			doClearCards(pointer.card, targetCard);
 		}
 	}, []);
 
-	const playableGetCards = useCallback((card) => game.getMovableCards(card), []);
+	const playableGetCards = useCallback((card: Card) => game.getMovableCards(card), []);
 
-	const playableTap = useCallback((pointer) => {
-		const activeCard = getCard(document.activeElement);
+	const playableTap = useCallback((pointer: Pointer) => {
+		const activeElement = document.activeElement as HTMLElement;
+		const activeCard = getCard(activeElement);
 		if (activeCard != null && game.canClearCards(activeCard, pointer.card)) {
 			doClearCards(activeCard, pointer.card);
 			return;
 		}
 
-		document.activeElement.blur();
+		activeElement.blur();
 		if (pointer.dragCards != null) {
-			pointer.card.meta.elem.focus();
+			pointer.card.meta.elem?.focus();
 		}
 	}, []);
 

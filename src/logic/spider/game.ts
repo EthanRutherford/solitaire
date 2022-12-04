@@ -41,7 +41,7 @@ function getDeck(suitCount: number) {
 	throw new Error("invalid suitCount");
 }
 
-export interface SerializedGame {
+export type SerializedGame = {
 	d: SerializedDeck,
 	t: SerializedDeck[],
 	f: SerializedDeck[],
