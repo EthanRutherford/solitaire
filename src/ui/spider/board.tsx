@@ -24,7 +24,7 @@ function useGame() {
 		tryFinish,
 		undo,
 		redo,
-	} = useGameCore<Game, SerializedGame>(Game, "spider");
+	} = useGameCore(Game, "spider");
 	const newGame = useNewGame("spider", newGameCore);
 	useSetup(newGame.openModal);
 
