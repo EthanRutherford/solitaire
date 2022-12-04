@@ -24,7 +24,7 @@ function useGame() {
 		tryFinish,
 		undo,
 		redo,
-	} = useGameCore<Game, SerializedGame>(Game, "wish");
+	} = useGameCore(Game, "wish");
 	const newGame = useNewGame("wish", newGameCore);
 	useSetup(newGame.openModal);
 

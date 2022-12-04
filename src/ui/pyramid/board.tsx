@@ -26,7 +26,7 @@ function useGame() {
 		tryFinish,
 		undo,
 		redo,
-	} = useGameCore<Game, SerializedGame>(Game, "pyramid");
+	} = useGameCore(Game, "pyramid");
 	const newGame = useNewGame("pyramid", newGameCore);
 	useSetup(newGame.openModal);
 
