@@ -1,4 +1,4 @@
-import {useMemo, useCallback, useState, CSSProperties, TransitionEvent, FC} from "react";
+import {useMemo, useCallback, useState, CSSProperties, TransitionEvent} from "react";
 import Brown from "../../../images/backs/brown.svg";
 import Spade from "../../../images/spade.svg";
 import Diamond from "../../../images/diamond.svg";
@@ -25,7 +25,7 @@ const suitColors = {
 	[Suit.Hearts]: styles.red,
 };
 
-interface Position {x: number, y: number, z: number}
+interface Position {x: number; y: number; z: number}
 
 const trueMod = (v: number, m: number) => ((v % m) + m) % m;
 function usePosition(card: CardType, pos: Position) {
@@ -40,7 +40,7 @@ function usePosition(card: CardType, pos: Position) {
 		const styles: CSSProperties = {};
 
 		if (card.meta.dragPos != null) {
-			const dragPos = card.meta.dragPos as {x: number, y: number};
+			const dragPos = card.meta.dragPos as {x: number; y: number};
 			styles.left = dragPos.x;
 			styles.top = dragPos.y;
 			styles.pointerEvents = "none";
@@ -64,10 +64,10 @@ function usePosition(card: CardType, pos: Position) {
 }
 
 interface FlipState {
-	faceUp: boolean,
-	flipClass?: string,
-	z?: number,
-	animationEnd?: () => void,
+	faceUp: boolean;
+	flipClass?: string;
+	z?: number;
+	animationEnd?: () => void;
 }
 
 function useFlip(card: CardType, pos: Position) {
@@ -104,15 +104,15 @@ function useDropShadow(card: CardType) {
 }
 
 interface CardPropTypes {
-	card: CardType,
-	pos: Position,
-	onTap?: (pointer: Pointer) => void,
-	onDoubleTap?: (pointer: Pointer) => void,
-	getDragCards?: (card: CardType) => CardType[],
+	card: CardType;
+	pos: Position;
+	onTap?: (pointer: Pointer) => void;
+	onDoubleTap?: (pointer: Pointer) => void;
+	getDragCards?: (card: CardType) => CardType[];
 }
 
-const cns = (...names: (string|null|undefined)[]) => names.filter((x) => x).join(" ");
-export const Card: FC<CardPropTypes> = ({card, pos, onTap, onDoubleTap, getDragCards}) => {
+const cns = (...names: (string | nullish)[]) => names.filter((x) => x).join(" ");
+export function Card({card, pos, onTap, onDoubleTap, getDragCards}: CardPropTypes) {
 	card.meta.rerender = useRerender();
 
 	const onPointerDown = usePointers(card, onTap, onDoubleTap, getDragCards);
@@ -160,4 +160,4 @@ export const Card: FC<CardPropTypes> = ({card, pos, onTap, onDoubleTap, getDragC
 			</div>
 		</div>
 	);
-};
+}

@@ -414,14 +414,6 @@ class Card {
     this.id = nextId++;
   }
 
-  get label() {
-    return faces[this.value];
-  }
-
-  get color() {
-    return this.suit % 2;
-  }
-
   serialize() {
     return {
       s: this.suit,
@@ -431,6 +423,15 @@ class Card {
     };
   }
 
+  get label() {
+    return faces[this.value];
+  }
+
+  get color() {
+    return this.suit % 2;
+  }
+
+  meta = {};
   static deserialize = (0,_undo_stack__WEBPACK_IMPORTED_MODULE_0__.validatedDelta)((input, card) => {
     card ??= new Card(0, 1);
     card.suit = input.s ?? card.suit;
@@ -439,7 +440,6 @@ class Card {
     card.id = input.i ?? card.id;
     return card;
   });
-  meta = {};
 }
 const coreDeckDeserialize = (0,_undo_stack__WEBPACK_IMPORTED_MODULE_0__.validatedDelta)((input, deck) => {
   const {
@@ -712,11 +712,14 @@ class Game {
 
     for (const deck of usableDecks) {
       const top = deck.fromTop();
-      const foundation = this.foundations[top?.suit];
 
-      if (top?.value <= maxValue && this.canMoveToFoundation(top, foundation)) {
-        this.transferCards(top, foundation);
-        return deck;
+      if (top != null) {
+        const foundation = this.foundations[top.suit];
+
+        if (top.value <= maxValue && this.canMoveToFoundation(top, foundation)) {
+          this.transferCards(top, foundation);
+          return deck;
+        }
       }
     }
 
@@ -735,28 +738,14 @@ class Game {
     };
   }
 
-  static deserialize = (0,_undo_stack__WEBPACK_IMPORTED_MODULE_2__.validatedDelta)((input, game) => {
-    game ??= new Game();
-    const tableau = game.tableau;
-
-    for (let i = 0; i < 8; i++) {
-      tableau[i] = _deck__WEBPACK_IMPORTED_MODULE_1__.Deck.deserialize(input.t?.[i], tableau[i]);
-    }
-
-    const freeCells = game.freeCells;
-
-    for (let i = 0; i < 4; i++) {
-      freeCells[i] = _deck__WEBPACK_IMPORTED_MODULE_1__.Deck.deserialize(input.c?.[i], freeCells[i]);
-    }
-
-    const foundations = game.foundations;
-
-    for (const k of [_deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Spades, _deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Diamonds, _deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Clubs, _deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Hearts]) {
-      foundations[k] = _deck__WEBPACK_IMPORTED_MODULE_1__.Deck.deserialize(input.f?.[k], foundations[k]);
-    }
-
-    return game.setContexts();
-  });
+  tableau = [new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck()];
+  freeCells = [new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck()];
+  foundations = {
+    [_deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Spades]: new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(),
+    [_deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Diamonds]: new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(),
+    [_deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Clubs]: new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(),
+    [_deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Hearts]: new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck()
+  };
 
   static fromScratch(game) {
     const deck = _deck__WEBPACK_IMPORTED_MODULE_1__.Deck.full().shuffle();
@@ -783,14 +772,28 @@ class Game {
     return game.setContexts();
   }
 
-  tableau = [new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck()];
-  freeCells = [new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck()];
-  foundations = {
-    [_deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Spades]: new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(),
-    [_deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Diamonds]: new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(),
-    [_deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Clubs]: new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(),
-    [_deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Hearts]: new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck()
-  };
+  static deserialize = (0,_undo_stack__WEBPACK_IMPORTED_MODULE_2__.validatedDelta)((input, game) => {
+    game ??= new Game();
+    const tableau = game.tableau;
+
+    for (let i = 0; i < 8; i++) {
+      tableau[i] = _deck__WEBPACK_IMPORTED_MODULE_1__.Deck.deserialize(input.t?.[i], tableau[i]);
+    }
+
+    const freeCells = game.freeCells;
+
+    for (let i = 0; i < 4; i++) {
+      freeCells[i] = _deck__WEBPACK_IMPORTED_MODULE_1__.Deck.deserialize(input.c?.[i], freeCells[i]);
+    }
+
+    const foundations = game.foundations;
+
+    for (const k of [_deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Spades, _deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Diamonds, _deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Clubs, _deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Hearts]) {
+      foundations[k] = _deck__WEBPACK_IMPORTED_MODULE_1__.Deck.deserialize(input.f?.[k], foundations[k]);
+    }
+
+    return game.setContexts();
+  });
 }
 
 /***/ }),
@@ -815,7 +818,7 @@ __webpack_require__.r(__webpack_exports__);
 const saveGameTable = "saves";
 const settingsTable = "settings"; // opens the database, initializing it if necessary
 
-function openDatabase() {
+async function openDatabase() {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open("solitaire", 1);
 
@@ -835,7 +838,7 @@ function openDatabase() {
       });
     };
 
-    navigator.storage.persist();
+    void navigator.storage.persist();
     request.onerror = reject;
 
     request.onsuccess = function () {
@@ -845,7 +848,7 @@ function openDatabase() {
 } // core database interactions
 
 
-function getCore(objectStore, id) {
+async function getCore(objectStore, id) {
   return new Promise((resolve, reject) => {
     const request = objectStore.get(id);
     request.onerror = reject;
@@ -856,7 +859,7 @@ function getCore(objectStore, id) {
   });
 }
 
-function listCore(objectStore) {
+async function listCore(objectStore) {
   return new Promise((resolve, reject) => {
     const request = objectStore.openCursor();
     request.onerror = reject;
@@ -878,7 +881,7 @@ function listCore(objectStore) {
   });
 }
 
-function addCore(objectStore, object) {
+async function addCore(objectStore, object) {
   return new Promise((resolve, reject) => {
     const request = objectStore.add(object);
     request.onerror = reject;
@@ -889,7 +892,7 @@ function addCore(objectStore, object) {
   });
 }
 
-function putCore(objectStore, object, id) {
+async function putCore(objectStore, object, id) {
   return new Promise((resolve, reject) => {
     const request = objectStore.put(object, id);
     request.onerror = reject;
@@ -900,7 +903,7 @@ function putCore(objectStore, object, id) {
   });
 }
 
-function deleteCore(objectStore, id) {
+async function deleteCore(objectStore, id) {
   return new Promise((resolve, reject) => {
     const request = objectStore.delete(id);
     request.onerror = reject;
@@ -931,7 +934,7 @@ async function put(tableName, object, id) {
   return await putCore(await getStore(tableName, true), object, id);
 }
 async function remove(tableName, id) {
-  return await deleteCore(await getStore(tableName, true), id);
+  await deleteCore(await getStore(tableName, true), id);
 }
 
 /***/ }),
@@ -1086,7 +1089,7 @@ class Game {
     if (this.tableau.includes(deck)) {
       const top = deck.fromTop();
 
-      if (!(top?.faceUp ?? true)) {
+      if (top != null && !top.faceUp) {
         top.faceUp = true;
         return true;
       }
@@ -1110,11 +1113,14 @@ class Game {
 
     for (const deck of usableDecks) {
       const top = deck.fromTop();
-      const foundation = this.foundations[top?.suit];
 
-      if (top?.value <= maxValue && this.canMoveToFoundation(top, foundation)) {
-        this.transferCards(top, foundation);
-        return deck;
+      if (top != null) {
+        const foundation = this.foundations[top.suit];
+
+        if (top.value <= maxValue && this.canMoveToFoundation(top, foundation)) {
+          this.transferCards(top, foundation);
+          return deck;
+        }
       }
     }
 
@@ -1133,6 +1139,22 @@ class Game {
 
   hasWon() {
     return Object.values(this.foundations).every(d => d.length === 13);
+  }
+
+  drawCount = 1;
+  drawPile = new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck();
+  discardPile = new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck();
+  tableau = [new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck()];
+  foundations = {
+    [_deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Spades]: new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(),
+    [_deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Diamonds]: new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(),
+    [_deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Clubs]: new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(),
+    [_deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Hearts]: new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck()
+  };
+
+  static fromScratch(game, settings) {
+    const generator = [_generator__WEBPACK_IMPORTED_MODULE_3__.randomShuffle, _generator__WEBPACK_IMPORTED_MODULE_3__.reverseGame][settings.generator];
+    return generator(game, settings.drawCount);
   }
 
   static deserialize = (0,_undo_stack__WEBPACK_IMPORTED_MODULE_2__.validatedDelta)((input, game) => {
@@ -1154,22 +1176,6 @@ class Game {
 
     return game.setContexts();
   });
-
-  static fromScratch(game, settings) {
-    const generator = [_generator__WEBPACK_IMPORTED_MODULE_3__.randomShuffle, _generator__WEBPACK_IMPORTED_MODULE_3__.reverseGame][settings.generator];
-    return generator(game, settings.drawCount);
-  }
-
-  drawCount = 1;
-  drawPile = new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck();
-  discardPile = new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck();
-  tableau = [new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck()];
-  foundations = {
-    [_deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Spades]: new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(),
-    [_deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Diamonds]: new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(),
-    [_deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Clubs]: new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(),
-    [_deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Hearts]: new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck()
-  };
 }
 
 /***/ }),
@@ -1463,6 +1469,17 @@ class Game {
     };
   }
 
+  tree = new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck();
+  drawPile = new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck();
+  discardPile = new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck();
+  completed = new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck();
+  remainingFlips = 0;
+
+  static fromScratch(game, settings) {
+    const generator = [_generator__WEBPACK_IMPORTED_MODULE_2__.randomShuffle, _generator__WEBPACK_IMPORTED_MODULE_2__.reverseGame][settings.generator];
+    return generator(game);
+  }
+
   static deserialize = (0,_undo_stack__WEBPACK_IMPORTED_MODULE_1__.validatedDelta)((input, game) => {
     game ??= new Game();
     game.tree = _deck__WEBPACK_IMPORTED_MODULE_0__.Deck.deserialize(input.t, game.tree);
@@ -1473,17 +1490,6 @@ class Game {
     game.remainingFlips = input.r ?? game.remainingFlips;
     return game.setContexts();
   });
-
-  static fromScratch(game, settings) {
-    const generator = [_generator__WEBPACK_IMPORTED_MODULE_2__.randomShuffle, _generator__WEBPACK_IMPORTED_MODULE_2__.reverseGame][settings.generator];
-    return generator(game);
-  }
-
-  tree = new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck();
-  drawPile = new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck();
-  discardPile = new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck();
-  completed = new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck();
-  remainingFlips = 0;
 }
 
 /***/ }),
@@ -1862,11 +1868,11 @@ class Game {
   }
 
   canMoveCards(card, target) {
-    if (target?.length === 0) {
+    if (target.length === 0) {
       return true;
     }
 
-    if (target?.fromTop().value - 1 === card.value) {
+    if (target.fromTop().value - 1 === card.value) {
       return true;
     }
 
@@ -1935,7 +1941,7 @@ class Game {
     if (this.tableau.includes(deck)) {
       const top = deck.fromTop();
 
-      if (!(top?.faceUp ?? true)) {
+      if (top != null && !top.faceUp) {
         top.faceUp = true;
         return true;
       }
@@ -1954,6 +1960,30 @@ class Game {
       t: this.tableau.map(d => d.serialize()),
       f: this.foundation.map(d => d.serialize())
     };
+  }
+
+  drawPile = new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck();
+  tableau = [new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck()];
+  foundation = [];
+
+  static fromScratch(game, settings) {
+    game.drawPile.splice(0, game.drawPile.length, ...getDeck(settings.suitCount).shuffle());
+    game.foundation.splice(0, game.foundation.length);
+    game.tableau.splice(0, game.tableau.length);
+
+    for (let i = 0; i < 4; i++) {
+      game.tableau.push(game.drawPile.draw(5));
+    }
+
+    for (let i = 0; i < 6; i++) {
+      game.tableau.push(game.drawPile.draw(4));
+    }
+
+    for (const deck of game.tableau) {
+      deck.fromTop().faceUp = true;
+    }
+
+    return game.setContexts();
   }
 
   static deserialize = (0,_undo_stack__WEBPACK_IMPORTED_MODULE_2__.validatedDelta)((input, game) => {
@@ -1976,30 +2006,6 @@ class Game {
 
     return game.setContexts();
   });
-
-  static fromScratch(game, settings) {
-    game.drawPile.splice(0, game.drawPile.length, ...getDeck(settings.suitCount).shuffle());
-    game.foundation.splice(0, game.foundation.length);
-    game.tableau.splice(0, game.tableau.length);
-
-    for (let i = 0; i < 4; i++) {
-      game.tableau.push(game.drawPile.draw(5));
-    }
-
-    for (let i = 0; i < 6; i++) {
-      game.tableau.push(game.drawPile.draw(4));
-    }
-
-    for (const deck of game.tableau) {
-      deck.fromTop().faceUp = true;
-    }
-
-    return game.setContexts();
-  }
-
-  drawPile = new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck();
-  tableau = [new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck()];
-  foundation = [];
 }
 
 /***/ }),
@@ -2144,6 +2150,9 @@ class UndoStack {
     };
   }
 
+  undoStack = [];
+  redoStack = [];
+  lock = false;
   static deserialize = (input, undoStack) => {
     // stupid workaround to function wrappers not being able to use generic types
     // with function wrappers
@@ -2187,9 +2196,6 @@ class UndoStack {
       return undoStack;
     })(input, undoStack);
   };
-  undoStack = [];
-  redoStack = [];
-  lock = false;
 }
 
 /***/ }),
@@ -2291,6 +2297,14 @@ class Game {
     };
   }
 
+  tableau = [new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck()];
+  completed = new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck();
+
+  static fromScratch(game, settings) {
+    const generator = [_generator__WEBPACK_IMPORTED_MODULE_3__.randomShuffle, _generator__WEBPACK_IMPORTED_MODULE_3__.reverseGame][settings.generator];
+    return generator(game);
+  }
+
   static deserialize = (0,_undo_stack__WEBPACK_IMPORTED_MODULE_2__.validatedDelta)((input, game) => {
     game ??= new Game();
     const tableau = game.tableau;
@@ -2302,14 +2316,6 @@ class Game {
     game.completed = _deck__WEBPACK_IMPORTED_MODULE_1__.Deck.deserialize(input.c, game.completed);
     return game.setContexts();
   });
-
-  static fromScratch(game, settings) {
-    const generator = [_generator__WEBPACK_IMPORTED_MODULE_3__.randomShuffle, _generator__WEBPACK_IMPORTED_MODULE_3__.reverseGame][settings.generator];
-    return generator(game);
-  }
-
-  tableau = [new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck()];
-  completed = new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck();
 }
 
 /***/ }),
@@ -2524,7 +2530,7 @@ class Loop extends AnimationStep {
   step(delta) {
     this.curStep?.advance(delta);
 
-    if (this.curStep?.done) {
+    if (this.curStep?.done ?? false) {
       if (this.until()) {
         this.curStep = null;
       } else {
@@ -2776,8 +2782,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _shared_get_context__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../shared/get-context */ "./src/ui/shared/get-context.ts");
 /* harmony import */ var _shared_sizerator__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../shared/sizerator */ "./src/ui/shared/sizerator.tsx");
 /* harmony import */ var _shared_board__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../shared/board */ "./src/ui/shared/board.tsx");
-/* harmony import */ var _animations_card_ring__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../animations/card-ring */ "./src/ui/animations/card-ring.ts");
-/* harmony import */ var _shared_pointer_manager__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../shared/pointer-manager */ "./src/ui/shared/pointer-manager.tsx");
+/* harmony import */ var _shared_pointer_manager__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../shared/pointer-manager */ "./src/ui/shared/pointer-manager.tsx");
+/* harmony import */ var _animations_card_ring__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../animations/card-ring */ "./src/ui/animations/card-ring.ts");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 
 
@@ -2825,7 +2831,7 @@ function useGame() {
         if (!tryFinish()) {
           saveGame();
         } else {
-          setAnimation(new _animations_card_ring__WEBPACK_IMPORTED_MODULE_12__.CardRingAnimation(...Object.values(game.foundations)));
+          setAnimation(new _animations_card_ring__WEBPACK_IMPORTED_MODULE_13__.CardRingAnimation(...Object.values(game.foundations)));
           rerender();
         }
 
@@ -3035,9 +3041,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _shared_get_context__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../shared/get-context */ "./src/ui/shared/get-context.ts");
 /* harmony import */ var _shared_sizerator__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../shared/sizerator */ "./src/ui/shared/sizerator.tsx");
 /* harmony import */ var _shared_board__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../shared/board */ "./src/ui/shared/board.tsx");
-/* harmony import */ var _animations_card_ring__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../animations/card-ring */ "./src/ui/animations/card-ring.ts");
-/* harmony import */ var _newgame_modal__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./newgame-modal */ "./src/ui/klondike/newgame-modal.tsx");
-/* harmony import */ var _shared_pointer_manager__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../shared/pointer-manager */ "./src/ui/shared/pointer-manager.tsx");
+/* harmony import */ var _shared_pointer_manager__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../shared/pointer-manager */ "./src/ui/shared/pointer-manager.tsx");
+/* harmony import */ var _animations_card_ring__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../animations/card-ring */ "./src/ui/animations/card-ring.ts");
+/* harmony import */ var _newgame_modal__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./newgame-modal */ "./src/ui/klondike/newgame-modal.tsx");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 
 
@@ -3073,7 +3079,7 @@ function useGame() {
     undo,
     redo
   } = (0,_shared_board__WEBPACK_IMPORTED_MODULE_12__.useGameCore)(_logic_klondike_game__WEBPACK_IMPORTED_MODULE_7__.Game, "klondike");
-  const newGame = (0,_newgame_modal__WEBPACK_IMPORTED_MODULE_14__.useNewGame)("klondike", newGameCore);
+  const newGame = (0,_newgame_modal__WEBPACK_IMPORTED_MODULE_15__.useNewGame)("klondike", newGameCore);
   useSetup(newGame.openModal);
   const tryAutoComplete = enqueueAction(function* () {
     while (true) {
@@ -3095,7 +3101,7 @@ function useGame() {
         if (!tryFinish()) {
           saveGame();
         } else {
-          setAnimation(new _animations_card_ring__WEBPACK_IMPORTED_MODULE_13__.CardRingAnimation(...Object.values(game.foundations)));
+          setAnimation(new _animations_card_ring__WEBPACK_IMPORTED_MODULE_14__.CardRingAnimation(...Object.values(game.foundations)));
           rerender();
         }
 
@@ -3323,7 +3329,7 @@ const Board = (0,_shared_sizerator__WEBPACK_IMPORTED_MODULE_11__.sizerated)(7, 5
         onDoubleTap: playableDoubleTap,
         getDragCards: playableGetCards
       }))]
-    }), newGame.showModal && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_newgame_modal__WEBPACK_IMPORTED_MODULE_14__.NewgameModal, { ...newGame
+    }), newGame.showModal && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_newgame_modal__WEBPACK_IMPORTED_MODULE_15__.NewgameModal, { ...newGame
     })]
   });
 });
@@ -3364,7 +3370,7 @@ function useNewGame(key, onStart) {
   const start = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(data => {
     onStart(data);
     setShowModal(false);
-    (0,_logic_game_db__WEBPACK_IMPORTED_MODULE_2__.put)(_logic_game_db__WEBPACK_IMPORTED_MODULE_2__.settingsTable, {
+    void (0,_logic_game_db__WEBPACK_IMPORTED_MODULE_2__.put)(_logic_game_db__WEBPACK_IMPORTED_MODULE_2__.settingsTable, {
       key,
       ...data
     });
@@ -3515,16 +3521,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _images_draw_svg__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../images/draw.svg */ "./images/draw.svg");
 /* harmony import */ var _images_draw_svg__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_images_draw_svg__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _logic_pyramid_game__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../logic/pyramid/game */ "./src/logic/pyramid/game.ts");
-/* harmony import */ var _shared_card_renderer__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../shared/card-renderer */ "./src/ui/shared/card-renderer.tsx");
-/* harmony import */ var _shared_empty_zone__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../shared/empty-zone */ "./src/ui/shared/empty-zone.tsx");
-/* harmony import */ var _shared_get_context__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../shared/get-context */ "./src/ui/shared/get-context.ts");
-/* harmony import */ var _shared_sizerator__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../shared/sizerator */ "./src/ui/shared/sizerator.tsx");
-/* harmony import */ var _shared_board__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../shared/board */ "./src/ui/shared/board.tsx");
-/* harmony import */ var _animations_card_ring__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../animations/card-ring */ "./src/ui/animations/card-ring.ts");
-/* harmony import */ var _newgame_modal__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./newgame-modal */ "./src/ui/pyramid/newgame-modal.tsx");
-/* harmony import */ var _board_css__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./board.css */ "./src/ui/pyramid/board.css");
-/* harmony import */ var _logic_deck__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../logic/deck */ "./src/logic/deck.ts");
-/* harmony import */ var _shared_pointer_manager__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../shared/pointer-manager */ "./src/ui/shared/pointer-manager.tsx");
+/* harmony import */ var _logic_deck__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../logic/deck */ "./src/logic/deck.ts");
+/* harmony import */ var _shared_card_renderer__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../shared/card-renderer */ "./src/ui/shared/card-renderer.tsx");
+/* harmony import */ var _shared_empty_zone__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../shared/empty-zone */ "./src/ui/shared/empty-zone.tsx");
+/* harmony import */ var _shared_get_context__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../shared/get-context */ "./src/ui/shared/get-context.ts");
+/* harmony import */ var _shared_sizerator__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../shared/sizerator */ "./src/ui/shared/sizerator.tsx");
+/* harmony import */ var _shared_board__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../shared/board */ "./src/ui/shared/board.tsx");
+/* harmony import */ var _shared_pointer_manager__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../shared/pointer-manager */ "./src/ui/shared/pointer-manager.tsx");
+/* harmony import */ var _animations_card_ring__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../animations/card-ring */ "./src/ui/animations/card-ring.ts");
+/* harmony import */ var _newgame_modal__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./newgame-modal */ "./src/ui/pyramid/newgame-modal.tsx");
+/* harmony import */ var _board_css__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./board.css */ "./src/ui/pyramid/board.css");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 
 
@@ -3556,8 +3562,8 @@ function useGame() {
     tryFinish,
     undo,
     redo
-  } = (0,_shared_board__WEBPACK_IMPORTED_MODULE_7__.useGameCore)(_logic_pyramid_game__WEBPACK_IMPORTED_MODULE_2__.Game, "pyramid");
-  const newGame = (0,_newgame_modal__WEBPACK_IMPORTED_MODULE_9__.useNewGame)("pyramid", newGameCore);
+  } = (0,_shared_board__WEBPACK_IMPORTED_MODULE_8__.useGameCore)(_logic_pyramid_game__WEBPACK_IMPORTED_MODULE_2__.Game, "pyramid");
+  const newGame = (0,_newgame_modal__WEBPACK_IMPORTED_MODULE_11__.useNewGame)("pyramid", newGameCore);
   useSetup(newGame.openModal);
   const finishCards = enqueueAction(function* (...cards) {
     for (const card of cards.reverse()) {
@@ -3566,7 +3572,7 @@ function useGame() {
       yield 10;
     }
 
-    setAnimation(new _animations_card_ring__WEBPACK_IMPORTED_MODULE_8__.CardRingAnimation(game.completed));
+    setAnimation(new _animations_card_ring__WEBPACK_IMPORTED_MODULE_10__.CardRingAnimation(game.completed));
     rerender();
   });
   const doClearCards = enqueueAction(function* (...cards) {
@@ -3627,7 +3633,7 @@ function useGame() {
   const playableGetCards = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(card => game.getMovableCards(card), []);
   const playableTap = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(pointer => {
     const activeElement = document.activeElement;
-    const activeCard = (0,_shared_get_context__WEBPACK_IMPORTED_MODULE_5__.getCard)(activeElement);
+    const activeCard = (0,_shared_get_context__WEBPACK_IMPORTED_MODULE_6__.getCard)(activeElement);
 
     if (activeCard != null && game.canClearCards(activeCard, pointer.card)) {
       doClearCards(activeCard, pointer.card);
@@ -3686,7 +3692,7 @@ const renderPyramid = (cards, handlers) => () => {
 
   return results;
 };
-const Board = (0,_shared_sizerator__WEBPACK_IMPORTED_MODULE_6__.sizerated)(7, 5, function Board() {
+const Board = (0,_shared_sizerator__WEBPACK_IMPORTED_MODULE_7__.sizerated)(7, 5, function Board() {
   const {
     game,
     isAnimating,
@@ -3700,54 +3706,54 @@ const Board = (0,_shared_sizerator__WEBPACK_IMPORTED_MODULE_6__.sizerated)(7, 5,
     undo,
     redo
   } = useGame();
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)(_shared_board__WEBPACK_IMPORTED_MODULE_7__.BoardCore, {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)(_shared_board__WEBPACK_IMPORTED_MODULE_8__.BoardCore, {
     newGame: newGame.openModal,
     undo: undo,
     redo: redo,
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)(_shared_board__WEBPACK_IMPORTED_MODULE_7__.BoardCore.Background, {
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_4__.EmptyZone, {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)(_shared_board__WEBPACK_IMPORTED_MODULE_8__.BoardCore.Background, {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_5__.EmptyZone, {
         slot: {
           x: 2,
           y: 4
         },
         onTap: flipDiscard,
         children: game.remainingFlips
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_4__.EmptyZone, {
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_5__.EmptyZone, {
         slot: {
           x: 4,
           y: 4
         }
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)("button", {
-        className: _board_css__WEBPACK_IMPORTED_MODULE_10__["default"].drawButton,
+        className: _board_css__WEBPACK_IMPORTED_MODULE_12__["default"].drawButton,
         onClick: drawPileDraw,
         children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)((_images_draw_svg__WEBPACK_IMPORTED_MODULE_1___default()), {})
       })]
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)(_shared_card_renderer__WEBPACK_IMPORTED_MODULE_3__.CardRenderer, {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)(_shared_card_renderer__WEBPACK_IMPORTED_MODULE_4__.CardRenderer, {
       onDrop: onDrop,
       isAnimating: isAnimating,
       children: [renderPyramid(game.tree, {
         onTap: playableTap,
         onDoubleTap: playableDoubleTap,
         getDragCards: playableGetCards
-      }), (0,_shared_card_renderer__WEBPACK_IMPORTED_MODULE_3__.renderPile)({
+      }), (0,_shared_card_renderer__WEBPACK_IMPORTED_MODULE_4__.renderPile)({
         x: 2,
         y: 4
       }, game.drawPile, {
         onTap: playableTap,
         onDoubleTap: playableDoubleTap,
         getDragCards: playableGetCards
-      }), (0,_shared_card_renderer__WEBPACK_IMPORTED_MODULE_3__.renderPile)({
+      }), (0,_shared_card_renderer__WEBPACK_IMPORTED_MODULE_4__.renderPile)({
         x: 4,
         y: 4
       }, game.discardPile, {
         onTap: playableTap,
         onDoubleTap: playableDoubleTap,
         getDragCards: playableGetCards
-      }), (0,_shared_card_renderer__WEBPACK_IMPORTED_MODULE_3__.renderPile)({
+      }), (0,_shared_card_renderer__WEBPACK_IMPORTED_MODULE_4__.renderPile)({
         x: 6,
         y: 4
       }, game.completed)]
-    }), newGame.showModal && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_newgame_modal__WEBPACK_IMPORTED_MODULE_9__.NewgameModal, { ...newGame
+    }), newGame.showModal && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_newgame_modal__WEBPACK_IMPORTED_MODULE_11__.NewgameModal, { ...newGame
     })]
   });
 });
@@ -3788,7 +3794,7 @@ function useNewGame(key, onStart) {
   const start = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(data => {
     onStart(data);
     setShowModal(false);
-    (0,_logic_game_db__WEBPACK_IMPORTED_MODULE_1__.put)(_logic_game_db__WEBPACK_IMPORTED_MODULE_1__.settingsTable, {
+    void (0,_logic_game_db__WEBPACK_IMPORTED_MODULE_1__.put)(_logic_game_db__WEBPACK_IMPORTED_MODULE_1__.settingsTable, {
       key,
       ...data
     });
@@ -3877,14 +3883,15 @@ function useHistory() {
   }, []);
 
   const go = route => {
-    const crumb = history.state.crumb;
+    const historyState = history.state;
+    const crumb = historyState.crumb;
     const index = crumb.indexOf(route);
 
     if (index >= 0) {
       history.go(index - crumb.length);
     } else {
       history.pushState({
-        crumb: history.state.crumb.concat(route)
+        crumb: historyState.crumb.concat(route)
       }, "", "/");
     }
 
@@ -3897,7 +3904,8 @@ function useHistory() {
   };
 
   const home = () => {
-    history.go(-(history.state.crumb.length - 1));
+    const historyState = history.state;
+    history.go(-(historyState.crumb.length - 1));
     rerender();
   };
 
@@ -3932,11 +3940,12 @@ function Route({
   Component
 }) {
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useContext)(routerContext).useRoute((0,_util_use_rerender__WEBPACK_IMPORTED_MODULE_1__.useRerender)());
-  const crumb = history.state.crumb;
+  const historyState = history.state;
+  const crumb = historyState.crumb;
   const urlPath = new URL(crumb[crumb.length - 1], location.href).pathname;
   const defPath = new URL(path, location.href).pathname;
 
-  if (exact) {
+  if (exact ?? false) {
     if (defPath !== urlPath) {
       return null;
     }
@@ -3997,7 +4006,7 @@ function useGameCore(Game, key) {
   const undoStack = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => new _logic_undo_stack__WEBPACK_IMPORTED_MODULE_1__.UndoStack(), []);
   const enqueueAction = (0,_util_use_action_queue__WEBPACK_IMPORTED_MODULE_4__.useActionQueue)();
   const rerender = (0,_util_use_rerender__WEBPACK_IMPORTED_MODULE_3__.useRerender)();
-  const saveGame = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(() => (0,_logic_game_db__WEBPACK_IMPORTED_MODULE_2__.put)(_logic_game_db__WEBPACK_IMPORTED_MODULE_2__.saveGameTable, {
+  const saveGame = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(() => void (0,_logic_game_db__WEBPACK_IMPORTED_MODULE_2__.put)(_logic_game_db__WEBPACK_IMPORTED_MODULE_2__.saveGameTable, {
     key,
     game: game.serialize(),
     undoStack: undoStack.serialize()
@@ -4011,7 +4020,7 @@ function useGameCore(Game, key) {
     saveGame();
   }, []);
   const useSetup = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(start => (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
-    (async () => {
+    void (async () => {
       const save = await (0,_logic_game_db__WEBPACK_IMPORTED_MODULE_2__.get)(_logic_game_db__WEBPACK_IMPORTED_MODULE_2__.saveGameTable, key);
 
       if (save != null) {
@@ -4019,7 +4028,7 @@ function useGameCore(Game, key) {
         _logic_undo_stack__WEBPACK_IMPORTED_MODULE_1__.UndoStack.deserialize(save.undoStack, undoStack);
         rerender();
       } else {
-        start();
+        void start();
       }
     })();
   }, []), []);
@@ -4027,7 +4036,7 @@ function useGameCore(Game, key) {
     if (game.hasWon()) {
       undoStack.reset();
       enqueueAction.reset();
-      (0,_logic_game_db__WEBPACK_IMPORTED_MODULE_2__.remove)(_logic_game_db__WEBPACK_IMPORTED_MODULE_2__.saveGameTable, key);
+      void (0,_logic_game_db__WEBPACK_IMPORTED_MODULE_2__.remove)(_logic_game_db__WEBPACK_IMPORTED_MODULE_2__.saveGameTable, key);
       return true;
     }
 
@@ -4106,7 +4115,7 @@ function BoardCore({
 BoardCore.Background = function ({
   children
 }) {
-  // shut up typescript
+  // the type system does not seem to know that this is ok
   return children;
 };
 
@@ -4444,13 +4453,13 @@ function useDropShadow(card) {
 
 const cns = (...names) => names.filter(x => x).join(" ");
 
-const Card = ({
+function Card({
   card,
   pos,
   onTap,
   onDoubleTap,
   getDragCards
-}) => {
+}) {
   card.meta.rerender = (0,_util_use_rerender__WEBPACK_IMPORTED_MODULE_7__.useRerender)();
   const onPointerDown = (0,_pointer_manager__WEBPACK_IMPORTED_MODULE_9__.usePointers)(card, onTap, onDoubleTap, getDragCards);
   const {
@@ -4513,7 +4522,7 @@ const Card = ({
       })]
     })]
   });
-};
+}
 
 /***/ }),
 
@@ -4567,7 +4576,7 @@ function ControlBar({
           children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)((_images_back_svg__WEBPACK_IMPORTED_MODULE_0___default()), {})
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("button", {
           className: _control_bar_css__WEBPACK_IMPORTED_MODULE_4__["default"].button,
-          onClick: newGame,
+          onClick: () => void newGame(),
           children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)((_images_plus_svg__WEBPACK_IMPORTED_MODULE_1___default()), {})
         })]
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
@@ -4649,7 +4658,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "getCard": () => (/* binding */ getCard),
 /* harmony export */   "getContextAndCard": () => (/* binding */ getContextAndCard)
 /* harmony export */ });
-/* harmony import */ var _logic_deck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../logic/deck */ "./src/logic/deck.ts");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var _card__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./card */ "./src/ui/shared/card.tsx");
 /* harmony import */ var _empty_zone__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./empty-zone */ "./src/ui/shared/empty-zone.tsx");
 
@@ -4683,11 +4692,13 @@ function getContextAndCard(elem) {
   const fiber = getComponentFiber(elem, [_card__WEBPACK_IMPORTED_MODULE_1__.Card, _empty_zone__WEBPACK_IMPORTED_MODULE_2__.EmptyZone]);
 
   if (fiber?.type === _card__WEBPACK_IMPORTED_MODULE_1__.Card) {
-    return [fiber.memoizedProps.card.meta.context, fiber.memoizedProps.card];
+    const props = fiber.memoizedProps;
+    return [props.card.meta.context, props.card];
   }
 
   if (fiber?.type === _empty_zone__WEBPACK_IMPORTED_MODULE_2__.EmptyZone) {
-    return [fiber.memoizedProps.context];
+    const props = fiber.memoizedProps;
+    return [props.context];
   }
 
   return [];
@@ -4725,12 +4736,16 @@ function takeWhere(array, predicate) {
   return index >= 0 ? array.splice(index, 1)[0] : null;
 }
 
+function typeIs(node, Type) {
+  return node?.type === Type;
+}
+
 function Modal({
   children
 }) {
   const wrapped = children instanceof Array ? [...children] : [children];
-  const header = takeWhere(wrapped, c => c.type === ModalHeader);
-  const footer = takeWhere(wrapped, c => c.type === ModalFooter);
+  const header = takeWhere(wrapped, c => typeIs(c, ModalHeader));
+  const footer = takeWhere(wrapped, c => typeIs(c, ModalFooter));
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
     className: _modal_css__WEBPACK_IMPORTED_MODULE_1__["default"].modalBackdrop,
     children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
@@ -4799,7 +4814,8 @@ function ModalRadio({
     label: label,
     isSelected: key === selected,
     onClick: () => onSelection(key)
-  }, `${key}`));
+  }, `${key}`) // the type system does not seem to know that this is ok
+  );
 }
 function ModalDisclaimer({
   children
@@ -4898,7 +4914,7 @@ function PointerManager({
       if (current.dragging) {
         onDrop(current, ...getContextAtPoint(current));
 
-        for (const dragCard of current?.dragCards ?? []) {
+        for (const dragCard of current.dragCards ?? []) {
           dragCard.card.meta.dragPos = null;
           dragCard.card.meta.rerender();
         }
@@ -5073,9 +5089,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _shared_get_context__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../shared/get-context */ "./src/ui/shared/get-context.ts");
 /* harmony import */ var _shared_sizerator__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../shared/sizerator */ "./src/ui/shared/sizerator.tsx");
 /* harmony import */ var _shared_board__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../shared/board */ "./src/ui/shared/board.tsx");
-/* harmony import */ var _animations_card_ring__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../animations/card-ring */ "./src/ui/animations/card-ring.ts");
-/* harmony import */ var _newgame_modal__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./newgame-modal */ "./src/ui/spider/newgame-modal.tsx");
-/* harmony import */ var _shared_pointer_manager__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../shared/pointer-manager */ "./src/ui/shared/pointer-manager.tsx");
+/* harmony import */ var _shared_pointer_manager__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../shared/pointer-manager */ "./src/ui/shared/pointer-manager.tsx");
+/* harmony import */ var _animations_card_ring__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../animations/card-ring */ "./src/ui/animations/card-ring.ts");
+/* harmony import */ var _newgame_modal__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./newgame-modal */ "./src/ui/spider/newgame-modal.tsx");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 
 
@@ -5106,7 +5122,7 @@ function useGame() {
     undo,
     redo
   } = (0,_shared_board__WEBPACK_IMPORTED_MODULE_7__.useGameCore)(_logic_spider_game__WEBPACK_IMPORTED_MODULE_2__.Game, "spider");
-  const newGame = (0,_newgame_modal__WEBPACK_IMPORTED_MODULE_9__.useNewGame)("spider", newGameCore);
+  const newGame = (0,_newgame_modal__WEBPACK_IMPORTED_MODULE_10__.useNewGame)("spider", newGameCore);
   useSetup(newGame.openModal);
   const tryCompleteStack = enqueueAction(function* (deck, commit) {
     if (game.canCompleteStack(deck)) {
@@ -5128,7 +5144,7 @@ function useGame() {
       if (!tryFinish()) {
         saveGame();
       } else {
-        setAnimation(new _animations_card_ring__WEBPACK_IMPORTED_MODULE_8__.CardRingAnimation(...game.foundation));
+        setAnimation(new _animations_card_ring__WEBPACK_IMPORTED_MODULE_9__.CardRingAnimation(...game.foundation));
         rerender();
       }
 
@@ -5272,7 +5288,7 @@ const Board = (0,_shared_sizerator__WEBPACK_IMPORTED_MODULE_6__.sizerated)(10, 5
         y: 4,
         z: -1000 + i * 100
       }, deck, {}))]
-    }), newGame.showModal && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)(_newgame_modal__WEBPACK_IMPORTED_MODULE_9__.NewgameModal, { ...newGame
+    }), newGame.showModal && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)(_newgame_modal__WEBPACK_IMPORTED_MODULE_10__.NewgameModal, { ...newGame
     })]
   });
 });
@@ -5313,7 +5329,7 @@ function useNewGame(key, onStart) {
   const start = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(data => {
     onStart(data);
     setShowModal(false);
-    (0,_logic_game_db__WEBPACK_IMPORTED_MODULE_1__.put)(_logic_game_db__WEBPACK_IMPORTED_MODULE_1__.settingsTable, {
+    void (0,_logic_game_db__WEBPACK_IMPORTED_MODULE_1__.put)(_logic_game_db__WEBPACK_IMPORTED_MODULE_1__.settingsTable, {
       key,
       ...data
     });
@@ -5379,15 +5395,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var _logic_wish_game__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../logic/wish/game */ "./src/logic/wish/game.ts");
-/* harmony import */ var _shared_card_renderer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../shared/card-renderer */ "./src/ui/shared/card-renderer.tsx");
-/* harmony import */ var _shared_empty_zone__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../shared/empty-zone */ "./src/ui/shared/empty-zone.tsx");
-/* harmony import */ var _shared_get_context__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../shared/get-context */ "./src/ui/shared/get-context.ts");
-/* harmony import */ var _shared_sizerator__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../shared/sizerator */ "./src/ui/shared/sizerator.tsx");
-/* harmony import */ var _shared_board__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../shared/board */ "./src/ui/shared/board.tsx");
-/* harmony import */ var _animations_card_ring__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../animations/card-ring */ "./src/ui/animations/card-ring.ts");
-/* harmony import */ var _newgame_modal__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./newgame-modal */ "./src/ui/wish/newgame-modal.tsx");
-/* harmony import */ var _logic_deck__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../logic/deck */ "./src/logic/deck.ts");
-/* harmony import */ var _shared_pointer_manager__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../shared/pointer-manager */ "./src/ui/shared/pointer-manager.tsx");
+/* harmony import */ var _logic_deck__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../logic/deck */ "./src/logic/deck.ts");
+/* harmony import */ var _shared_card_renderer__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../shared/card-renderer */ "./src/ui/shared/card-renderer.tsx");
+/* harmony import */ var _shared_empty_zone__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../shared/empty-zone */ "./src/ui/shared/empty-zone.tsx");
+/* harmony import */ var _shared_get_context__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../shared/get-context */ "./src/ui/shared/get-context.ts");
+/* harmony import */ var _shared_sizerator__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../shared/sizerator */ "./src/ui/shared/sizerator.tsx");
+/* harmony import */ var _shared_board__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../shared/board */ "./src/ui/shared/board.tsx");
+/* harmony import */ var _shared_pointer_manager__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../shared/pointer-manager */ "./src/ui/shared/pointer-manager.tsx");
+/* harmony import */ var _animations_card_ring__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../animations/card-ring */ "./src/ui/animations/card-ring.ts");
+/* harmony import */ var _newgame_modal__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./newgame-modal */ "./src/ui/wish/newgame-modal.tsx");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 
 
@@ -5417,8 +5433,8 @@ function useGame() {
     tryFinish,
     undo,
     redo
-  } = (0,_shared_board__WEBPACK_IMPORTED_MODULE_6__.useGameCore)(_logic_wish_game__WEBPACK_IMPORTED_MODULE_1__.Game, "wish");
-  const newGame = (0,_newgame_modal__WEBPACK_IMPORTED_MODULE_8__.useNewGame)("wish", newGameCore);
+  } = (0,_shared_board__WEBPACK_IMPORTED_MODULE_7__.useGameCore)(_logic_wish_game__WEBPACK_IMPORTED_MODULE_1__.Game, "wish");
+  const newGame = (0,_newgame_modal__WEBPACK_IMPORTED_MODULE_10__.useNewGame)("wish", newGameCore);
   useSetup(newGame.openModal);
   const doClearCards = enqueueAction(function* (...cards) {
     const commit = undoStack.record(game);
@@ -5435,7 +5451,7 @@ function useGame() {
     if (!tryFinish()) {
       saveGame();
     } else {
-      setAnimation(new _animations_card_ring__WEBPACK_IMPORTED_MODULE_7__.CardRingAnimation(game.completed));
+      setAnimation(new _animations_card_ring__WEBPACK_IMPORTED_MODULE_9__.CardRingAnimation(game.completed));
       rerender();
     }
   });
@@ -5447,7 +5463,7 @@ function useGame() {
   const playableGetCards = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(card => game.getMovableCards(card), []);
   const playableTap = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(pointer => {
     const activeElement = document.activeElement;
-    const activeCard = (0,_shared_get_context__WEBPACK_IMPORTED_MODULE_4__.getCard)(activeElement);
+    const activeCard = (0,_shared_get_context__WEBPACK_IMPORTED_MODULE_5__.getCard)(activeElement);
 
     if (activeCard != null && game.canClearCards(activeCard, pointer.card)) {
       doClearCards(activeCard, pointer.card);
@@ -5472,7 +5488,7 @@ function useGame() {
   };
 }
 
-const Board = (0,_shared_sizerator__WEBPACK_IMPORTED_MODULE_5__.sizerated)(8, 5, function Board() {
+const Board = (0,_shared_sizerator__WEBPACK_IMPORTED_MODULE_6__.sizerated)(8, 5, function Board() {
   const {
     game,
     isAnimating,
@@ -5483,32 +5499,32 @@ const Board = (0,_shared_sizerator__WEBPACK_IMPORTED_MODULE_5__.sizerated)(8, 5,
     undo,
     redo
   } = useGame();
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsxs)(_shared_board__WEBPACK_IMPORTED_MODULE_6__.BoardCore, {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsxs)(_shared_board__WEBPACK_IMPORTED_MODULE_7__.BoardCore, {
     newGame: newGame.openModal,
     undo: undo,
     redo: redo,
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)(_shared_board__WEBPACK_IMPORTED_MODULE_6__.BoardCore.Background, {
-      children: game.tableau.map((stack, i) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_3__.EmptyZone, {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)(_shared_board__WEBPACK_IMPORTED_MODULE_7__.BoardCore.Background, {
+      children: game.tableau.map((stack, i) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)(_shared_empty_zone__WEBPACK_IMPORTED_MODULE_4__.EmptyZone, {
         slot: {
           x: i,
           y: 0
         },
         context: stack
       }, i))
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsxs)(_shared_card_renderer__WEBPACK_IMPORTED_MODULE_2__.CardRenderer, {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsxs)(_shared_card_renderer__WEBPACK_IMPORTED_MODULE_3__.CardRenderer, {
       onDrop: onDrop,
       isAnimating: isAnimating,
-      children: [game.tableau.map((deck, i) => (0,_shared_card_renderer__WEBPACK_IMPORTED_MODULE_2__.renderStack)({
+      children: [game.tableau.map((deck, i) => (0,_shared_card_renderer__WEBPACK_IMPORTED_MODULE_3__.renderStack)({
         x: i,
         y: 0
       }, deck, {
         onTap: playableTap,
         getDragCards: playableGetCards
-      })), (0,_shared_card_renderer__WEBPACK_IMPORTED_MODULE_2__.renderPile)({
+      })), (0,_shared_card_renderer__WEBPACK_IMPORTED_MODULE_3__.renderPile)({
         x: 3.5,
         y: 4
       }, game.completed)]
-    }), newGame.showModal && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)(_newgame_modal__WEBPACK_IMPORTED_MODULE_8__.NewgameModal, { ...newGame
+    }), newGame.showModal && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)(_newgame_modal__WEBPACK_IMPORTED_MODULE_10__.NewgameModal, { ...newGame
     })]
   });
 });
@@ -5549,7 +5565,7 @@ function useNewGame(key, onStart) {
   const start = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(data => {
     onStart(data);
     setShowModal(false);
-    (0,_logic_game_db__WEBPACK_IMPORTED_MODULE_1__.put)(_logic_game_db__WEBPACK_IMPORTED_MODULE_1__.settingsTable, {
+    void (0,_logic_game_db__WEBPACK_IMPORTED_MODULE_1__.put)(_logic_game_db__WEBPACK_IMPORTED_MODULE_1__.settingsTable, {
       key,
       ...data
     });
@@ -5631,8 +5647,8 @@ function useInstallPrompt() {
     };
   }, []);
   const promptForInstall = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(() => {
-    deferredPrompt?.prompt();
-    return deferredPrompt?.userChoice.then(choiceResult => {
+    void deferredPrompt?.prompt();
+    void deferredPrompt?.userChoice.then(choiceResult => {
       deferredPrompt = null;
 
       for (const listener of listeners) {
@@ -5694,7 +5710,7 @@ function useActionQueue() {
       const result = gen.next();
       if (working.current !== token) return;
 
-      if (result.done) {
+      if (result.done ?? false) {
         setTimeout(() => begin(), result.value);
         return;
       }
@@ -37084,7 +37100,7 @@ __webpack_require__.r(__webpack_exports__);
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("/service-worker.js");
+    void navigator.serviceWorker.register("/service-worker.js");
   }, {
     once: true
   });

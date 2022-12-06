@@ -11,7 +11,7 @@ import styles from "./main.css";
 // register service worker
 if ("serviceWorker" in navigator) {
 	window.addEventListener("load", () => {
-		navigator.serviceWorker.register("/service-worker.js");
+		void navigator.serviceWorker.register("/service-worker.js");
 	}, {once: true});
 }
 

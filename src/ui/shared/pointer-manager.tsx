@@ -11,17 +11,17 @@ import {Card} from "../../logic/deck";
 import {getContextAndCard} from "./get-context";
 
 export interface Pointer {
-	id: number,
-	timeStamp: number,
-	card: Card,
-	dragging: boolean,
-	onTap?: (pointer: Pointer) => void,
-	onDoubleTap?: (pointer: Pointer) => void,
+	id: number;
+	timeStamp: number;
+	card: Card;
+	dragging: boolean;
+	onTap?: (pointer: Pointer) => void;
+	onDoubleTap?: (pointer: Pointer) => void;
 	dragCards?: {
-		card: Card,
-		origin: {x: number, y: number},
-		offset: {x: number, y: number},
-	}[],
+		card: Card;
+		origin: {x: number; y: number};
+		offset: {x: number; y: number};
+	}[];
 }
 
 function getContextAtPoint(pointer: Pointer) {
@@ -31,12 +31,12 @@ function getContextAtPoint(pointer: Pointer) {
 	return getContextAndCard(elem);
 }
 
-interface PointerContext {current?: Pointer|null, previous?: Pointer|null}
+interface PointerContext {current?: Pointer | null; previous?: Pointer | null}
 const pointerContext = createContext<PointerContext>({});
 
 export interface PointerManagerProps {
-	onDrop: (pointer: Pointer, context?: unknown, card?: Card) => void,
-	children: ReactNode
+	onDrop: (pointer: Pointer, context?: unknown, card?: Card) => void;
+	children: ReactNode;
 }
 export function PointerManager({onDrop, children}: PointerManagerProps) {
 	const pointers: PointerContext = useMemo(() => ({}), []);
@@ -44,12 +44,12 @@ export function PointerManager({onDrop, children}: PointerManagerProps) {
 	useLayoutEffect(() => {
 		const pointerMove = (event: PointerEvent) => {
 			event.preventDefault();
-			if (event.pointerId !== pointers.current?.id || pointers.current!.dragCards == null) {
+			if (event.pointerId !== pointers.current?.id || pointers.current.dragCards == null) {
 				return;
 			}
 
-			const timeSince = event.timeStamp - pointers.current!.timeStamp;
-			for (const dragCard of pointers.current!.dragCards) {
+			const timeSince = event.timeStamp - pointers.current.timeStamp;
+			for (const dragCard of pointers.current.dragCards) {
 				const origin = dragCard.origin;
 				const newPos = {
 					x: event.pageX - dragCard.offset.x,
@@ -58,7 +58,7 @@ export function PointerManager({onDrop, children}: PointerManagerProps) {
 
 				const distSqr = (newPos.x - origin.x) ** 2 + (newPos.y - origin.y) ** 2;
 				if (distSqr > 25 ** 2 || timeSince > 250) {
-					pointers.current!.dragging = true;
+					pointers.current.dragging = true;
 					dragCard.card.meta.dragPos = newPos;
 					dragCard.card.meta.rerender?.();
 				}
@@ -83,7 +83,7 @@ export function PointerManager({onDrop, children}: PointerManagerProps) {
 			if (current.dragging) {
 				onDrop(current, ...getContextAtPoint(current));
 
-				for (const dragCard of current?.dragCards ?? []) {
+				for (const dragCard of current.dragCards ?? []) {
 					dragCard.card.meta.dragPos = null;
 					dragCard.card.meta.rerender!();
 				}

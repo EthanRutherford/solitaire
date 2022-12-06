@@ -11,21 +11,21 @@ import {useSizes} from "./sizerator";
 // which return arrays of elements, which we concat together and render.
 
 type Sizes = ReturnType<typeof useSizes>;
-interface SlotPosition {x: number, y: number, z?: number}
+interface SlotPosition {x: number; y: number; z?: number}
 interface CardRendererSlot {
-	card: CardType,
-	slot: SlotPosition,
-	offsetX?: number,
-	offsetY?: number,
-	offsetZ: number,
-	handlers?: Record<string, unknown>,
+	card: CardType;
+	slot: SlotPosition;
+	offsetX?: number;
+	offsetY?: number;
+	offsetZ: number;
+	handlers?: Record<string, unknown>;
 }
 
 type CardRenderChild = (sizes: Sizes) => CardRendererSlot[];
 interface CardRendererProps {
-	onDrop: PointerManagerProps['onDrop'],
-	isAnimating: boolean,
-	children: (CardRenderChild|CardRenderChild[])[],
+	onDrop: PointerManagerProps["onDrop"];
+	isAnimating: boolean;
+	children: (CardRenderChild | CardRenderChild[])[];
 }
 export function CardRenderer({onDrop, isAnimating, children}: CardRendererProps) {
 	const sizes = useSizes();

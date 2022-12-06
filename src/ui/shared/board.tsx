@@ -1,4 +1,4 @@
-import {ReactFragment, ReactNode, useCallback, useEffect, useMemo} from "react";
+import {ReactElement, ReactFragment, ReactNode, useCallback, useEffect, useMemo} from "react";
 import {SerializedUndoStack, UndoStack, validatedDelta} from "../../logic/undo-stack";
 import {get, put, remove, saveGameTable} from "../../logic/game-db";
 import {useRerender} from "../../util/use-rerender";
@@ -8,18 +8,18 @@ import {ControlBar} from "./control-bar";
 import styles from "./board.css";
 
 interface Gamelike<Serialized> {
-	hasWon: () => boolean,
-	serialize: () => Serialized,
+	hasWon: () => boolean;
+	serialize: () => Serialized;
 }
 interface StaticGame<T extends Gamelike<S>, S, P extends unknown[]> {
-	new(): T,
-	deserialize: ReturnType<typeof validatedDelta<S, T>>,
-	fromScratch: (game: T, ...args: P) => T,
+	new(): T;
+	deserialize: ReturnType<typeof validatedDelta<S, T>>;
+	fromScratch: (game: T, ...args: P) => T;
 }
 interface SaveGame<Serialized> {
-	key: IDBValidKey,
-	game: Serialized,
-	undoStack: SerializedUndoStack,
+	key: IDBValidKey;
+	game: Serialized;
+	undoStack: SerializedUndoStack;
 }
 
 export function useGameCore<
@@ -32,7 +32,7 @@ export function useGameCore<
 	const undoStack = useMemo(() => new UndoStack<Serialized>(), []);
 	const enqueueAction = useActionQueue();
 	const rerender = useRerender();
-	const saveGame = useCallback(() => put(saveGameTable, {
+	const saveGame = useCallback(() => void put(saveGameTable, {
 		key,
 		game: game.serialize(),
 		undoStack: undoStack.serialize(),
@@ -46,15 +46,15 @@ export function useGameCore<
 		saveGame();
 	}, []);
 
-	const useSetup = useCallback((start: () => void) => useEffect(() => {
-		(async () => {
+	const useSetup = useCallback((start: () => void | Promise<unknown>) => useEffect(() => {
+		void (async () => {
 			const save = await get<SaveGame<Serialized>>(saveGameTable, key);
 			if (save != null) {
 				Game.deserialize(save.game, game);
 				UndoStack.deserialize<Serialized>(save.undoStack, undoStack);
 				rerender();
 			} else {
-				start();
+				void start();
 			}
 		})();
 	}, []), []);
@@ -63,7 +63,7 @@ export function useGameCore<
 		if (game.hasWon()) {
 			undoStack.reset();
 			enqueueAction.reset();
-			remove(saveGameTable, key);
+			void remove(saveGameTable, key);
 			return true;
 		}
 
@@ -121,10 +121,10 @@ export function useGameCore<
 }
 
 interface BoardCoreProps {
-	newGame: () => void,
-	undo: () => void,
-	redo: () => void,
-	children: ReactFragment,
+	newGame: () => void | Promise<void>;
+	undo: () => void;
+	redo: () => void;
+	children: ReactFragment;
 }
 export function BoardCore({newGame, undo, redo, children}: BoardCoreProps) {
 	const [background, foreground, ...rest] = children;
@@ -141,6 +141,6 @@ export function BoardCore({newGame, undo, redo, children}: BoardCoreProps) {
 }
 
 BoardCore.Background = function({children}: {children: ReactNode}) {
-	// shut up typescript
-	return children as any;
+	// the type system does not seem to know that this is ok
+	return children as unknown as ReactElement;
 };

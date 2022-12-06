@@ -5,15 +5,15 @@ import Diamond from "../../../images/diamond.svg";
 import Club from "../../../images/club.svg";
 import Heart from "../../../images/heart.svg";
 import {Card, Deck, Suit} from "../../logic/deck";
-import {Game, SerializedGame} from "../../logic/klondike/game";
+import {Game} from "../../logic/klondike/game";
 import {CardRenderer, renderPile, renderStack} from "../shared/card-renderer";
 import {EmptyZone} from "../shared/empty-zone";
 import {getCard} from "../shared/get-context";
 import {sizerated} from "../shared/sizerator";
 import {BoardCore, useGameCore} from "../shared/board";
+import {Pointer} from "../shared/pointer-manager";
 import {CardRingAnimation} from "../animations/card-ring";
 import {NewgameModal, useNewGame} from "./newgame-modal";
-import { Pointer } from "../shared/pointer-manager";
 
 function useGame() {
 	const {

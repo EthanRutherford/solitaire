@@ -2,7 +2,7 @@ export const saveGameTable = "saves";
 export const settingsTable = "settings";
 
 // opens the database, initializing it if necessary
-function openDatabase() {
+async function openDatabase() {
 	return new Promise<IDBDatabase>((resolve, reject) => {
 		const request = indexedDB.open("solitaire", 1);
 
@@ -19,7 +19,7 @@ function openDatabase() {
 			database.createObjectStore(settingsTable, {keyPath: "key"});
 		};
 
-		navigator.storage.persist();
+		void navigator.storage.persist();
 		request.onerror = reject;
 		request.onsuccess = function() {
 			resolve(this.result);
@@ -28,25 +28,25 @@ function openDatabase() {
 }
 
 // core database interactions
-function getCore<T>(objectStore: IDBObjectStore, id: IDBValidKey) {
-	return new Promise<T>((resolve, reject) => {
+async function getCore<T>(objectStore: IDBObjectStore, id: IDBValidKey) {
+	return new Promise<T | null>((resolve, reject) => {
 		const request = objectStore.get(id);
 		request.onerror = reject;
 		request.onsuccess = function() {
-			resolve(this.result);
+			resolve(this.result as T | null);
 		};
 	});
 }
-function listCore<T>(objectStore: IDBObjectStore) {
-	return new Promise<{id: IDBValidKey, value: T}[]>((resolve, reject) => {
+async function listCore<T>(objectStore: IDBObjectStore) {
+	return new Promise<{id: IDBValidKey; value: T}[]>((resolve, reject) => {
 		const request = objectStore.openCursor();
 		request.onerror = reject;
 
-		const list: {id: IDBValidKey, value: T}[] = [];
+		const list: {id: IDBValidKey; value: T}[] = [];
 		request.onsuccess = function() {
 			const cursor = this.result;
 			if (cursor) {
-				list.push({id: cursor.key, value: cursor.value});
+				list.push({id: cursor.key, value: cursor.value as T});
 				cursor.continue();
 			} else {
 				resolve(list);
@@ -54,7 +54,7 @@ function listCore<T>(objectStore: IDBObjectStore) {
 		};
 	});
 }
-function addCore<T>(objectStore: IDBObjectStore, object: T) {
+async function addCore<T>(objectStore: IDBObjectStore, object: T) {
 	return new Promise<IDBValidKey>((resolve, reject) => {
 		const request = objectStore.add(object);
 		request.onerror = reject;
@@ -63,7 +63,7 @@ function addCore<T>(objectStore: IDBObjectStore, object: T) {
 		};
 	});
 }
-function putCore<T>(objectStore: IDBObjectStore, object: T, id?: IDBValidKey) {
+async function putCore<T>(objectStore: IDBObjectStore, object: T, id?: IDBValidKey) {
 	return new Promise<IDBValidKey>((resolve, reject) => {
 		const request = objectStore.put(object, id);
 		request.onerror = reject;
@@ -72,7 +72,7 @@ function putCore<T>(objectStore: IDBObjectStore, object: T, id?: IDBValidKey) {
 		};
 	});
 }
-function deleteCore(objectStore: IDBObjectStore, id: IDBValidKey) {
+async function deleteCore(objectStore: IDBObjectStore, id: IDBValidKey) {
 	return new Promise<void>((resolve, reject) => {
 		const request = objectStore.delete(id);
 		request.onerror = reject;
@@ -101,5 +101,5 @@ export async function put<T>(tableName: string, object: T, id?: IDBValidKey) {
 	return await putCore(await getStore(tableName, true), object, id);
 }
 export async function remove(tableName: string, id: IDBValidKey) {
-	return await deleteCore(await getStore(tableName, true), id);
+	await deleteCore(await getStore(tableName, true), id);
 }

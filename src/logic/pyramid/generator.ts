@@ -31,9 +31,9 @@ function isAncestorOf(indexA: number, indexB: number) {
 }
 
 interface MicroCard {
-	i: number,
-	value: number,
-	blockedBy: Set<MicroCard>,
+	i: number;
+	value: number;
+	blockedBy: Set<MicroCard>;
 }
 
 function without<T>(set: Set<T>, ...items: T[]) {
@@ -178,7 +178,7 @@ export function reverseGame(game: Game) {
 
 	// pair-off all cards in a shuffled deck
 	const deck = Deck.full().shuffle();
-	const pairs = new Deck<[Card]|[Card, Card]>();
+	const pairs = new Deck<[Card] | [Card, Card]>();
 	while (deck.length > 0) {
 		const cardA = deck.pop()!;
 		cardA.faceUp = true;

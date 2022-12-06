@@ -3,9 +3,9 @@ import {useSizes} from "../shared/sizerator";
 import {Delayed, Eased, Loop, Parallel, Sequence} from "./animation-step";
 
 interface AnimationMetadata {
-	left: number,
-	top: number,
-	easeProgress: number,
+	left: number;
+	top: number;
+	easeProgress: number;
 }
 
 function getTransform(z: number, degrees: number, radius: number) {

@@ -1,12 +1,12 @@
 import {TupleOf} from "../../util/tupleof";
 import {Card, Deck, Suit, SerializedDeck} from "../deck";
-import {validatedDelta} from "../undo-stack";
+import {SerializedArray, validatedDelta} from "../undo-stack";
 
 export type SerializedGame = {
-	t: SerializedDeck[],
-	c: SerializedDeck[],
-	f: Record<string, SerializedDeck>,
-}
+	t?: SerializedArray<SerializedDeck>;
+	c?: SerializedArray<SerializedDeck>;
+	f?: Record<string, SerializedDeck>;
+};
 
 export class Game {
 	setContexts() {
@@ -26,13 +26,13 @@ export class Game {
 			card.meta.context = context;
 		}
 	}
-	moveCards(cards: Array<Card>, target: Deck<Card>) {
+	moveCards(cards: Card[], target: Deck<Card>) {
 		for (const card of cards) {
 			target.push(card);
 			card.meta.context = target;
 		}
 	}
-	getMovableCards(card: Card) {
+	getMovableCards(this: void, card: Card) {
 		const context = card.meta.context as Deck<Card>;
 		const index = context.indexOf(card);
 		const cards = context.slice(index);
@@ -154,7 +154,7 @@ export class Game {
 		let maxValue = 15;
 		for (const deck of Object.values(this.foundations)) {
 			if (deck.length > 0) {
-				maxValue = Math.min(deck.fromTop().value + 1, maxValue);
+				maxValue = Math.min(deck.fromTop()!.value + 1, maxValue);
 			} else {
 				maxValue = 0;
 			}
@@ -163,10 +163,12 @@ export class Game {
 		const usableDecks = this.tableau.concat(this.freeCells);
 		for (const deck of usableDecks) {
 			const top = deck.fromTop();
-			const foundation = this.foundations[top?.suit];
-			if (top?.value <= maxValue && this.canMoveToFoundation(top, foundation)) {
-				this.transferCards(top, foundation);
-				return deck;
+			if (top != null) {
+				const foundation = this.foundations[top.suit];
+				if (top.value <= maxValue && this.canMoveToFoundation(top, foundation)) {
+					this.transferCards(top, foundation);
+					return deck;
+				}
 			}
 		}
 
@@ -184,26 +186,20 @@ export class Game {
 			)),
 		};
 	}
-	static deserialize = validatedDelta((input: SerializedGame, game: Game|null) => {
-		game ??= new Game();
+	tableau: TupleOf<Deck<Card>, 8> = [
+		new Deck<Card>(), new Deck<Card>(), new Deck<Card>(), new Deck<Card>(),
+		new Deck<Card>(), new Deck<Card>(), new Deck<Card>(), new Deck<Card>(),
+	];
+	freeCells: TupleOf<Deck<Card>, 4> = [
+		new Deck<Card>(), new Deck<Card>(), new Deck<Card>(), new Deck<Card>(),
+	];
+	foundations = {
+		[Suit.Spades]: new Deck<Card>(),
+		[Suit.Diamonds]: new Deck<Card>(),
+		[Suit.Clubs]: new Deck<Card>(),
+		[Suit.Hearts]: new Deck<Card>(),
+	};
 
-		const tableau = game.tableau;
-		for (let i = 0; i < 8; i++) {
-			tableau[i] = Deck.deserialize(input.t?.[i], tableau[i]);
-		}
-
-		const freeCells = game.freeCells;
-		for (let i = 0; i < 4; i++) {
-			freeCells[i] = Deck.deserialize(input.c?.[i], freeCells[i]);
-		}
-
-		const foundations = game.foundations;
-		for (const k of [Suit.Spades, Suit.Diamonds, Suit.Clubs, Suit.Hearts]) {
-			foundations[k] = Deck.deserialize(input.f?.[k], foundations[k]);
-		}
-
-		return game.setContexts();
-	});
 	static fromScratch(game: Game) {
 		const deck = Deck.full().shuffle();
 		game.tableau.splice(0, game.tableau.length);
@@ -227,17 +223,24 @@ export class Game {
 
 		return game.setContexts();
 	}
-	tableau: TupleOf<Deck<Card>, 8> = [
-		new Deck<Card>(), new Deck<Card>(), new Deck<Card>(), new Deck<Card>(),
-		new Deck<Card>(), new Deck<Card>(), new Deck<Card>(), new Deck<Card>(),
-	];
-	freeCells: TupleOf<Deck<Card>, 4> = [
-		new Deck<Card>(), new Deck<Card>(), new Deck<Card>(), new Deck<Card>(),
-	];
-	foundations = {
-		[Suit.Spades]: new Deck<Card>(),
-		[Suit.Diamonds]: new Deck<Card>(),
-		[Suit.Clubs]: new Deck<Card>(),
-		[Suit.Hearts]: new Deck<Card>(),
-	};
+	static deserialize = validatedDelta((input: SerializedGame, game: Game | null) => {
+		game ??= new Game();
+
+		const tableau = game.tableau;
+		for (let i = 0; i < 8; i++) {
+			tableau[i] = Deck.deserialize(input.t?.[i], tableau[i]);
+		}
+
+		const freeCells = game.freeCells;
+		for (let i = 0; i < 4; i++) {
+			freeCells[i] = Deck.deserialize(input.c?.[i], freeCells[i]);
+		}
+
+		const foundations = game.foundations;
+		for (const k of [Suit.Spades, Suit.Diamonds, Suit.Clubs, Suit.Hearts]) {
+			foundations[k] = Deck.deserialize(input.f?.[k], foundations[k]);
+		}
+
+		return game.setContexts();
+	});
 }

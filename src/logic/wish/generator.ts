@@ -8,7 +8,7 @@ export function randomShuffle(game: Game) {
 	const deck = Deck.full().shuffle().filter((c) => c.value < 2 || c.value > 6);
 	for (let i = 0; i < 8; i++) {
 		game.tableau.push(deck.draw(4));
-		game.tableau[i].fromTop().faceUp = true;
+		game.tableau[i].fromTop()!.faceUp = true;
 	}
 
 	return game.setContexts();
@@ -74,7 +74,7 @@ export function reverseGame(game: Game) {
 	}
 
 	for (const deck of game.tableau) {
-		deck.fromTop().faceUp = true;
+		deck.fromTop()!.faceUp = true;
 	}
 
 	return game.setContexts();

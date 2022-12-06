@@ -16,12 +16,12 @@ type ConcatArrays<N extends number, R extends never[][], B extends never[]> =
 			[...R[0], ...B]
 		>;
 
-type Replace<R extends unknown[], T> = { [K in keyof R]: T }
+type Replace<R extends unknown[], T> = {[K in keyof R]: T};
 
 type MakeTuple<T, N extends number> = {
 	[K in N]:
 	GetPow2Arrays<K, [[never]]> extends infer U ? U extends never[][]
 		? Replace<ConcatArrays<K, U, []>, T> : never : never;
-}[N]
+}[N];
 
 export type TupleOf<T, N extends number> = number extends N ? T[] : MakeTuple<T, N>;
