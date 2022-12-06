@@ -2,14 +2,14 @@ import {useCallback, useEffect, useMemo} from "react";
 import {useSizes} from "../shared/sizerator";
 
 export interface Animation {
-	advance: (delta: number, sizes: ReturnType<typeof useSizes>) => void,
+	advance: (delta: number, sizes: ReturnType<typeof useSizes>) => void;
 }
 
 interface AnimationData {
-	animate: (time: number) => void,
-	prevTime?: number|null,
-	animation?: Animation|null,
-	frame?: number,
+	animate: (time: number) => void;
+	prevTime?: number | null;
+	animation?: Animation | null;
+	frame?: number;
 }
 
 export function useAnimator() {
@@ -29,7 +29,7 @@ export function useAnimator() {
 		cancelAnimationFrame(animData.frame!);
 	}, []);
 
-	const setAnimation = useCallback((animation: Animation|null) => {
+	const setAnimation = useCallback((animation: Animation | null) => {
 		cancelAnimationFrame(animData.frame!);
 		animData.animation = animation;
 		animData.prevTime = null;

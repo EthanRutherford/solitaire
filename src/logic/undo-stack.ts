@@ -1,5 +1,5 @@
-interface SerializedDelta {f: unknown, t: unknown}
-type Collection = Partial<Record<string, unknown>>|unknown[];
+interface SerializedDelta {f?: unknown; t?: unknown}
+type Collection = Partial<Record<string, unknown>> | unknown[];
 
 class Delta<T> {
 	constructor(public from: T, public to: T) {}
@@ -9,13 +9,13 @@ class Delta<T> {
 	static deserialize(input: SerializedDelta) {
 		return new Delta(input.f, input.t);
 	}
-	static compute(prevState: Collection|null, nextState: Collection|null) {
-		const from: Collection|null = prevState == null ? null : {};
-		const to: Collection|null = nextState == null ? null : {};
+	static compute(prevState: Collection | null, nextState: Collection | null) {
+		const from: Collection | null = prevState == null ? null : {};
+		const to: Collection | null = nextState == null ? null : {};
 
 		// cast to record so typescript doesn't complain about string indexes
-		const prevRecord = prevState as Record<string, unknown>|null;
-		const nextRecord = nextState as Record<string, unknown>|null;
+		const prevRecord = prevState as Record<string, unknown> | null;
+		const nextRecord = nextState as Record<string, unknown> | null;
 		const allKeys = new Set(
 			Object.getOwnPropertyNames(prevState ?? {})
 				.concat(Object.getOwnPropertyNames(nextState ?? {})),
@@ -51,10 +51,10 @@ class Delta<T> {
 	}
 }
 
-export function validatedDelta<T, U>(action: (delta: T, object: U|null) => U) {
-	function validator(delta: T, object: U|null): U;
-	function validator(delta?: T|null, object?: U|null): U|null;
-	function validator(delta?: T|null, object: U|null = null): U|null {
+export function validatedDelta<T, U>(action: (delta: T, object: U | null) => U) {
+	function validator(delta: T, object: U | null): U;
+	function validator(delta?: T | nullish, object?: U | null): U | null;
+	function validator(delta?: T | nullish, object: U | null = null): U | null {
 		if (delta == null) {
 			return delta === undefined ? object : null;
 		}
@@ -65,21 +65,26 @@ export function validatedDelta<T, U>(action: (delta: T, object: U|null) => U) {
 	return validator;
 }
 
+export interface SerializedArray<T> {
+	length?: number;
+	[i: number]: T;
+}
+
 export interface SerializedUndoStack {
-	u: SerializedDelta[][],
-	r: SerializedDelta[][],
+	u?: SerializedArray<SerializedDelta[]>;
+	r?: SerializedArray<SerializedDelta[]>;
 }
 
 export class UndoStack<DeltaType> {
 	constructor(undo = [], redo = []) {
 		this.reset(undo, redo);
 	}
-	record(object: { serialize: () => Collection }) {
+	record(object: {serialize: () => Collection}) {
 		let start: Collection = object.serialize();
-		let deltas: Delta<DeltaType>[]|null;
+		let deltas: Delta<DeltaType>[] | null;
 		return () => {
 			const end = object.serialize();
-			const diff = Delta.compute(start, end) as Delta<DeltaType>;
+			const diff = Delta.compute(start, end) as Delta<DeltaType> | null;
 			if (diff != null) {
 				if (deltas == null) {
 					deltas = [];
@@ -123,10 +128,14 @@ export class UndoStack<DeltaType> {
 			r: this.redoStack.map((ds) => ds.map((d) => d.serialize())),
 		};
 	}
-	static deserialize = <DeltaType>(input: SerializedUndoStack, undoStack: UndoStack<DeltaType>|null) => {
+	undoStack: Delta<DeltaType>[][] = [];
+	redoStack: Delta<DeltaType>[][] = [];
+	lock = false;
+
+	static deserialize = <DeltaType>(input: SerializedUndoStack, undoStack: UndoStack<DeltaType> | null) => {
 		// stupid workaround to function wrappers not being able to use generic types
 		// with function wrappers
-		return validatedDelta((input: SerializedUndoStack, undoStack: UndoStack<DeltaType>|null) => {
+		return validatedDelta((input: SerializedUndoStack, undoStack: UndoStack<DeltaType> | null) => {
 			undoStack ??= new UndoStack<DeltaType>();
 
 			if (input.u != null) {
@@ -156,7 +165,4 @@ export class UndoStack<DeltaType> {
 			return undoStack;
 		})(input, undoStack);
 	};
-	undoStack: Delta<DeltaType>[][] = [];
-	redoStack: Delta<DeltaType>[][] = [];
-	lock = false;
 }

@@ -1,7 +1,7 @@
 import {Card, Deck, Suit} from "../deck";
 import {Game} from "./game";
 
-export function randomShuffle(game: Game, drawCount: 1|3) {
+export function randomShuffle(game: Game, drawCount: 1 | 3) {
 	game.drawCount = drawCount;
 	game.drawPile.splice(0, game.drawPile.length, ...Deck.full().shuffle());
 	game.discardPile.splice(0, game.discardPile.length);
@@ -14,14 +14,14 @@ export function randomShuffle(game: Game, drawCount: 1|3) {
 	}
 
 	for (const deck of game.tableau) {
-		deck.fromTop().faceUp = true;
+		deck.fromTop()!.faceUp = true;
 	}
 
 	return game.setContexts();
 }
 
 // builds a game backward from solution
-export function reverseGame(game: Game, drawCount: 1|3) {
+export function reverseGame(game: Game, drawCount: 1 | 3) {
 	// clear and initialize the game
 	game.drawCount = drawCount;
 	game.drawPile.splice(0, game.drawPile.length);
@@ -79,7 +79,7 @@ export function reverseGame(game: Game, drawCount: 1|3) {
 		} else {
 			// move the card to foundation or drawPile
 			const foundation = game.foundations[card.suit];
-			if (foundation.length === 0 || card.value === foundation.fromTop().value + 1) {
+			if (foundation.length === 0 || card.value === foundation.fromTop()!.value + 1) {
 				foundation.push(card);
 			} else {
 				game.drawPile.push(card);
@@ -114,7 +114,7 @@ export function reverseGame(game: Game, drawCount: 1|3) {
 	}
 
 	for (const deck of game.tableau) {
-		deck.fromTop().faceUp = true;
+		deck.fromTop()!.faceUp = true;
 	}
 
 	return game.setContexts();

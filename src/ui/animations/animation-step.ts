@@ -1,16 +1,16 @@
 export abstract class AnimationStep {
+	abstract done: boolean;
 	advance(delta: number) {
 		this.progress += delta;
 		this.step(delta);
 	}
-	step(delta: number): void|never {
+	step(delta: number): void | never {
 		throw new Error(`you shouldn't be here ${delta}`);
 	}
 	progress = 0;
-	abstract done: boolean;
 }
 
-type ActionFunc = (progress: number, delta: number) => boolean|void;
+type ActionFunc = (progress: number, delta: number) => boolean | undefined | void;
 class Action extends AnimationStep {
 	constructor(public func: ActionFunc) {
 		super();
@@ -21,7 +21,7 @@ class Action extends AnimationStep {
 	done = false;
 }
 
-type AnimationSteplike = AnimationStep|ActionFunc;
+type AnimationSteplike = AnimationStep | ActionFunc;
 function wrapStep(step: AnimationSteplike) {
 	if (step instanceof AnimationStep) {
 		return step;
@@ -65,10 +65,11 @@ export class Parallel extends AnimationStep {
 
 		return this.steps.every((s) => s.done);
 	}
+	steps: AnimationStep[];
+
 	static asRace(steps: AnimationSteplike[]) {
 		return new Parallel(steps, true);
 	}
-	steps: AnimationStep[];
 }
 
 export class Loop extends AnimationStep {
@@ -79,7 +80,7 @@ export class Loop extends AnimationStep {
 	}
 	step(delta: number) {
 		this.curStep?.advance(delta);
-		if (this.curStep?.done) {
+		if (this.curStep?.done ?? false) {
 			if (this.until()) {
 				this.curStep = null;
 			} else {
@@ -91,7 +92,7 @@ export class Loop extends AnimationStep {
 		return this.curStep == null;
 	}
 	create: () => AnimationStep;
-	curStep: AnimationStep|null;
+	curStep: AnimationStep | null;
 }
 
 export class Delayed extends AnimationStep {

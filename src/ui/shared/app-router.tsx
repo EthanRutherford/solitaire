@@ -4,6 +4,10 @@ import {useRerender} from "../../util/use-rerender";
 
 // sort of a stripped down, barebones react router clone
 
+interface HistoryState {
+	crumb: string[];
+}
+
 function useHistory() {
 	const routes = useMemo(() => new Set<() => void>(), []);
 	const rerender = useCallback(() => routes.forEach((r) => r()), []);
@@ -16,12 +20,13 @@ function useHistory() {
 	}, []);
 
 	const go = (route: string) => {
-		const crumb = history.state.crumb;
+		const historyState = history.state as HistoryState;
+		const crumb = historyState.crumb;
 		const index = crumb.indexOf(route);
 		if (index >= 0) {
 			history.go(index - crumb.length);
 		} else {
-			history.pushState({crumb: history.state.crumb.concat(route)}, "", "/");
+			history.pushState({crumb: historyState.crumb.concat(route)}, "", "/");
 		}
 
 		rerender();
@@ -33,7 +38,8 @@ function useHistory() {
 	};
 
 	const home = () => {
-		history.go(-(history.state.crumb.length - 1));
+		const historyState = history.state as HistoryState;
+		history.go(-(historyState.crumb.length - 1));
 		rerender();
 	};
 
@@ -46,7 +52,7 @@ function useHistory() {
 	}), []);
 }
 
-const routerContext = createContext<ReturnType<typeof useHistory>|null>(null);
+const routerContext = createContext<ReturnType<typeof useHistory> | null>(null);
 
 export function AppRouter({children}: {children: ReactNode}) {
 	const context = useHistory();
@@ -58,13 +64,14 @@ export function AppRouter({children}: {children: ReactNode}) {
 	);
 }
 
-export function Route({path, exact, Component}: {path: string, exact?: boolean, Component: ComponentType}) {
+export function Route({path, exact, Component}: {path: string; exact?: boolean; Component: ComponentType}) {
 	useContext(routerContext)!.useRoute(useRerender());
-	const crumb = history.state.crumb;
+	const historyState = history.state as HistoryState;
+	const crumb = historyState.crumb;
 	const urlPath = new URL(crumb[crumb.length - 1], location.href).pathname;
 	const defPath = new URL(path, location.href).pathname;
 
-	if (exact) {
+	if (exact ?? false) {
 		if (defPath !== urlPath) {
 			return null;
 		}

@@ -5,7 +5,7 @@ import Redo from "../../../images/redo.svg";
 import styles from "./control-bar.css";
 import {useRouter} from "./app-router";
 
-interface ControlBarProps {newGame: () => void, undo: () => void, redo: () => void}
+interface ControlBarProps {newGame: () => void | Promise<void>; undo: () => void; redo: () => void}
 export function ControlBar({newGame, undo, redo}: ControlBarProps) {
 	const {home} = useRouter();
 
@@ -16,7 +16,7 @@ export function ControlBar({newGame, undo, redo}: ControlBarProps) {
 					<button className={styles.button} onClick={home}>
 						<Back />
 					</button>
-					<button className={styles.button} onClick={newGame}>
+					<button className={styles.button} onClick={() => void newGame()}>
 						<Plus />
 					</button>
 				</div>

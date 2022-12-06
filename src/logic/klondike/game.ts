@@ -1,19 +1,19 @@
 import {TupleOf} from "../../util/tupleof";
 import {Card, Deck, Suit, SerializedDeck} from "../deck";
-import {validatedDelta} from "../undo-stack";
+import {SerializedArray, validatedDelta} from "../undo-stack";
 import {randomShuffle, reverseGame} from "./generator";
 
 export type SerializedGame = {
-	dc: number,
-	dr: SerializedDeck,
-	di: SerializedDeck,
-	t: SerializedDeck[],
-	f: Record<string, SerializedDeck>,
-}
+	dc?: number;
+	dr?: SerializedDeck;
+	di?: SerializedDeck;
+	t?: SerializedArray<SerializedDeck>;
+	f?: Record<string, SerializedDeck>;
+};
 
 export interface Settings {
-	generator: 0|1,
-	drawCount: 1|3,
+	generator: 0 | 1;
+	drawCount: 1 | 3;
 }
 
 export class Game {
@@ -35,7 +35,7 @@ export class Game {
 			card.meta.context = context;
 		}
 	}
-	moveCards(cards: Array<Card>, target: Deck<Card>) {
+	moveCards(cards: Card[], target: Deck<Card>) {
 		for (const card of cards) {
 			target.push(card);
 			card.meta.context = target;
@@ -138,7 +138,7 @@ export class Game {
 	tryFlipCard(deck: Deck<Card>) {
 		if (this.tableau.includes(deck)) {
 			const top = deck.fromTop();
-			if (!(top?.faceUp ?? true)) {
+			if (top != null && !top.faceUp) {
 				top.faceUp = true;
 				return true;
 			}
@@ -150,7 +150,7 @@ export class Game {
 		let maxValue = 15;
 		for (const deck of Object.values(this.foundations)) {
 			if (deck.length > 0) {
-				maxValue = Math.min(deck.fromTop().value + 1, maxValue);
+				maxValue = Math.min(deck.fromTop()!.value + 1, maxValue);
 			} else {
 				maxValue = 0;
 			}
@@ -159,10 +159,12 @@ export class Game {
 		const usableDecks = this.tableau.concat([this.discardPile]);
 		for (const deck of usableDecks) {
 			const top = deck.fromTop();
-			const foundation = this.foundations[top?.suit];
-			if (top?.value <= maxValue && this.canMoveToFoundation(top, foundation)) {
-				this.transferCards(top, foundation);
-				return deck;
+			if (top != null) {
+				const foundation = this.foundations[top.suit];
+				if (top.value <= maxValue && this.canMoveToFoundation(top, foundation)) {
+					this.transferCards(top, foundation);
+					return deck;
+				}
 			}
 		}
 
@@ -182,7 +184,25 @@ export class Game {
 	hasWon() {
 		return Object.values(this.foundations).every((d) => d.length === 13);
 	}
-	static deserialize = validatedDelta((input: SerializedGame, game: Game|null) => {
+	drawCount = 1;
+	drawPile = new Deck<Card>();
+	discardPile = new Deck<Card>();
+	tableau: TupleOf<Deck<Card>, 7> = [
+		new Deck<Card>(), new Deck<Card>(), new Deck<Card>(), new Deck<Card>(),
+		new Deck<Card>(), new Deck<Card>(), new Deck<Card>(),
+	];
+	foundations = {
+		[Suit.Spades]: new Deck<Card>(),
+		[Suit.Diamonds]: new Deck<Card>(),
+		[Suit.Clubs]: new Deck<Card>(),
+		[Suit.Hearts]: new Deck<Card>(),
+	};
+
+	static fromScratch(game: Game, settings: Settings) {
+		const generator = [randomShuffle, reverseGame][settings.generator];
+		return generator(game, settings.drawCount);
+	}
+	static deserialize = validatedDelta((input: SerializedGame, game: Game | null) => {
 		game ??= new Game();
 
 		game.drawCount = input.dc ?? game.drawCount;
@@ -200,21 +220,4 @@ export class Game {
 
 		return game.setContexts();
 	});
-	static fromScratch(game: Game, settings: Settings) {
-		const generator = [randomShuffle, reverseGame][settings.generator];
-		return generator(game, settings.drawCount);
-	}
-	drawCount = 1;
-	drawPile = new Deck<Card>();
-	discardPile = new Deck<Card>();
-	tableau: TupleOf<Deck<Card>, 7> = [
-		new Deck<Card>(), new Deck<Card>(), new Deck<Card>(), new Deck<Card>(),
-		new Deck<Card>(), new Deck<Card>(), new Deck<Card>(),
-	];
-	foundations = {
-		[Suit.Spades]: new Deck<Card>(),
-		[Suit.Diamonds]: new Deck<Card>(),
-		[Suit.Clubs]: new Deck<Card>(),
-		[Suit.Hearts]: new Deck<Card>(),
-	};
 }

@@ -1,16 +1,16 @@
 import {useCallback} from "react";
 import Draw from "../../../images/draw.svg";
-import {Game, SerializedGame} from "../../logic/pyramid/game";
+import {Game} from "../../logic/pyramid/game";
+import {Card, Deck} from "../../logic/deck";
 import {CardRenderer, renderPile} from "../shared/card-renderer";
 import {EmptyZone} from "../shared/empty-zone";
 import {getCard} from "../shared/get-context";
 import {sizerated} from "../shared/sizerator";
 import {BoardCore, useGameCore} from "../shared/board";
+import {Pointer} from "../shared/pointer-manager";
 import {CardRingAnimation} from "../animations/card-ring";
 import {NewgameModal, useNewGame} from "./newgame-modal";
 import styles from "./board.css";
-import { Card, Deck } from "../../logic/deck";
-import { Pointer } from "../shared/pointer-manager";
 
 function useGame() {
 	const {
@@ -134,7 +134,7 @@ function useGame() {
 	};
 }
 
-export const renderPyramid = (cards: Deck<Card|null>, handlers: Record<string, unknown>) => () => {
+export const renderPyramid = (cards: Deck<Card | null>, handlers: Record<string, unknown>) => () => {
 	const results = [];
 	for (let i = 0, j = 0; j < cards.length; i++, j += i) {
 		const rowSize = i + 1;

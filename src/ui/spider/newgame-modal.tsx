@@ -1,11 +1,11 @@
 import {useCallback, useState} from "react";
 import {get, put, settingsTable} from "../../logic/game-db";
-import { Settings } from "../../logic/spider/game";
+import {Settings} from "../../logic/spider/game";
 import {Modal, ModalButton, ModalFooter, ModalHeader, ModalLabel, ModalRadio} from "../shared/modal";
 
 export function useNewGame(key: string, onStart: (data: Settings) => void) {
 	const [showModal, setShowModal] = useState(false);
-	const [initialSettings, setSettings] = useState<Settings|null>(null);
+	const [initialSettings, setSettings] = useState<Settings | null>(null);
 	const openModal = useCallback(async () => {
 		setSettings(await get(settingsTable, key));
 		setShowModal(true);
@@ -14,14 +14,14 @@ export function useNewGame(key: string, onStart: (data: Settings) => void) {
 	const start = useCallback((data: Settings) => {
 		onStart(data);
 		setShowModal(false);
-		put(settingsTable, {key, ...data});
+		void put(settingsTable, {key, ...data});
 	}, []);
 
 	return {showModal, openModal, initialSettings, onStart: start, onCancel: cancel};
 }
 
 interface NewgameModalProps {
-	initialSettings: Settings|null;
+	initialSettings: Settings | null;
 	onStart: (data: Settings) => void;
 	onCancel: () => void;
 }

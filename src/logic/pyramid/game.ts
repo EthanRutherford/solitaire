@@ -17,15 +17,15 @@ export function getChildIndices(index: number) {
 }
 
 export type SerializedGame = {
-	t: SerializedNullableDeck,
-	dr: SerializedDeck,
-	di: SerializedDeck,
-	c: SerializedDeck,
-	r: number,
-}
+	t?: SerializedNullableDeck;
+	dr?: SerializedDeck;
+	di?: SerializedDeck;
+	c?: SerializedDeck;
+	r?: number;
+};
 
 export interface Settings {
-	generator: 0|1,
+	generator: 0 | 1;
 }
 
 export class Game {
@@ -42,7 +42,7 @@ export class Game {
 
 		return this;
 	}
-	setContext(context: Deck<Card|null>) {
+	setContext(context: Deck<Card | null>) {
 		for (const card of context) {
 			if (card != null) {
 				card.meta.context = context;
@@ -125,7 +125,17 @@ export class Game {
 			r: this.remainingFlips,
 		};
 	}
-	static deserialize = validatedDelta((input: SerializedGame, game: Game|null) => {
+	tree = new Deck<Card | null>();
+	drawPile = new Deck<Card>();
+	discardPile = new Deck<Card>();
+	completed = new Deck<Card>();
+	remainingFlips = 0;
+
+	static fromScratch(game: Game, settings: Settings) {
+		const generator = [randomShuffle, reverseGame][settings.generator];
+		return generator(game);
+	}
+	static deserialize = validatedDelta((input: SerializedGame, game: Game | null) => {
 		game ??= new Game();
 		game.tree = Deck.deserialize(input.t, game.tree);
 		game.drawPile = Deck.deserialize(input.dr, game.drawPile);
@@ -135,13 +145,4 @@ export class Game {
 		game.remainingFlips = input.r ?? game.remainingFlips;
 		return game.setContexts();
 	});
-	static fromScratch(game: Game, settings: Settings) {
-		const generator = [randomShuffle, reverseGame][settings.generator];
-		return generator(game);
-	}
-	tree = new Deck<Card|null>();
-	drawPile = new Deck<Card>();
-	discardPile = new Deck<Card>();
-	completed = new Deck<Card>();
-	remainingFlips = 0;
 }

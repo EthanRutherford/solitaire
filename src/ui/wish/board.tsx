@@ -1,14 +1,14 @@
 import {useCallback} from "react";
-import {Game, SerializedGame} from "../../logic/wish/game";
+import {Game} from "../../logic/wish/game";
+import {Card} from "../../logic/deck";
 import {CardRenderer, renderPile, renderStack} from "../shared/card-renderer";
 import {EmptyZone} from "../shared/empty-zone";
 import {getCard} from "../shared/get-context";
 import {sizerated} from "../shared/sizerator";
 import {BoardCore, useGameCore} from "../shared/board";
+import {Pointer} from "../shared/pointer-manager";
 import {CardRingAnimation} from "../animations/card-ring";
 import {NewgameModal, useNewGame} from "./newgame-modal";
-import { Card } from "../../logic/deck";
-import { Pointer } from "../shared/pointer-manager";
 
 function useGame() {
 	const {

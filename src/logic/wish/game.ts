@@ -1,12 +1,12 @@
 import {TupleOf} from "../../util/tupleof";
 import {Card, Deck, SerializedDeck} from "../deck";
-import {validatedDelta} from "../undo-stack";
+import {SerializedArray, validatedDelta} from "../undo-stack";
 import {randomShuffle, reverseGame} from "./generator";
 
 export type SerializedGame = {
-	t: SerializedDeck[],
-	c: SerializedDeck,
-}
+	t?: SerializedArray<SerializedDeck>;
+	c?: SerializedDeck;
+};
 
 export enum GameGenerator {
 	Random,
@@ -14,7 +14,7 @@ export enum GameGenerator {
 }
 
 export interface Settings {
-	generator: GameGenerator,
+	generator: GameGenerator;
 }
 
 export class Game {
@@ -29,7 +29,7 @@ export class Game {
 
 		return this;
 	}
-	setContext(context: Deck<Card>) {
+	setContext(context: Deck<Card | nullish>) {
 		for (const card of context) {
 			if (card != null) {
 				card.meta.context = context;
@@ -80,7 +80,17 @@ export class Game {
 			c: this.completed.serialize(),
 		};
 	}
-	static deserialize = validatedDelta((input: SerializedGame, game: Game|null) => {
+	tableau: TupleOf<Deck<Card>, 8> = [
+		new Deck<Card>(), new Deck<Card>(), new Deck<Card>(), new Deck<Card>(),
+		new Deck<Card>(), new Deck<Card>(), new Deck<Card>(), new Deck<Card>(),
+	];
+	completed = new Deck<Card>();
+
+	static fromScratch(game: Game, settings: Settings) {
+		const generator = [randomShuffle, reverseGame][settings.generator];
+		return generator(game);
+	}
+	static deserialize = validatedDelta((input: SerializedGame, game: Game | null) => {
 		game ??= new Game();
 
 		const tableau = game.tableau;
@@ -91,13 +101,4 @@ export class Game {
 		game.completed = Deck.deserialize(input.c, game.completed);
 		return game.setContexts();
 	});
-	static fromScratch(game: Game, settings: Settings) {
-		const generator = [randomShuffle, reverseGame][settings.generator];
-		return generator(game);
-	}
-	tableau: TupleOf<Deck<Card>, 8> = [
-		new Deck<Card>(), new Deck<Card>(), new Deck<Card>(), new Deck<Card>(),
-		new Deck<Card>(), new Deck<Card>(), new Deck<Card>(), new Deck<Card>(),
-	];
-	completed = new Deck<Card>();
 }

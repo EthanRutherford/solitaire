@@ -1,4 +1,4 @@
-import {ReactNode, MouseEventHandler} from "react";
+import {ReactNode, MouseEventHandler, ReactElement, FC} from "react";
 import styles from "./modal.css";
 
 function takeWhere<T>(array: T[], predicate: (x: T) => boolean) {
@@ -6,10 +6,14 @@ function takeWhere<T>(array: T[], predicate: (x: T) => boolean) {
 	return index >= 0 ? array.splice(index, 1)[0] : null;
 }
 
+function typeIs(node: ReactNode, Type: FC<any>) {
+	return (node as {type?: FC} | null)?.type === Type;
+}
+
 export function Modal({children}: {children: ReactNode}) {
-	const wrapped = children instanceof Array ? [...children] : [children];
-	const header = takeWhere(wrapped, (c) => c.type === ModalHeader);
-	const footer = takeWhere(wrapped, (c) => c.type === ModalFooter);
+	const wrapped = children instanceof Array ? [...children as ReactNode[]] : [children];
+	const header = takeWhere(wrapped, (c) => typeIs(c, ModalHeader));
+	const footer = takeWhere(wrapped, (c) => typeIs(c, ModalFooter));
 
 	return (
 		<div className={styles.modalBackdrop}>
@@ -53,9 +57,9 @@ export function ModalButton(props: Record<string, unknown>) {
 }
 
 interface RadioButtonProps {
-	label: ReactNode,
-	isSelected: boolean,
-	onClick: MouseEventHandler,
+	label: ReactNode;
+	isSelected: boolean;
+	onClick: MouseEventHandler;
 }
 function RadioButton({label, isSelected, onClick}: RadioButtonProps) {
 	return (
@@ -67,11 +71,11 @@ function RadioButton({label, isSelected, onClick}: RadioButtonProps) {
 }
 
 interface ModalRadioProps<KeyType> {
-	options: {label: string, key: KeyType}[],
-	selected: KeyType,
-	onSelection: (key: KeyType) => void,
+	options: {label: string; key: KeyType}[];
+	selected: KeyType;
+	onSelection: (key: KeyType) => void;
 }
-export function ModalRadio<KeyType>({options, selected, onSelection}: ModalRadioProps<KeyType>) {
+export function ModalRadio<KeyType extends string | number>({options, selected, onSelection}: ModalRadioProps<KeyType>) {
 	return options.map(({label, key}) => (
 		<RadioButton
 			label={label}
@@ -79,7 +83,8 @@ export function ModalRadio<KeyType>({options, selected, onSelection}: ModalRadio
 			onClick={() => onSelection(key)}
 			key={`${key}`}
 		/>
-	)) as any;
+	// the type system does not seem to know that this is ok
+	)) as unknown as ReactElement;
 }
 
 export function ModalDisclaimer({children}: {children: ReactNode}) {

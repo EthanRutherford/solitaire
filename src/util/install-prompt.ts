@@ -2,7 +2,7 @@ import {useCallback, useEffect, useState} from "react";
 
 interface BeforeInstallPromptEvent extends Event {
 	prompt: () => Promise<void>;
-	readonly userChoice: Promise<{outcome: "accepted"|"dismissed"}>;
+	readonly userChoice: Promise<{outcome: "accepted" | "dismissed"}>;
 }
 declare global {
 	interface WindowEventMap {
@@ -10,8 +10,8 @@ declare global {
 	}
 }
 
-const listeners: Set<(success: boolean) => void> = new Set();
-let deferredPrompt: BeforeInstallPromptEvent|null = null;
+const listeners = new Set<(success: boolean) => void>();
+let deferredPrompt: BeforeInstallPromptEvent | null = null;
 window.addEventListener("beforeinstallprompt", (event: BeforeInstallPromptEvent) => {
 	event.preventDefault();
 	deferredPrompt = event;
@@ -29,8 +29,8 @@ export function useInstallPrompt() {
 	}, []);
 
 	const promptForInstall = useCallback(() => {
-		deferredPrompt?.prompt();
-		return deferredPrompt?.userChoice.then((choiceResult) => {
+		void deferredPrompt?.prompt();
+		void deferredPrompt?.userChoice.then((choiceResult) => {
 			deferredPrompt = null;
 			for (const listener of listeners) {
 				listener(false);

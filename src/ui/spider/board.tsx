@@ -1,14 +1,14 @@
 import {useCallback} from "react";
 import {Card, Deck} from "../../logic/deck";
-import {Game, SerializedGame} from "../../logic/spider/game";
+import {Game} from "../../logic/spider/game";
 import {CardRenderer, renderPile, renderStack} from "../shared/card-renderer";
 import {EmptyZone} from "../shared/empty-zone";
 import {getCard} from "../shared/get-context";
 import {sizerated} from "../shared/sizerator";
 import {BoardCore, useGameCore} from "../shared/board";
+import {Pointer} from "../shared/pointer-manager";
 import {CardRingAnimation} from "../animations/card-ring";
 import {NewgameModal, useNewGame} from "./newgame-modal";
-import { Pointer } from "../shared/pointer-manager";
 
 function useGame() {
 	const {
@@ -88,7 +88,7 @@ function useGame() {
 			const commit = undoStack.record(game);
 			for (let i = 0; i < 10; i++) {
 				game.moveCards(game.drawPile.draw(1), game.tableau[i]);
-				game.tableau[i].fromTop().faceUp = true;
+				game.tableau[i].fromTop()!.faceUp = true;
 				rerender();
 				commit();
 				yield 10;
@@ -127,7 +127,7 @@ function useGame() {
 
 	const playableDoubleTap = useCallback((pointer: Pointer) => {
 		if (pointer.dragCards != null) {
-			const target = game.tryGetMoveTarget(pointer.card);
+			const target = game.tryGetMoveTarget(pointer.card)!;
 			if (game.canMoveCards(pointer.card, target)) {
 				doMoveCards(pointer.card, target);
 			}

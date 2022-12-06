@@ -4,10 +4,10 @@ import styles from "./empty-zone.css";
 import {useSizes} from "./sizerator";
 
 interface EmptyZonePropTypes {
-	context?: Deck<Card>,
-	slot: {x: number, y: number},
-	onTap?: (deck: Deck<Card>) => void,
-	children?: ReactNode,
+	context?: Deck<Card>;
+	slot: {x: number; y: number};
+	onTap?: (deck: Deck<Card>) => void;
+	children?: ReactNode;
 }
 
 export function EmptyZone({context, slot, onTap, children}: EmptyZonePropTypes) {

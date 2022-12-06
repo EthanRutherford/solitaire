@@ -32,7 +32,7 @@ function renderNumberCard(Icon: ComponentType, value: CardValue) {
 	);
 }
 
-export function CardFace({Icon, value}: {Icon: ComponentType, value: CardValue}) {
+export function CardFace({Icon, value}: {Icon: ComponentType; value: CardValue}) {
 	const {cardWidth} = useSizes();
 	const smallCard = cardWidth < 50;
 	const output = useMemo(() => {
