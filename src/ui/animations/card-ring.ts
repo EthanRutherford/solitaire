@@ -36,7 +36,7 @@ const getAnimMeta = (card: Card) => card.meta.anim as AnimationMetadata;
 
 export class CardRingAnimation {
 	constructor(...decks: Deck<Card>[]) {
-		this.cards = decks.flatMap((d) => [...d]);
+		this.cards = decks.flatMap((d) => [...d].reverse());
 		this.totalCards = this.cards.length;
 		this.coprime = getCoprimeAround(this.totalCards, this.totalCards / 4);
 
