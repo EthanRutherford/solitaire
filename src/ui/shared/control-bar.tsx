@@ -5,7 +5,12 @@ import Redo from "../../../images/redo.svg";
 import styles from "./control-bar.css";
 import {useRouter} from "./app-router";
 
-interface ControlBarProps {newGame: () => void | Promise<void>; undo: () => void; redo: () => void}
+interface ControlBarProps {
+	newGame: () => void | Promise<void>;
+	undo: () => void;
+	redo: () => void;
+}
+
 export function ControlBar({newGame, undo, redo}: ControlBarProps) {
 	const {home} = useRouter();
 

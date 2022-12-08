@@ -8,11 +8,8 @@
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 var _path;
-
-function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
-
+function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-
 var SvgBack = function SvgBack(props) {
   return /*#__PURE__*/React.createElement("svg", _extends({
     xmlns: "http://www.w3.org/2000/svg",
@@ -22,7 +19,6 @@ var SvgBack = function SvgBack(props) {
     d: "m2 10 8-8v5h8v6h-8v5l-8-8"
   })));
 };
-
 module.exports = SvgBack;
 
 /***/ }),
@@ -34,11 +30,8 @@ module.exports = SvgBack;
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 var _path, _path2, _path3;
-
-function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
-
+function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-
 var SvgBrown = function SvgBrown(props) {
   return /*#__PURE__*/React.createElement("svg", _extends({
     xmlns: "http://www.w3.org/2000/svg",
@@ -59,7 +52,6 @@ var SvgBrown = function SvgBrown(props) {
     fill: "#93806c"
   })));
 };
-
 module.exports = SvgBrown;
 
 /***/ }),
@@ -71,11 +63,8 @@ module.exports = SvgBrown;
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 var _path;
-
-function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
-
+function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-
 var SvgClub = function SvgClub(props) {
   return /*#__PURE__*/React.createElement("svg", _extends({
     viewBox: "0 0 20 20",
@@ -85,7 +74,6 @@ var SvgClub = function SvgClub(props) {
     d: "M3.19 19.76c.03-.13.07-.25.1-.27.01-.03.51-.17 1.1-.32a8.4 8.4 0 0 0 2.62-.98 6.54 6.54 0 0 0 2.05-2.5c.5-1.05.7-1.92.75-3.2l.04-.85-.25.43c-1.03 1.76-2.1 2.71-3.65 3.23-.78.26-1.98.29-2.76.06a4.65 4.65 0 0 1-3.1-3.3 6.48 6.48 0 0 1 0-2.13A4.31 4.31 0 0 1 1.64 7.4c1.3-1.05 2.55-1.12 4.46-.25.22.1.4.17.4.15l-.27-.53c-.6-1.04-.74-1.51-.74-2.4 0-.96.2-1.66.7-2.4A4.3 4.3 0 0 1 8.91.09a6.28 6.28 0 0 1 2.07 0 4.43 4.43 0 0 1 3.05 2.38c.44.88.55 2 .27 2.94A6.47 6.47 0 0 1 13.58 7c-.1.16-.19.3-.18.31.02.01.35-.13.74-.31.93-.43 1.28-.52 2-.48 1.12.07 1.89.43 2.66 1.27a4.5 4.5 0 0 1 1.2 3.19 4.57 4.57 0 0 1-2.72 4.2c-.65.27-1.05.34-1.83.3a4.24 4.24 0 0 1-1.98-.48 6.24 6.24 0 0 1-3.01-2.86l-.29-.44v.33c0 .48.15 1.63.3 2.31.15.64.39 1.3.66 1.77a6.6 6.6 0 0 0 2.32 2.32c.42.24 1.43.58 2.36.79 1.03.24 1 .22 1.06.52l.06.26H3.13z"
   })));
 };
-
 module.exports = SvgClub;
 
 /***/ }),
@@ -97,11 +85,8 @@ module.exports = SvgClub;
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 var _path;
-
-function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
-
+function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-
 var SvgDiamond = function SvgDiamond(props) {
   return /*#__PURE__*/React.createElement("svg", _extends({
     viewBox: "0 0 20 20",
@@ -111,7 +96,6 @@ var SvgDiamond = function SvgDiamond(props) {
     d: "M9.67 19.53A87.36 87.36 0 0 0 3.2 10.7a5.74 5.74 0 0 1-.51-.66c0-.03.17-.26.38-.5a96.75 96.75 0 0 0 5.38-7.1C8.97 1.67 9.88.2 9.94.04c.02-.08.02-.09.42.57a85.18 85.18 0 0 0 6.95 9.42 90.01 90.01 0 0 0-4.55 5.82 63.94 63.94 0 0 0-2.7 4.11c-.07.1-.11.04-.4-.43z"
   })));
 };
-
 module.exports = SvgDiamond;
 
 /***/ }),
@@ -123,11 +107,8 @@ module.exports = SvgDiamond;
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 var _rect, _rect2, _path;
-
-function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
-
+function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-
 var SvgDraw = function SvgDraw(props) {
   return /*#__PURE__*/React.createElement("svg", _extends({
     xmlns: "http://www.w3.org/2000/svg",
@@ -153,7 +134,6 @@ var SvgDraw = function SvgDraw(props) {
     fill: "currentColor"
   })));
 };
-
 module.exports = SvgDraw;
 
 /***/ }),
@@ -165,11 +145,8 @@ module.exports = SvgDraw;
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 var _path;
-
-function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
-
+function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-
 var SvgJackHat = function SvgJackHat(props) {
   return /*#__PURE__*/React.createElement("svg", _extends({
     xmlns: "http://www.w3.org/2000/svg",
@@ -181,7 +158,6 @@ var SvgJackHat = function SvgJackHat(props) {
     strokeLinejoin: "round"
   })));
 };
-
 module.exports = SvgJackHat;
 
 /***/ }),
@@ -193,11 +169,8 @@ module.exports = SvgJackHat;
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 var _g;
-
-function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
-
+function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-
 var SvgKingHat = function SvgKingHat(props) {
   return /*#__PURE__*/React.createElement("svg", _extends({
     xmlns: "http://www.w3.org/2000/svg",
@@ -217,7 +190,6 @@ var SvgKingHat = function SvgKingHat(props) {
     paintOrder: "markers stroke fill"
   }))));
 };
-
 module.exports = SvgKingHat;
 
 /***/ }),
@@ -229,11 +201,8 @@ module.exports = SvgKingHat;
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 var _path;
-
-function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
-
+function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-
 var SvgQueenHat = function SvgQueenHat(props) {
   return /*#__PURE__*/React.createElement("svg", _extends({
     xmlns: "http://www.w3.org/2000/svg",
@@ -245,7 +214,6 @@ var SvgQueenHat = function SvgQueenHat(props) {
     strokeLinejoin: "round"
   })));
 };
-
 module.exports = SvgQueenHat;
 
 /***/ }),
@@ -257,11 +225,8 @@ module.exports = SvgQueenHat;
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 var _path;
-
-function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
-
+function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-
 var SvgHeart = function SvgHeart(props) {
   return /*#__PURE__*/React.createElement("svg", _extends({
     viewBox: "0 0 20 20",
@@ -271,7 +236,6 @@ var SvgHeart = function SvgHeart(props) {
     d: "M9.84 19.38c-.23-.77-.68-1.85-1.1-2.67-.61-1.15-1.78-2.84-4.15-6-1.77-2.36-2-2.7-2.52-3.66a7.94 7.94 0 0 1-.67-1.81 6.42 6.42 0 0 1 0-2.08A4.14 4.14 0 0 1 3.83.29a4.5 4.5 0 0 1 3.29.06 5.2 5.2 0 0 1 2.74 3.22l.16.42.2-.53A5.08 5.08 0 0 1 12.3.64C13 .2 13.68 0 14.55 0a4 4 0 0 1 2.98 1.21 3.7 3.7 0 0 1 1.15 2.78c0 1.52-.52 2.97-1.7 4.75-.56.85-.77 1.13-2.49 3.36-2.42 3.14-3.54 5.04-4.25 7.22l-.22.68z"
   })));
 };
-
 module.exports = SvgHeart;
 
 /***/ }),
@@ -283,11 +247,8 @@ module.exports = SvgHeart;
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 var _path;
-
-function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
-
+function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-
 var SvgPlus = function SvgPlus(props) {
   return /*#__PURE__*/React.createElement("svg", _extends({
     xmlns: "http://www.w3.org/2000/svg",
@@ -297,7 +258,6 @@ var SvgPlus = function SvgPlus(props) {
     d: "M7 2h6v5h5v6h-5v5H7v-5H2V7h5V2"
   })));
 };
-
 module.exports = SvgPlus;
 
 /***/ }),
@@ -309,11 +269,8 @@ module.exports = SvgPlus;
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 var _path;
-
-function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
-
+function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-
 var SvgRedo = function SvgRedo(props) {
   return /*#__PURE__*/React.createElement("svg", _extends({
     viewBox: "0 0 20 20",
@@ -323,7 +280,6 @@ var SvgRedo = function SvgRedo(props) {
     d: "M2 10c0-5 3-8 8-8s8 3 8 8h2l-3.5 4-3.5-4h2c0-3-2-5-5-5s-5 2-5 5 2 5 5 5v3c-5 0-8-3-8-8Z"
   })));
 };
-
 module.exports = SvgRedo;
 
 /***/ }),
@@ -335,11 +291,8 @@ module.exports = SvgRedo;
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 var _path;
-
-function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
-
+function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-
 var SvgSpade = function SvgSpade(props) {
   return /*#__PURE__*/React.createElement("svg", _extends({
     viewBox: "0 0 20 20",
@@ -349,7 +302,6 @@ var SvgSpade = function SvgSpade(props) {
     d: "M3.6 19.72c.04-.16.09-.3.12-.3.04-.01.39-.05.79-.08a5.54 5.54 0 0 0 3.67-1.59c1.13-1.14 1.6-2.46 1.72-4.76l.03-.64-.2.39a5.06 5.06 0 0 1-2.27 2.33 3.79 3.79 0 0 1-3.59-.06 3.87 3.87 0 0 1-1.63-2.05c-.1-.32-.12-.51-.12-1.11 0-.86.08-1.23.44-1.95.49-.99 1.24-1.84 2.7-3.05 1.89-1.57 3.35-3.26 4-4.63.2-.4.52-1.34.68-1.97L10 0l.24.72c.39 1.23.8 2.05 1.55 3.03.4.54 1.26 1.42 3.46 3.57 1.28 1.24 1.83 1.9 2.14 2.55.41.86.53 1.38.48 2.2a3.47 3.47 0 0 1-1.17 2.5c-1.34 1.23-3.28 1.22-4.82 0a5.02 5.02 0 0 1-1.25-1.44 27.3 27.3 0 0 0-.37-.58 7.36 7.36 0 0 0 .09 1.92c.33 2.02 1.24 3.38 2.78 4.15.68.35 1.85.65 2.82.74.4.04.4.03.47.43l.03.21H3.55z"
   })));
 };
-
 module.exports = SvgSpade;
 
 /***/ }),
@@ -361,11 +313,8 @@ module.exports = SvgSpade;
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 var _path;
-
-function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
-
+function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-
 var SvgUndo = function SvgUndo(props) {
   return /*#__PURE__*/React.createElement("svg", _extends({
     viewBox: "0 0 20 20",
@@ -375,7 +324,6 @@ var SvgUndo = function SvgUndo(props) {
     d: "M18 10c0-5-3-8-8-8s-8 3-8 8H0l3.5 4L7 10H5c0-3 2-5 5-5s5 2 5 5-2 5-5 5v3c5 0 8-3 8-8z"
   })));
 };
-
 module.exports = SvgUndo;
 
 /***/ }),
@@ -396,14 +344,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _undo_stack__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./undo-stack */ "./src/logic/undo-stack.ts");
 
 let Suit;
-
 (function (Suit) {
   Suit[Suit["Spades"] = 0] = "Spades";
   Suit[Suit["Diamonds"] = 1] = "Diamonds";
   Suit[Suit["Clubs"] = 2] = "Clubs";
   Suit[Suit["Hearts"] = 3] = "Hearts";
 })(Suit || (Suit = {}));
-
 const faces = ["NIL", "A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
 let nextId = 0;
 class Card {
@@ -413,7 +359,6 @@ class Card {
     this.faceUp = faceUp;
     this.id = nextId++;
   }
-
   serialize() {
     return {
       s: this.suit,
@@ -422,15 +367,12 @@ class Card {
       i: this.id
     };
   }
-
   get label() {
     return faces[this.value];
   }
-
   get color() {
     return this.suit % 2;
   }
-
   meta = {};
   static deserialize = (0,_undo_stack__WEBPACK_IMPORTED_MODULE_0__.validatedDelta)((input, card) => {
     card ??= new Card(0, 1);
@@ -448,90 +390,69 @@ const coreDeckDeserialize = (0,_undo_stack__WEBPACK_IMPORTED_MODULE_0__.validate
   } = input;
   deck ??= new Deck();
   deck.length = length ?? deck.length;
-
   for (const key of Object.keys(rest)) {
     const index = Number.parseInt(key, 10);
-
     if (index < deck.length) {
       deck[index] = Card.deserialize(rest[index], deck[index]);
     }
   }
-
   return deck;
 });
 class Deck extends Array {
   shuffle() {
     const copy = [...this];
-
     for (let i = 0; i < this.length; i++) {
       const card = Math.floor(Math.random() * copy.length);
       this[i] = copy.splice(card, 1)[0];
     }
-
     return this;
   }
-
   draw(count) {
     return this.splice(-count, count);
   }
-
   fromTop(number = 0) {
     return this[this.length - number - 1];
   }
-
   map(mapper) {
     return super.map(mapper);
   }
-
   filter(mapper) {
     return super.filter(mapper);
   }
-
   concat(other) {
     return super.concat(other);
   }
-
   reverse() {
     return super.reverse();
   }
-
   serialize() {
     return this.map(c => c?.serialize() ?? null);
   }
-
   static deserialize(input, deck) {
     return coreDeckDeserialize(input, deck);
   }
-
   static full() {
     const deck = new Deck(52);
     let i = 0;
-
     for (const suit of [Suit.Spades, Suit.Diamonds]) {
       for (let v = 1; v <= 13; v++) {
         deck[i++] = new Card(suit, v);
       }
     }
-
     for (const suit of [Suit.Clubs, Suit.Hearts]) {
       for (let v = 13; v > 0; v--) {
         deck[i++] = new Card(suit, v);
       }
     }
-
     return deck;
   }
-
   static ofSuit(suit) {
     const deck = new Deck(13);
-
     for (let v = 1; v <= 13; v++) {
       deck[v - 1] = new Card(suit, v);
     }
-
     return deck;
   }
-
 }
 
 /***/ }),
@@ -556,83 +477,68 @@ __webpack_require__.r(__webpack_exports__);
 class Game {
   setContexts() {
     const contexts = [...this.tableau, ...this.freeCells, ...Object.values(this.foundations)];
-
     for (const context of contexts) {
       this.setContext(context);
     }
-
     return this;
   }
-
   setContext(context) {
     for (const card of context) {
       card.meta.context = context;
     }
   }
-
   moveCards(cards, target) {
     for (const card of cards) {
       target.push(card);
       card.meta.context = target;
     }
   }
-
   getMovableCards(card) {
     const context = card.meta.context;
     const index = context.indexOf(card);
     const cards = context.slice(index);
-
     for (let i = 1; i < cards.length; i++) {
       const prev = cards[i - 1];
       const cur = cards[i];
-
       if (prev.color === cur.color || prev.value - 1 !== cur.value) {
         return null;
       }
     }
-
     return cards;
   }
-
   canMoveToFoundation(card, target) {
-    const context = card.meta.context; // only cards on top can be sent to foundation
+    const context = card.meta.context;
 
+    // only cards on top can be sent to foundation
     if (card !== context.fromTop()) {
       return false;
-    } // cards can only be sent to matching foundation
+    }
 
-
+    // cards can only be sent to matching foundation
     if (target !== this.foundations[card.suit]) {
       return false;
-    } // card must be the next card for the foundation
+    }
 
-
+    // card must be the next card for the foundation
     if ((target.fromTop()?.value ?? 0) !== card.value - 1) {
       return false;
     }
-
     return true;
   }
-
   canMoveStack(card, target) {
     const topCard = target.fromTop();
-
     if (topCard != null && (card.color === topCard.color || card.value + 1 !== topCard.value)) {
       return false;
     }
-
     const freeCellCount = this.freeCells.filter(c => c.length === 0).length;
     const freeTableauCount = this.tableau.filter(t => t !== target && t.length === 0).length;
     const maxStackSize = (freeCellCount + 1) * (freeTableauCount + 1);
     const context = card.meta.context;
-
     if (context.length - context.indexOf(card) > maxStackSize) {
       return false;
     }
-
     return true;
   }
-
   canMoveCards(card, target) {
     if (Object.values(this.foundations).includes(target)) {
       return this.canMoveToFoundation(card, target);
@@ -642,10 +548,8 @@ class Game {
       const context = card.meta.context;
       return card === context.fromTop() && target.length === 0;
     }
-
     return false;
   }
-
   transferCards(card, target) {
     if (Object.values(this.foundations).includes(target)) {
       const originDeck = card.meta.context;
@@ -659,47 +563,37 @@ class Game {
       this.moveCards(originDeck.draw(1), target);
     }
   }
-
   tryGetMoveTarget(card) {
     const context = card.meta.context;
-
     if (card === context.fromTop()) {
       const foundation = this.foundations[card.suit];
-
       if (this.canMoveToFoundation(card, foundation)) {
         return foundation;
       }
     }
-
     const [empty, nonEmpty] = this.tableau.reduce((partitions, deck) => {
       partitions[deck.length === 0 ? 0 : 1].push(deck);
       return partitions;
     }, [[], []]);
-
     for (const deck of nonEmpty) {
       if (this.canMoveCards(card, deck)) {
         return deck;
       }
     }
-
     for (const deck of empty) {
       if (this.canMoveCards(card, deck)) {
         return deck;
       }
     }
-
     for (const cell of this.freeCells) {
       if (cell.length === 0) {
         return cell;
       }
     }
-
     return null;
   }
-
   tryAutoCompleteOne() {
     let maxValue = 15;
-
     for (const deck of Object.values(this.foundations)) {
       if (deck.length > 0) {
         maxValue = Math.min(deck.fromTop().value + 1, maxValue);
@@ -707,29 +601,22 @@ class Game {
         maxValue = 0;
       }
     }
-
     const usableDecks = this.tableau.concat(this.freeCells);
-
     for (const deck of usableDecks) {
       const top = deck.fromTop();
-
       if (top != null) {
         const foundation = this.foundations[top.suit];
-
         if (top.value <= maxValue && this.canMoveToFoundation(top, foundation)) {
           this.transferCards(top, foundation);
           return deck;
         }
       }
     }
-
     return null;
   }
-
   hasWon() {
     return Object.values(this.foundations).every(d => d.length === 13);
   }
-
   serialize() {
     return {
       t: this.tableau.map(d => d.serialize()),
@@ -737,7 +624,6 @@ class Game {
       f: Object.fromEntries(Object.entries(this.foundations).map(([k, v]) => [k, v.serialize()]))
     };
   }
-
   tableau = [new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck()];
   freeCells = [new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck()];
   foundations = {
@@ -746,52 +632,39 @@ class Game {
     [_deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Clubs]: new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(),
     [_deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Hearts]: new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck()
   };
-
   static fromScratch(game) {
     const deck = _deck__WEBPACK_IMPORTED_MODULE_1__.Deck.full().shuffle();
     game.tableau.splice(0, game.tableau.length);
     game.freeCells.splice(0, game.freeCells.length);
-
     for (let i = 0; i < 8; i++) {
       game.tableau.push(new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck());
     }
-
     for (let i = 0; i < 4; i++) {
       game.freeCells.push(new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck());
     }
-
     for (const k of [_deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Spades, _deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Diamonds, _deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Clubs, _deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Hearts]) {
       game.foundations[k] = new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck();
     }
-
     for (let i = 0; i < deck.length; i++) {
       deck[i].faceUp = true;
       game.tableau[i % 8].push(deck[i]);
     }
-
     return game.setContexts();
   }
-
   static deserialize = (0,_undo_stack__WEBPACK_IMPORTED_MODULE_2__.validatedDelta)((input, game) => {
     game ??= new Game();
     const tableau = game.tableau;
-
     for (let i = 0; i < 8; i++) {
       tableau[i] = _deck__WEBPACK_IMPORTED_MODULE_1__.Deck.deserialize(input.t?.[i], tableau[i]);
     }
-
     const freeCells = game.freeCells;
-
     for (let i = 0; i < 4; i++) {
       freeCells[i] = _deck__WEBPACK_IMPORTED_MODULE_1__.Deck.deserialize(input.c?.[i], freeCells[i]);
     }
-
     const foundations = game.foundations;
-
     for (const k of [_deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Spades, _deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Diamonds, _deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Clubs, _deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Hearts]) {
       foundations[k] = _deck__WEBPACK_IMPORTED_MODULE_1__.Deck.deserialize(input.f?.[k], foundations[k]);
     }
-
     return game.setContexts();
   });
 }
@@ -816,20 +689,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "settingsTable": () => (/* binding */ settingsTable)
 /* harmony export */ });
 const saveGameTable = "saves";
-const settingsTable = "settings"; // opens the database, initializing it if necessary
+const settingsTable = "settings";
 
+// opens the database, initializing it if necessary
 async function openDatabase() {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open("solitaire", 1);
-
     request.onupgradeneeded = function () {
-      const database = this.result; // drop existing tables
+      const database = this.result;
 
+      // drop existing tables
       for (const name of database.objectStoreNames) {
         database.deleteObjectStore(name);
-      } // create tables
+      }
 
-
+      // create tables
       database.createObjectStore(saveGameTable, {
         keyPath: "key"
       });
@@ -837,37 +711,31 @@ async function openDatabase() {
         keyPath: "key"
       });
     };
-
     void navigator.storage.persist();
     request.onerror = reject;
-
-    request.onsuccess = function () {
-      resolve(this.result);
-    };
-  });
-} // core database interactions
-
-
-async function getCore(objectStore, id) {
-  return new Promise((resolve, reject) => {
-    const request = objectStore.get(id);
-    request.onerror = reject;
-
     request.onsuccess = function () {
       resolve(this.result);
     };
   });
 }
 
+// core database interactions
+async function getCore(objectStore, id) {
+  return new Promise((resolve, reject) => {
+    const request = objectStore.get(id);
+    request.onerror = reject;
+    request.onsuccess = function () {
+      resolve(this.result);
+    };
+  });
+}
 async function listCore(objectStore) {
   return new Promise((resolve, reject) => {
     const request = objectStore.openCursor();
     request.onerror = reject;
     const list = [];
-
     request.onsuccess = function () {
       const cursor = this.result;
-
       if (cursor) {
         list.push({
           id: cursor.key,
@@ -880,47 +748,40 @@ async function listCore(objectStore) {
     };
   });
 }
-
 async function addCore(objectStore, object) {
   return new Promise((resolve, reject) => {
     const request = objectStore.add(object);
     request.onerror = reject;
-
     request.onsuccess = function () {
       resolve(this.result);
     };
   });
 }
-
 async function putCore(objectStore, object, id) {
   return new Promise((resolve, reject) => {
     const request = objectStore.put(object, id);
     request.onerror = reject;
-
     request.onsuccess = function () {
       resolve(this.result);
     };
   });
 }
-
 async function deleteCore(objectStore, id) {
   return new Promise((resolve, reject) => {
     const request = objectStore.delete(id);
     request.onerror = reject;
-
     request.onsuccess = function () {
       resolve();
     };
   });
 }
-
 async function getStore(tableName, readwrite = false) {
   const db = await openDatabase();
   const transaction = db.transaction([tableName], readwrite ? "readwrite" : "readonly");
   return transaction.objectStore(tableName);
-} // public api
+}
 
-
+// public api
 async function get(tableName, id) {
   return await getCore(await getStore(tableName), id);
 }
@@ -961,99 +822,81 @@ __webpack_require__.r(__webpack_exports__);
 class Game {
   setContexts() {
     const contexts = [this.drawPile, this.discardPile, ...this.tableau, ...Object.values(this.foundations)];
-
     for (const context of contexts) {
       this.setContext(context);
     }
-
     return this;
   }
-
   setContext(context) {
     for (const card of context) {
       card.meta.context = context;
     }
   }
-
   moveCards(cards, target) {
     for (const card of cards) {
       target.push(card);
       card.meta.context = target;
     }
   }
-
   drawCards(count) {
     const cards = this.drawPile.draw(count).reverse();
     this.moveCards(cards, this.discardPile);
-
     for (const card of cards) {
       card.faceUp = true;
     }
   }
-
   undrawCards(count) {
     const cards = this.discardPile.draw(count).reverse();
     this.moveCards(cards, this.drawPile);
-
     for (const card of cards) {
       card.faceUp = false;
     }
   }
-
   getMovableCards(card) {
     if (card.meta.context === this.discardPile) {
       return [this.discardPile.fromTop()];
     }
-
     if (card.faceUp) {
       const context = card.meta.context;
       const index = context.indexOf(card);
       return context.slice(index);
     }
-
     return null;
   }
-
   canMoveToFoundation(card, target) {
-    const context = card.meta.context; // only cards on top can be sent to foundation
+    const context = card.meta.context;
 
+    // only cards on top can be sent to foundation
     if (card !== context.fromTop()) {
       return false;
-    } // cards can only be sent to matching foundation
+    }
 
-
+    // cards can only be sent to matching foundation
     if (target !== this.foundations[card.suit]) {
       return false;
-    } // card must be the next card for the foundation
+    }
 
-
+    // card must be the next card for the foundation
     if ((target.fromTop()?.value ?? 0) !== card.value - 1) {
       return false;
     }
-
     return true;
   }
-
   canMoveStack(card, target) {
     const topCard = target.fromTop();
-
     if (topCard == null ? card.value !== 13 : card.color === topCard.color || card.value + 1 !== topCard.value) {
       return false;
     }
-
     return true;
   }
-
   canMoveCards(card, target) {
     if (Object.values(this.foundations).includes(target)) {
       return this.canMoveToFoundation(card, target);
     } else if (this.tableau.includes(target)) {
       return this.canMoveStack(card, target);
     }
-
     return false;
   }
-
   transferCards(card, target) {
     if (Object.values(this.foundations).includes(target)) {
       const originDeck = card.meta.context;
@@ -1064,43 +907,33 @@ class Game {
       this.moveCards(context.draw(context.length - index), target);
     }
   }
-
   tryGetMoveTarget(card) {
     const context = card.meta.context;
-
     if (card === context.fromTop()) {
       const foundation = this.foundations[card.suit];
-
       if (this.canMoveToFoundation(card, foundation)) {
         return foundation;
       }
     }
-
     for (const deck of this.tableau) {
       if (this.canMoveStack(card, deck)) {
         return deck;
       }
     }
-
     return null;
   }
-
   tryFlipCard(deck) {
     if (this.tableau.includes(deck)) {
       const top = deck.fromTop();
-
       if (top != null && !top.faceUp) {
         top.faceUp = true;
         return true;
       }
     }
-
     return false;
   }
-
   tryAutoCompleteOne() {
     let maxValue = 15;
-
     for (const deck of Object.values(this.foundations)) {
       if (deck.length > 0) {
         maxValue = Math.min(deck.fromTop().value + 1, maxValue);
@@ -1108,25 +941,19 @@ class Game {
         maxValue = 0;
       }
     }
-
     const usableDecks = this.tableau.concat([this.discardPile]);
-
     for (const deck of usableDecks) {
       const top = deck.fromTop();
-
       if (top != null) {
         const foundation = this.foundations[top.suit];
-
         if (top.value <= maxValue && this.canMoveToFoundation(top, foundation)) {
           this.transferCards(top, foundation);
           return deck;
         }
       }
     }
-
     return null;
   }
-
   serialize() {
     return {
       dc: this.drawCount,
@@ -1136,11 +963,9 @@ class Game {
       f: Object.fromEntries(Object.entries(this.foundations).map(([k, v]) => [k, v.serialize()]))
     };
   }
-
   hasWon() {
     return Object.values(this.foundations).every(d => d.length === 13);
   }
-
   drawCount = 1;
   drawPile = new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck();
   discardPile = new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck();
@@ -1151,29 +976,23 @@ class Game {
     [_deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Clubs]: new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(),
     [_deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Hearts]: new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck()
   };
-
   static fromScratch(game, settings) {
     const generator = [_generator__WEBPACK_IMPORTED_MODULE_3__.randomShuffle, _generator__WEBPACK_IMPORTED_MODULE_3__.reverseGame][settings.generator];
     return generator(game, settings.drawCount);
   }
-
   static deserialize = (0,_undo_stack__WEBPACK_IMPORTED_MODULE_2__.validatedDelta)((input, game) => {
     game ??= new Game();
     game.drawCount = input.dc ?? game.drawCount;
     game.drawPile = _deck__WEBPACK_IMPORTED_MODULE_1__.Deck.deserialize(input.dr, game.drawPile);
     game.discardPile = _deck__WEBPACK_IMPORTED_MODULE_1__.Deck.deserialize(input.di, game.discardPile);
     const tableau = game.tableau;
-
     for (let i = 0; i < 7; i++) {
       tableau[i] = _deck__WEBPACK_IMPORTED_MODULE_1__.Deck.deserialize(input.t?.[i], tableau[i]);
     }
-
     const foundations = game.foundations;
-
     for (const k of [_deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Spades, _deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Diamonds, _deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Clubs, _deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Hearts]) {
       foundations[k] = _deck__WEBPACK_IMPORTED_MODULE_1__.Deck.deserialize(input.f?.[k], foundations[k]);
     }
-
     return game.setContexts();
   });
 }
@@ -1201,92 +1020,74 @@ function randomShuffle(game, drawCount) {
   game.drawPile.splice(0, game.drawPile.length, ..._deck__WEBPACK_IMPORTED_MODULE_0__.Deck.full().shuffle());
   game.discardPile.splice(0, game.discardPile.length);
   game.tableau.splice(0, game.tableau.length);
-
   for (let i = 0; i < 7; i++) {
     game.tableau.push(game.drawPile.draw(i + 1));
   }
-
   for (const k of [_deck__WEBPACK_IMPORTED_MODULE_0__.Suit.Spades, _deck__WEBPACK_IMPORTED_MODULE_0__.Suit.Diamonds, _deck__WEBPACK_IMPORTED_MODULE_0__.Suit.Clubs, _deck__WEBPACK_IMPORTED_MODULE_0__.Suit.Hearts]) {
     game.foundations[k] = new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck();
   }
-
   for (const deck of game.tableau) {
     deck.fromTop().faceUp = true;
   }
-
   return game.setContexts();
-} // builds a game backward from solution
+}
 
+// builds a game backward from solution
 function reverseGame(game, drawCount) {
   // clear and initialize the game
   game.drawCount = drawCount;
   game.drawPile.splice(0, game.drawPile.length);
   game.discardPile.splice(0, game.discardPile.length);
   game.tableau.splice(0, game.tableau.length);
-
   for (let i = 0; i < 7; i++) {
     game.tableau.push(new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck());
   }
-
   for (const k of [_deck__WEBPACK_IMPORTED_MODULE_0__.Suit.Spades, _deck__WEBPACK_IMPORTED_MODULE_0__.Suit.Diamonds, _deck__WEBPACK_IMPORTED_MODULE_0__.Suit.Clubs, _deck__WEBPACK_IMPORTED_MODULE_0__.Suit.Hearts]) {
     game.foundations[k] = new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck();
-  } // build a "completed" game
+  }
 
-
+  // build a "completed" game
   const completeSuits = [];
-
   for (let i = 0; i < 4; i++) {
     completeSuits[i] = _deck__WEBPACK_IMPORTED_MODULE_0__.Deck.ofSuit(i).reverse();
   }
-
   const completeStacks = [new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck()];
-
   for (let i = 0; i < 13; i++) {
     const sets = [[0, 2], [1, 3]];
-
     if (i % 2 === 1) {
       sets.reverse();
     }
-
     if (Math.random() < .5) {
       sets[0].reverse();
     }
-
     if (Math.random() < .5) {
       sets[1].reverse();
     }
-
     const plan = [sets[0][0], sets[1][0], sets[0][1], sets[1][1]];
-
     for (let j = 0; j < 4; j++) {
       completeStacks[j].push(completeSuits[plan[j]].pop());
     }
-  } // move cards from our completed state into the game decks
+  }
 
-
+  // move cards from our completed state into the game decks
   const notFullTableauDecks = [0, 1, 2, 3, 4, 5, 6];
-
   while (completeStacks.length > 0) {
     const stackIndex = Math.floor(Math.random() * completeStacks.length);
     const card = completeStacks[stackIndex].pop();
-
     if (completeStacks[stackIndex].length === 0) {
       completeStacks.splice(stackIndex, 1);
     }
-
     if (notFullTableauDecks.length > 0 && Math.random() < .5) {
       // move the card to an available spot in the tableau
       const notFullIndex = Math.floor(Math.random() * notFullTableauDecks.length);
       const tableauIndex = notFullTableauDecks[notFullIndex];
       game.tableau[tableauIndex].push(card);
-
       if (game.tableau[tableauIndex].length === tableauIndex + 1) {
         notFullTableauDecks.splice(notFullIndex, 1);
       }
     } else {
       // move the card to foundation or drawPile
       const foundation = game.foundations[card.suit];
-
       if (foundation.length === 0 || card.value === foundation.fromTop().value + 1) {
         foundation.push(card);
       } else {
@@ -1294,16 +1095,13 @@ function reverseGame(game, drawCount) {
       }
     }
   }
-
   for (const foundation of Object.values(game.foundations)) {
     while (foundation.length > 0) {
       const card = foundation.pop();
-
       if (notFullTableauDecks.length > 0) {
         const notFullIndex = Math.floor(Math.random() * notFullTableauDecks.length);
         const tableauIndex = notFullTableauDecks[notFullIndex];
         game.tableau[tableauIndex].push(card);
-
         if (game.tableau[tableauIndex].length === tableauIndex + 1) {
           notFullTableauDecks.splice(notFullIndex, 1);
         }
@@ -1312,23 +1110,18 @@ function reverseGame(game, drawCount) {
       }
     }
   }
-
   game.drawPile.shuffle();
-
   while (notFullTableauDecks.length > 0) {
     const notFullIndex = Math.floor(Math.random() * notFullTableauDecks.length);
     const tableauIndex = notFullTableauDecks[notFullIndex];
     game.tableau[tableauIndex].push(game.drawPile.pop());
-
     if (game.tableau[tableauIndex].length === tableauIndex + 1) {
       notFullTableauDecks.splice(notFullIndex, 1);
     }
   }
-
   for (const deck of game.tableau) {
     deck.fromTop().faceUp = true;
   }
-
   return game.setContexts();
 }
 
@@ -1357,7 +1150,6 @@ function getChildIndices(index) {
   if (index >= treeRows[treeRows.length - 1]) {
     return [];
   }
-
   const [curRow, nextRow] = treeRows.slice(treeRows.findIndex((r, i) => index >= r && index < treeRows[i + 1]));
   const rowOffset = index - curRow;
   return [nextRow + rowOffset, nextRow + rowOffset + 1];
@@ -1365,14 +1157,11 @@ function getChildIndices(index) {
 class Game {
   setContexts() {
     const contexts = [this.tree, this.drawPile, this.discardPile, this.completed];
-
     for (const context of contexts) {
       this.setContext(context);
     }
-
     return this;
   }
-
   setContext(context) {
     for (const card of context) {
       if (card != null) {
@@ -1380,43 +1169,34 @@ class Game {
       }
     }
   }
-
   getChildrenOf(index) {
     if (index === -1) {
       return null;
     }
-
     return getChildIndices(index).map(i => this.tree[i]).filter(c => c != null);
   }
-
   drawCard() {
     const card = this.drawPile.draw(1)[0];
     this.discardPile.push(card);
     card.meta.context = this.discardPile;
   }
-
   undrawCard() {
     const card = this.discardPile.draw(1)[0];
     this.drawPile.push(card);
     card.meta.context = this.drawPile;
   }
-
   getMovableCards(card) {
     if (card.meta.context === this.drawPile) {
       return [this.drawPile.fromTop()];
     }
-
     if (card.meta.context === this.discardPile) {
       return [this.discardPile.fromTop()];
     }
-
     if (this.isPlayable(card)) {
       return [card];
     }
-
     return null;
   }
-
   clearCard(card) {
     if (card.meta.context === this.tree) {
       const index = this.tree.indexOf(card);
@@ -1427,38 +1207,28 @@ class Game {
     } else {
       return;
     }
-
     this.completed.push(card);
     card.meta.context = this.completed;
-    card.faceUp = false;
   }
-
   isPlayable(card) {
     if (card.meta.context === this.completed) {
       return false;
     }
-
     const children = this.getChildrenOf(this.tree.indexOf(card));
-
     if (children != null && children.length > 0) {
       return false;
     }
-
     return true;
   }
-
   canClearCards(cardA, cardB) {
     if ((cardA.value + cardB.value) % 13 !== 0) {
       return false;
     }
-
     return this.isPlayable(cardA) && this.isPlayable(cardB);
   }
-
   hasWon() {
     return this.tree[0] == null;
   }
-
   serialize() {
     return {
       t: this.tree.serialize(),
@@ -1468,18 +1238,15 @@ class Game {
       r: this.remainingFlips
     };
   }
-
   tree = new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck();
   drawPile = new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck();
   discardPile = new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck();
   completed = new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck();
   remainingFlips = 0;
-
   static fromScratch(game, settings) {
     const generator = [_generator__WEBPACK_IMPORTED_MODULE_2__.randomShuffle, _generator__WEBPACK_IMPORTED_MODULE_2__.reverseGame][settings.generator];
     return generator(game);
   }
-
   static deserialize = (0,_undo_stack__WEBPACK_IMPORTED_MODULE_1__.validatedDelta)((input, game) => {
     game ??= new Game();
     game.tree = _deck__WEBPACK_IMPORTED_MODULE_0__.Deck.deserialize(input.t, game.tree);
@@ -1510,74 +1277,62 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _deck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../deck */ "./src/logic/deck.ts");
 /* harmony import */ var _game__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./game */ "./src/logic/pyramid/game.ts");
 
- // shuffles a deck and deals cards onto the pyramid
 
+
+// shuffles a deck and deals cards onto the pyramid
 function randomShuffle(game) {
   game.drawPile.splice(0, game.drawPile.length, ..._deck__WEBPACK_IMPORTED_MODULE_0__.Deck.full().shuffle());
-
   for (const card of game.drawPile) {
     card.faceUp = true;
   }
-
   game.discardPile.splice(0, game.discardPile.length);
   game.completed.splice(0, game.completed.length);
   game.tree.splice(0, game.tree.length, ...game.drawPile.draw(28));
   game.remainingFlips = 2;
   return game.setContexts();
 }
-
 function isAncestorOf(indexA, indexB) {
   if (indexA > indexB) {
     return false;
   }
-
   const children = (0,_game__WEBPACK_IMPORTED_MODULE_1__.getChildIndices)(indexA);
-
   for (const index of children) {
     if (index === indexB || isAncestorOf(index, indexB)) {
       return true;
     }
   }
-
   return false;
 }
-
 function without(set, ...items) {
   const copy = new Set(set);
-
   for (const item of items) {
     copy.delete(item);
   }
-
   return copy;
 }
-
 function microsolve(cards, value, remainingValue, remainingOther) {
   if (cards.length === 0) {
     return true;
-  } // there may be a faster (non-exhaustive) way to check for solvability,
+  }
+
+  // there may be a faster (non-exhaustive) way to check for solvability,
   // but this is *probably* fast enough
-
-
   const leaves = cards.filter(x => x.blockedBy.size === 0);
-
   for (let i = 0; i < leaves.length; i++) {
     for (let j = i + 1; j < leaves.length; j++) {
       if (leaves[i].value !== leaves[j].value) {
-        const copy = cards.filter(c => c !== leaves[i] && c !== leaves[j]).map(c => ({ ...c,
+        const copy = cards.filter(c => c !== leaves[i] && c !== leaves[j]).map(c => ({
+          ...c,
           blockedBy: without(c.blockedBy, leaves[i], leaves[j])
         }));
-
         if (microsolve(copy, value, remainingValue, remainingOther)) {
           return true;
         }
       }
     }
-
     let rv = remainingValue;
     let ro = remainingOther;
     const isValue = leaves[i].value === value;
-
     if (isValue && rv > 0) {
       rv--;
     } else if (!isValue && ro > 0) {
@@ -1585,31 +1340,27 @@ function microsolve(cards, value, remainingValue, remainingOther) {
     } else {
       continue;
     }
-
-    const copy = cards.filter(c => c !== leaves[i]).map(c => ({ ...c,
+    const copy = cards.filter(c => c !== leaves[i]).map(c => ({
+      ...c,
       blockedBy: without(c.blockedBy, leaves[i])
     }));
-
     if (microsolve(copy, value, rv, ro)) {
       return true;
     }
   }
-
   return false;
 }
-
 function canPlace(game, index, value) {
   // kings are free
   if (value === 13) {
     return true;
-  } // gather relevant cards already in the pyramid
+  }
 
-
+  // gather relevant cards already in the pyramid
   const otherValue = 13 - value;
   const relevantCards = [];
   let remainingValue = 3;
   let remainingOther = 4;
-
   for (let i = 0; i < game.tree.length; i++) {
     if (game.tree[i].value === value || game.tree[i].value === otherValue) {
       relevantCards.push({
@@ -1617,7 +1368,6 @@ function canPlace(game, index, value) {
         value: game.tree[i].value,
         blockedBy: new Set()
       });
-
       if (game.tree[i].value === value) {
         remainingValue--;
       } else {
@@ -1625,32 +1375,32 @@ function canPlace(game, index, value) {
       }
     }
   }
-
   relevantCards.push({
     i: index,
     value,
     blockedBy: new Set()
-  }); // if half or more of both values are in the drawPile, we know for sure they can be cleared
+  });
 
+  // if half or more of both values are in the drawPile, we know for sure they can be cleared
   if (remainingValue >= 2 && remainingOther >= 2) {
     return true;
-  } // map out dependency graph
+  }
 
-
+  // map out dependency graph
   for (let i = 0; i < relevantCards.length; i++) {
     for (let j = i + 1; j < relevantCards.length; j++) {
       if (isAncestorOf(i, j)) {
         relevantCards[i].blockedBy.add(relevantCards[j]);
       }
     }
-  } // check if this arrangement of cards can be cleared
+  }
 
-
+  // check if this arrangement of cards can be cleared
   return microsolve(relevantCards, value, remainingValue, remainingOther);
-} // shuffles a deck, but only places cards on the pyramid which do not cause an impossible game
+}
+
+// shuffles a deck, but only places cards on the pyramid which do not cause an impossible game
 // NOTE: in hindsight, this method did not prevent *every* kind of impossible game
-
-
 function validatedShuffle(game) {
   // clear and initialize the game
   game.drawPile.splice(0, game.drawPile.length, ..._deck__WEBPACK_IMPORTED_MODULE_0__.Deck.full().shuffle());
@@ -1658,22 +1408,19 @@ function validatedShuffle(game) {
   game.completed.splice(0, game.completed.length);
   game.tree.splice(0, game.tree.length);
   game.remainingFlips = 2;
-
   for (const card of game.drawPile) {
     card.faceUp = true;
-  } // put cards onto the pyramid, so long as they don't block completion
+  }
 
-
+  // put cards onto the pyramid, so long as they don't block completion
   while (game.tree.length < 28) {
     const card = game.drawPile.pop();
-
     if (canPlace(game, game.tree.length, card.value)) {
       game.tree.push(card);
     } else {
       game.drawPile.unshift(card);
     }
   }
-
   return game.setContexts();
 }
 function reverseGame(game) {
@@ -1686,77 +1433,63 @@ function reverseGame(game) {
   const parentMap = {
     0: []
   };
-
   for (let i = 0; i < 21; i++) {
     const children = (0,_game__WEBPACK_IMPORTED_MODULE_1__.getChildIndices)(i);
-
     for (const child of children) {
       parentMap[child] ??= [];
       parentMap[child].push(i);
     }
-  } // pair-off all cards in a shuffled deck
+  }
 
-
+  // pair-off all cards in a shuffled deck
   const deck = _deck__WEBPACK_IMPORTED_MODULE_0__.Deck.full().shuffle();
   const pairs = new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck();
-
   while (deck.length > 0) {
     const cardA = deck.pop();
     cardA.faceUp = true;
-
     if (cardA.value === 13) {
       pairs.push([cardA]);
       continue;
     }
-
     const index = deck.findIndex(c => c.value + cardA.value === 13);
     const cardB = deck.splice(index, 1)[0];
     cardB.faceUp = true;
     pairs.push([cardA, cardB]);
   }
+  pairs.shuffle();
 
-  pairs.shuffle(); // add cards from the list of pairs
-
+  // add cards from the list of pairs
   let added = 0;
-
   function add(leaf, card) {
     game.tree[leaf] = card;
     added++;
   }
-
   while (added < 28) {
-    const pair = pairs.pop(); // gather available spots to put new card...
+    const pair = pairs.pop();
 
+    // gather available spots to put new card...
     const available = [];
-
     for (let i = 0; i < 28; i++) {
       const parents = parentMap[i];
-
       if (game.tree[i] == null && parents.every(p => game.tree[p] != null)) {
         available.push(i);
       }
     }
-
     const leafA = available.splice(Math.random() * available.length, 1)[0] ?? 0;
     add(leafA, pair[0]);
-
     if (pair.length === 1) {
       continue;
     }
-
     if (available.length === 0 || Math.random() < .5) {
       game.drawPile.push(pair[1]);
       continue;
     }
-
     const leafB = available.splice(Math.random() * available.length, 1)[0];
     add(leafB, pair[1]);
   }
-
   while (pairs.length > 0) {
     game.drawPile.push(...pairs.pop());
   }
-
   game.drawPile.shuffle();
   return game.setContexts();
 }
@@ -1780,125 +1513,95 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
 function getOneSuitDeck() {
   const deck = new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck();
-
   for (let i = 0; i < 8; i++) {
     deck.push(..._deck__WEBPACK_IMPORTED_MODULE_1__.Deck.ofSuit(_deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Spades));
   }
-
   return deck;
 }
-
 function getTwoSuitDeck() {
   const deck = new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck();
-
   for (let i = 0; i < 4; i++) {
     deck.push(..._deck__WEBPACK_IMPORTED_MODULE_1__.Deck.ofSuit(_deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Spades));
     deck.push(..._deck__WEBPACK_IMPORTED_MODULE_1__.Deck.ofSuit(_deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Hearts));
   }
-
   return deck;
 }
-
 function getFourSuitDeck() {
   return _deck__WEBPACK_IMPORTED_MODULE_1__.Deck.full().concat(_deck__WEBPACK_IMPORTED_MODULE_1__.Deck.full());
 }
-
 function getDeck(suitCount) {
   if (suitCount === 1) {
     return getOneSuitDeck();
   }
-
   if (suitCount === 2) {
     return getTwoSuitDeck();
   }
-
   if (suitCount === 4) {
     return getFourSuitDeck();
   }
-
   throw new Error("invalid suitCount");
 }
-
 class Game {
   setContexts() {
     const contexts = [this.drawPile, ...this.tableau, ...this.foundation];
-
     for (const context of contexts) {
       this.setContext(context);
     }
-
     return this;
   }
-
   setContext(context) {
     for (const card of context) {
       card.meta.context = context;
     }
   }
-
   moveCards(cards, target) {
     for (const card of cards) {
       target.push(card);
       card.meta.context = target;
     }
   }
-
   getMovableCards(card) {
     if (!card.faceUp) {
       return null;
     }
-
     const context = card.meta.context;
     const index = context.indexOf(card);
     const cards = context.slice(index);
-
     for (let i = 1; i < cards.length; i++) {
       const prev = cards[i - 1];
       const cur = cards[i];
-
       if (prev.suit !== cur.suit || prev.value - 1 !== cur.value) {
         return null;
       }
     }
-
     return cards;
   }
-
   canMoveCards(card, target) {
     if (target.length === 0) {
       return true;
     }
-
     if (target.fromTop().value - 1 === card.value) {
       return true;
     }
-
     return false;
   }
-
   canCompleteStack(deck) {
     const suit = deck.fromTop().suit;
-
     for (let i = 12; i >= 0; i--) {
       const card = deck.fromTop(i);
-
       if (card?.suit !== suit || card.value !== i + 1) {
         return false;
       }
     }
-
     return true;
   }
-
   transferCards(card, target) {
     const context = card.meta.context;
     const index = context.indexOf(card);
     this.moveCards(context.draw(context.length - index), target);
   }
-
   tryGetMoveTarget(card) {
     const possibleTargets = this.tableau.filter(deck => this.canMoveCards(card, deck));
     const ranked = possibleTargets.map(deck => {
@@ -1909,22 +1612,17 @@ class Game {
           differentSuitSize: 0
         };
       }
-
       let sameSuitSize = 0;
       let value = card.value + 1;
-
       while (deck.fromTop(sameSuitSize)?.suit === card.suit && deck.fromTop(sameSuitSize)?.value === value) {
         sameSuitSize++;
         value++;
       }
-
       let differentSuitSize = sameSuitSize;
-
       while (deck.fromTop(differentSuitSize)?.value === value) {
         differentSuitSize++;
         value++;
       }
-
       return {
         deck,
         sameSuitSize,
@@ -1936,24 +1634,19 @@ class Game {
     });
     return ranked[0]?.deck ?? null;
   }
-
   tryFlipCard(deck) {
     if (this.tableau.includes(deck)) {
       const top = deck.fromTop();
-
       if (top != null && !top.faceUp) {
         top.faceUp = true;
         return true;
       }
     }
-
     return false;
   }
-
   hasWon() {
     return this.foundation.length === 8;
   }
-
   serialize() {
     return {
       d: this.drawPile.serialize(),
@@ -1961,49 +1654,38 @@ class Game {
       f: this.foundation.map(d => d.serialize())
     };
   }
-
   drawPile = new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck();
   tableau = [new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck()];
   foundation = [];
-
   static fromScratch(game, settings) {
     game.drawPile.splice(0, game.drawPile.length, ...getDeck(settings.suitCount).shuffle());
     game.foundation.splice(0, game.foundation.length);
     game.tableau.splice(0, game.tableau.length);
-
     for (let i = 0; i < 4; i++) {
       game.tableau.push(game.drawPile.draw(5));
     }
-
     for (let i = 0; i < 6; i++) {
       game.tableau.push(game.drawPile.draw(4));
     }
-
     for (const deck of game.tableau) {
       deck.fromTop().faceUp = true;
     }
-
     return game.setContexts();
   }
-
   static deserialize = (0,_undo_stack__WEBPACK_IMPORTED_MODULE_2__.validatedDelta)((input, game) => {
     game ??= new Game();
     game.drawPile = _deck__WEBPACK_IMPORTED_MODULE_1__.Deck.deserialize(input.d, game.drawPile);
     const tableau = game.tableau;
-
     for (let i = 0; i < 10; i++) {
       tableau[i] = _deck__WEBPACK_IMPORTED_MODULE_1__.Deck.deserialize(input.t?.[i], tableau[i]);
     }
-
     if (input.f != null) {
       const foundation = game.foundation;
       foundation.length = input.f.length ?? foundation.length;
-
       for (let i = 0; i < foundation.length; i++) {
         foundation[i] = _deck__WEBPACK_IMPORTED_MODULE_1__.Deck.deserialize(input.f[i], foundation[i]);
       }
     }
-
     return game.setContexts();
   });
 }
@@ -2027,129 +1709,105 @@ class Delta {
     this.from = from;
     this.to = to;
   }
-
   serialize() {
     return {
       f: this.from,
       t: this.to
     };
   }
-
   static deserialize(input) {
     return new Delta(input.f, input.t);
   }
-
   static compute(prevState, nextState) {
     const from = prevState == null ? null : {};
-    const to = nextState == null ? null : {}; // cast to record so typescript doesn't complain about string indexes
+    const to = nextState == null ? null : {};
 
+    // cast to record so typescript doesn't complain about string indexes
     const prevRecord = prevState;
     const nextRecord = nextState;
     const allKeys = new Set(Object.getOwnPropertyNames(prevState ?? {}).concat(Object.getOwnPropertyNames(nextState ?? {})));
-
     for (const key of allKeys) {
       const prev = prevRecord?.[key] ?? null;
       const next = nextRecord?.[key] ?? null;
-
       if (prev === next) {
         continue;
       }
-
       if (typeof prev === "object" && typeof next === "object") {
         const result = Delta.compute(prev, next);
-
         if (result != null) {
           from != null && (from[key] = result.from);
           to != null && (to[key] = result.to);
         }
-
         continue;
       }
-
       from != null && (from[key] = prev);
       to != null && (to[key] = next);
     }
-
     if (Object.keys(from ?? {}).length + Object.keys(to ?? {}).length === 0) {
       return null;
     }
-
     return new Delta(from, to);
   }
-
 }
-
 function validatedDelta(action) {
   function validator(delta, object = null) {
     if (delta == null) {
       return delta === undefined ? object : null;
     }
-
     return action(delta, object);
   }
-
   return validator;
 }
 class UndoStack {
   constructor(undo = [], redo = []) {
     this.reset(undo, redo);
   }
-
   record(object) {
     let start = object.serialize();
     let deltas;
     return () => {
       const end = object.serialize();
       const diff = Delta.compute(start, end);
-
       if (diff != null) {
         if (deltas == null) {
           deltas = [];
           this.undoStack.push(deltas);
           this.redoStack = [];
         }
-
         deltas.push(diff);
         start = end;
       }
     };
   }
-
   undo() {
     if (this.undoStack.length === 0 || this.lock) {
       return null;
     }
-
     const deltas = this.undoStack.pop();
     const result = deltas.map(d => d.from);
     this.redoStack.push(deltas.reverse());
     return result;
   }
-
   redo() {
     if (this.redoStack.length === 0 || this.lock) {
       return null;
     }
-
     const deltas = this.redoStack.pop();
     const result = deltas.map(d => d.to);
     this.undoStack.push(deltas.reverse());
     return result;
   }
-
   reset(undo = [], redo = []) {
     this.undoStack = undo;
     this.redoStack = redo;
     this.lock = false;
   }
-
   serialize() {
     return {
       u: this.undoStack.map(ds => ds.map(d => d.serialize())),
       r: this.redoStack.map(ds => ds.map(d => d.serialize()))
     };
   }
-
   undoStack = [];
   redoStack = [];
   lock = false;
@@ -2158,7 +1816,6 @@ class UndoStack {
     // with function wrappers
     return validatedDelta((input, undoStack) => {
       undoStack ??= new UndoStack();
-
       if (input.u != null) {
         const {
           length,
@@ -2166,16 +1823,13 @@ class UndoStack {
         } = input.u;
         const stack = undoStack.undoStack;
         stack.length = length ?? stack.length;
-
         for (const key of Object.keys(rest)) {
           const index = Number.parseInt(key, 10);
-
           if (index < stack.length) {
             stack[index] = rest[index].map(d => Delta.deserialize(d));
           }
         }
       }
-
       if (input.r != null) {
         const {
           length,
@@ -2183,16 +1837,13 @@ class UndoStack {
         } = input.r;
         const stack = undoStack.redoStack;
         stack.length = length ?? stack.length;
-
         for (const key of Object.keys(rest)) {
           const index = Number.parseInt(key, 10);
-
           if (index < stack.length) {
             stack[index] = rest[index].map(d => Delta.deserialize(d));
           }
         }
       }
-
       return undoStack;
     })(input, undoStack);
   };
@@ -2221,23 +1872,18 @@ __webpack_require__.r(__webpack_exports__);
 
 
 let GameGenerator;
-
 (function (GameGenerator) {
   GameGenerator[GameGenerator["Random"] = 0] = "Random";
   GameGenerator[GameGenerator["Solveable"] = 1] = "Solveable";
 })(GameGenerator || (GameGenerator = {}));
-
 class Game {
   setContexts() {
     const contexts = [...this.tableau, this.completed];
-
     for (const context of contexts) {
       this.setContext(context);
     }
-
     return this;
   }
-
   setContext(context) {
     for (const card of context) {
       if (card != null) {
@@ -2245,74 +1891,58 @@ class Game {
       }
     }
   }
-
   getMovableCards(card) {
     if (this.isPlayable(card)) {
       return [card];
     }
-
     return null;
   }
-
   clearCard(card) {
     if (card.meta.context === this.completed) {
       return;
     }
-
     const formerContext = card.meta.context;
     formerContext.splice(formerContext.indexOf(card), 1);
     this.completed.push(card);
     card.meta.context = this.completed;
-
     if (formerContext.length > 0) {
       formerContext.fromTop().faceUp = true;
     }
   }
-
   isPlayable(card) {
     if (card.meta.context === this.completed) {
       return false;
     }
-
     const context = card.meta.context;
     return card === context.fromTop();
   }
-
   canClearCards(cardA, cardB) {
     if (cardA === cardB || cardA.value !== cardB.value) {
       return false;
     }
-
     return this.isPlayable(cardA) && this.isPlayable(cardB);
   }
-
   hasWon() {
     return this.completed.length === 32;
   }
-
   serialize() {
     return {
       t: this.tableau.map(d => d.serialize()),
       c: this.completed.serialize()
     };
   }
-
   tableau = [new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck()];
   completed = new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck();
-
   static fromScratch(game, settings) {
     const generator = [_generator__WEBPACK_IMPORTED_MODULE_3__.randomShuffle, _generator__WEBPACK_IMPORTED_MODULE_3__.reverseGame][settings.generator];
     return generator(game);
   }
-
   static deserialize = (0,_undo_stack__WEBPACK_IMPORTED_MODULE_2__.validatedDelta)((input, game) => {
     game ??= new Game();
     const tableau = game.tableau;
-
     for (let i = 0; i < 8; i++) {
       tableau[i] = _deck__WEBPACK_IMPORTED_MODULE_1__.Deck.deserialize(input.t?.[i], tableau[i]);
     }
-
     game.completed = _deck__WEBPACK_IMPORTED_MODULE_1__.Deck.deserialize(input.c, game.completed);
     return game.setContexts();
   });
@@ -2340,34 +1970,30 @@ function randomShuffle(game) {
   game.tableau.splice(0, game.tableau.length);
   game.completed.splice(0, game.completed.length);
   const deck = _deck__WEBPACK_IMPORTED_MODULE_0__.Deck.full().shuffle().filter(c => c.value < 2 || c.value > 6);
-
   for (let i = 0; i < 8; i++) {
     game.tableau.push(deck.draw(4));
     game.tableau[i].fromTop().faceUp = true;
   }
-
   return game.setContexts();
 }
 function reverseGame(game) {
   game.tableau.splice(0, game.tableau.length);
   game.completed.splice(0, game.completed.length);
-
   for (let i = 0; i < 8; i++) {
     game.tableau.push(new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck());
-  } // pair-off all cards in a shuffled deck
+  }
 
-
+  // pair-off all cards in a shuffled deck
   const deck = _deck__WEBPACK_IMPORTED_MODULE_0__.Deck.full().shuffle().filter(c => c.value < 2 || c.value > 6);
   const pairs = new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck();
-
   while (deck.length > 0) {
     const cardA = deck.pop();
     const index = deck.findIndex(c => c.value === cardA.value);
     const cardB = deck.splice(index, 1)[0];
     pairs.push([cardA, cardB]);
   }
-
   pairs.shuffle();
+
   /* rules:
   	1. do not reduce to 1 deck before last pair
   		this would cause and unsolvable game, since the last pair is placed one atop the other
@@ -2376,46 +2002,37 @@ function reverseGame(game) {
   	3. do remove empty decks before third to last pair
   		an empty deck on third to last would be 0 3 3, (or 0 2) which forces us to break rule 2
   */
-
   while (pairs.length > 0) {
     const pair = pairs.pop();
     const illegalDeckCount = pairs.length > 1 ? 2 : pairs.length > 0 ? 1 : -1;
     const decks = game.tableau.filter(d => d.length < 4);
     let deckCount = decks.length;
-
     while (true) {
       const deckA = decks.splice(Math.random() * decks.length, 1)[0];
       const completedDecks = deckA.length === 3 ? 1 : 0;
       const remainingDecks = deckCount - completedDecks;
-
       if (pairs.length > 4 || remainingDecks > illegalDeckCount) {
         deckA.push(pair[0]);
         deckCount -= completedDecks;
         break;
       }
     }
-
     while (true) {
       const deckB = decks.splice(Math.random() * decks.length, 1)[0];
-
       if (pairs.length === 3 && decks.some(d => d.length === 0)) {
         continue;
       }
-
       const completedDecks = deckB.length === 3 ? 1 : 0;
       const remainingDecks = deckCount - completedDecks;
-
       if (pairs.length > 4 || remainingDecks > illegalDeckCount) {
         deckB.push(pair[1]);
         break;
       }
     }
   }
-
   for (const deck of game.tableau) {
     deck.fromTop().faceUp = true;
   }
-
   return game.setContexts();
 }
 
@@ -2442,53 +2059,41 @@ class AnimationStep {
     this.progress += delta;
     this.step(delta);
   }
-
   step(delta) {
     throw new Error(`you shouldn't be here ${delta}`);
   }
-
   progress = 0;
 }
-
 class Action extends AnimationStep {
   constructor(func) {
     super();
     this.func = func;
   }
-
   step(delta) {
     this.done = this.func(this.progress, delta) ?? false;
   }
-
   done = false;
 }
-
 function wrapStep(step) {
   if (step instanceof AnimationStep) {
     return step;
   }
-
   return new Action(step);
 }
-
 class Sequence extends AnimationStep {
   constructor(steps) {
     super();
     this.steps = steps.map(wrapStep);
   }
-
   step(delta) {
     this.steps[this.stepIndex].advance(delta);
-
     if (this.steps[this.stepIndex].done) {
       this.stepIndex++;
     }
   }
-
   get done() {
     return this.stepIndex === this.steps.length;
   }
-
   stepIndex = 0;
 }
 class Parallel extends AnimationStep {
@@ -2497,39 +2102,30 @@ class Parallel extends AnimationStep {
     this.race = race;
     this.steps = steps.map(wrapStep);
   }
-
   step(delta) {
     for (const step of this.steps.filter(s => !s.done)) {
       step.advance(delta);
     }
   }
-
   get done() {
     if (this.race) {
       return this.steps.some(s => s.done);
     }
-
     return this.steps.every(s => s.done);
   }
-
   static asRace(steps) {
     return new Parallel(steps, true);
   }
-
 }
 class Loop extends AnimationStep {
   constructor(createStep, until = () => false) {
     super();
     this.until = until;
-
     this.create = () => wrapStep(createStep());
-
     this.curStep = this.create();
   }
-
   step(delta) {
     this.curStep?.advance(delta);
-
     if (this.curStep?.done ?? false) {
       if (this.until()) {
         this.curStep = null;
@@ -2538,11 +2134,9 @@ class Loop extends AnimationStep {
       }
     }
   }
-
   get done() {
     return this.curStep == null;
   }
-
 }
 class Delayed extends AnimationStep {
   constructor(step, delay) {
@@ -2550,17 +2144,14 @@ class Delayed extends AnimationStep {
     this.delay = delay;
     this.substep = wrapStep(step);
   }
-
   step(delta) {
     if (this.progress >= this.delay) {
       this.substep.advance(delta);
     }
   }
-
   get done() {
     return this.substep.done;
   }
-
 }
 class Eased extends AnimationStep {
   constructor(step, duration) {
@@ -2568,12 +2159,10 @@ class Eased extends AnimationStep {
     this.duration = duration;
     this.substep = wrapStep(step);
   }
-
   advance(delta) {
     if (this.progress > this.duration) {
       throw "WTF";
     }
-
     const prevProgress = this.progress;
     this.progress += delta;
     const prevFraction = Math.min(prevProgress / this.duration);
@@ -2582,11 +2171,9 @@ class Eased extends AnimationStep {
     const eased = Eased.easeInOut(fraction);
     this.substep.advance(eased - prevEased);
   }
-
   get done() {
     return this.progress >= this.duration;
   }
-
   static easeInOut = t => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
 }
 
@@ -2617,7 +2204,6 @@ function useAnimator() {
         animData.animation?.advance(delta / 1000, sizes);
         animData.frame = requestAnimationFrame(animData.animate);
       }
-
     };
   }, [sizes]);
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => () => {
@@ -2627,7 +2213,6 @@ function useAnimator() {
     cancelAnimationFrame(animData.frame);
     animData.animation = animation;
     animData.prevTime = null;
-
     if (animation != null) {
       animData.frame = requestAnimationFrame(animData.animate);
     }
@@ -2654,41 +2239,32 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
 function getTransform(z, degrees, radius) {
   const out = `translateY(-${radius * 150}%)`;
   const rotate = `rotate(${degrees}deg)`;
   return `translate(-50%, -50%) translateZ(${z}px) ${rotate} ${out} rotateY(2deg)`;
 }
-
 const gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
-
 function getCoprimeAround(value, desired) {
   if (gcd(value, desired) === 1) {
     return desired;
   }
-
   for (let i = 0; i < 100; i++) {
     if (gcd(value, desired - i) === 1) {
       return desired - i;
     }
-
     if (gcd(value, desired + i) === 1) {
       return desired + i;
     }
   }
-
   throw new Error("This should *definitely* not happen");
 }
-
 const getAnimMeta = card => card.meta.anim;
-
 class CardRingAnimation {
   constructor(...decks) {
-    this.cards = decks.flatMap(d => [...d]);
+    this.cards = decks.flatMap(d => [...d].reverse());
     this.totalCards = this.cards.length;
     this.coprime = getCoprimeAround(this.totalCards, this.totalCards / 4);
-
     for (const card of this.cards) {
       const box = card.meta.elem.getBoundingClientRect();
       card.meta.anim = {
@@ -2697,43 +2273,43 @@ class CardRingAnimation {
         easeProgress: 0
       };
     }
-
     const rps = .5;
     this.spinAnimation = new _animation_step__WEBPACK_IMPORTED_MODULE_2__.Loop(() => progress => {
       this.baseRotation = progress * rps % 1;
     });
-    this.sequence = new _animation_step__WEBPACK_IMPORTED_MODULE_2__.Sequence([new _animation_step__WEBPACK_IMPORTED_MODULE_2__.Parallel([// pulse
+    this.sequence = new _animation_step__WEBPACK_IMPORTED_MODULE_2__.Sequence([new _animation_step__WEBPACK_IMPORTED_MODULE_2__.Parallel([
+    // pulse
     new _animation_step__WEBPACK_IMPORTED_MODULE_2__.Loop(() => new _animation_step__WEBPACK_IMPORTED_MODULE_2__.Sequence([new _animation_step__WEBPACK_IMPORTED_MODULE_2__.Eased(progress => {
       const offset = (progress - .5) * .2;
       this.radius = 1 - offset;
     }, 1), new _animation_step__WEBPACK_IMPORTED_MODULE_2__.Eased(progress => {
       const offset = (progress - .5) * .2;
       this.radius = 1 + offset;
-    }, 1)]), () => this.cards.every(card => getAnimMeta(card).easeProgress === 1)), // move cards into ring
+    }, 1)]), () => this.cards.every(card => getAnimMeta(card).easeProgress === 1)),
+    // move cards into ring
     ...this.cards.map((card, i) => new _animation_step__WEBPACK_IMPORTED_MODULE_2__.Delayed(new _animation_step__WEBPACK_IMPORTED_MODULE_2__.Eased(progress => {
       getAnimMeta(card).easeProgress = progress;
-    }, .25), i * .1))]), // shrink
+    }, .25), i * .1))]),
+    // shrink
     new _animation_step__WEBPACK_IMPORTED_MODULE_2__.Eased(progress => {
       this.radius = 1.1 - progress * .6;
-    }, 1), // fly out
+    }, 1),
+    // fly out
     () => {
       this.radius += this.radius * .05;
     }]);
   }
-
   advance(delta, sizes) {
     this.spinAnimation.advance(delta);
     this.sequence.advance(delta);
     const left = sizes.boardWidth / 2;
     const top = sizes.boardHeight / 2;
-
     for (let i = 0; i < this.cards.filter(c => getAnimMeta(c).easeProgress > 0).length; i++) {
       const card = this.cards[i];
       const style = card.meta.elem.style;
       const cardOffset = i * this.coprime % this.totalCards / this.totalCards;
       const degrees = (this.baseRotation + cardOffset) * 360;
       style.transition = "unset";
-
       if (getAnimMeta(card).easeProgress !== 1) {
         const diffLeft = left - getAnimMeta(card).left;
         const diffTop = top - getAnimMeta(card).top;
@@ -2748,7 +2324,6 @@ class CardRingAnimation {
       }
     }
   }
-
   baseRotation = 0;
   radius = 1.1;
 }
@@ -2801,7 +2376,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
 function useGame() {
   const {
     game,
@@ -2822,7 +2396,6 @@ function useGame() {
     while (true) {
       const commit = undoStack.record(game);
       const movedFromDeck = game.tryAutoCompleteOne();
-
       if (movedFromDeck != null) {
         rerender();
         commit();
@@ -2834,7 +2407,6 @@ function useGame() {
           setAnimation(new _animations_card_ring__WEBPACK_IMPORTED_MODULE_13__.CardRingAnimation(...Object.values(game.foundations)));
           rerender();
         }
-
         return;
       }
     }
@@ -2857,22 +2429,18 @@ function useGame() {
   const targetTap = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(targetContext => {
     const activeElement = document.activeElement;
     const activeCard = (0,_shared_get_context__WEBPACK_IMPORTED_MODULE_9__.getCard)(activeElement);
-
     if (activeCard != null && game.canMoveCards(activeCard, targetContext)) {
       doMoveCards(activeCard, targetContext);
       return true;
     }
-
     activeElement.blur();
     return false;
   }, []);
   const playableTap = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(pointer => {
     const targetContext = pointer.card.meta.context;
-
     if (targetTap(targetContext)) {
       return;
     }
-
     if (pointer.dragCards != null) {
       pointer.card.meta.elem?.focus();
     }
@@ -2880,7 +2448,6 @@ function useGame() {
   const playableDoubleTap = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(pointer => {
     if (pointer.dragCards != null) {
       const target = game.tryGetMoveTarget(pointer.card);
-
       if (game.canMoveCards(pointer.card, target)) {
         doMoveCards(pointer.card, target);
       }
@@ -2902,7 +2469,6 @@ function useGame() {
     redo
   };
 }
-
 const Board = (0,_shared_sizerator__WEBPACK_IMPORTED_MODULE_10__.sizerated)(8, 5, function Board() {
   const {
     game,
@@ -3063,7 +2629,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
 function useGame() {
   const {
     game,
@@ -3085,17 +2650,14 @@ function useGame() {
     while (true) {
       const commit = undoStack.record(game);
       const movedFromDeck = game.tryAutoCompleteOne();
-
       if (movedFromDeck != null) {
         rerender();
         commit();
-
         if (game.tryFlipCard(movedFromDeck)) {
           yield 10;
           rerender();
           commit();
         }
-
         yield 100;
       } else {
         if (!tryFinish()) {
@@ -3104,7 +2666,6 @@ function useGame() {
           setAnimation(new _animations_card_ring__WEBPACK_IMPORTED_MODULE_14__.CardRingAnimation(...Object.values(game.foundations)));
           rerender();
         }
-
         return;
       }
     }
@@ -3117,13 +2678,11 @@ function useGame() {
     rerender();
     commit();
     saveGame();
-
     if (game.tryFlipCard(originDeck)) {
       yield 10;
       rerender();
       commit();
     }
-
     yield 100;
     tryAutoComplete();
   });
@@ -3136,9 +2695,7 @@ function useGame() {
     if (game.drawPile.length > 0) {
       return;
     }
-
     const commit = undoStack.record(game);
-
     while (game.discardPile.length > 0) {
       game.undrawCards(1);
       rerender();
@@ -3149,17 +2706,14 @@ function useGame() {
   const drawPileTap = enqueueAction(function* (pointer) {
     document.activeElement.blur();
     const context = pointer.card.meta.context;
-
     if (pointer.card === context.fromTop()) {
       const commit = undoStack.record(game);
-
       for (let i = 0; i < game.drawCount; i++) {
         game.drawCards(1);
         rerender();
         commit();
         yield 10;
       }
-
       yield 100;
       tryAutoComplete();
     }
@@ -3168,22 +2722,18 @@ function useGame() {
   const targetTap = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(targetContext => {
     const activeElement = document.activeElement;
     const activeCard = (0,_shared_get_context__WEBPACK_IMPORTED_MODULE_10__.getCard)(activeElement);
-
     if (activeCard != null && game.canMoveCards(activeCard, targetContext)) {
       doMoveCards(activeCard, targetContext);
       return true;
     }
-
     activeElement.blur();
     return false;
   }, []);
   const playableTap = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(pointer => {
     const targetContext = pointer.card.meta.context;
-
     if (targetTap(targetContext)) {
       return;
     }
-
     if (pointer.dragCards != null) {
       pointer.card.meta.elem?.focus();
     }
@@ -3191,7 +2741,6 @@ function useGame() {
   const playableDoubleTap = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(pointer => {
     if (pointer.dragCards != null) {
       const target = game.tryGetMoveTarget(pointer.dragCards[0].card);
-
       if (game.canMoveCards(pointer.dragCards[0].card, target)) {
         doMoveCards(pointer.dragCards[0].card, target);
       }
@@ -3216,7 +2765,6 @@ function useGame() {
     redo
   };
 }
-
 const Board = (0,_shared_sizerator__WEBPACK_IMPORTED_MODULE_11__.sizerated)(7, 5, function Board() {
   const {
     game,
@@ -3329,7 +2877,8 @@ const Board = (0,_shared_sizerator__WEBPACK_IMPORTED_MODULE_11__.sizerated)(7, 5
         onDoubleTap: playableDoubleTap,
         getDragCards: playableGetCards
       }))]
-    }), newGame.showModal && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_newgame_modal__WEBPACK_IMPORTED_MODULE_15__.NewgameModal, { ...newGame
+    }), newGame.showModal && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_newgame_modal__WEBPACK_IMPORTED_MODULE_15__.NewgameModal, {
+      ...newGame
     })]
   });
 });
@@ -3547,7 +3096,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
 function useGame() {
   const {
     game,
@@ -3571,22 +3119,18 @@ function useGame() {
       rerender();
       yield 10;
     }
-
     setAnimation(new _animations_card_ring__WEBPACK_IMPORTED_MODULE_10__.CardRingAnimation(game.completed));
     rerender();
   });
   const doClearCards = enqueueAction(function* (...cards) {
     const commit = undoStack.record(game);
-
     for (const card of cards) {
       game.clearCard(card);
       card.meta.elem?.blur();
     }
-
     rerender();
     commit();
     yield 100;
-
     if (!tryFinish()) {
       saveGame();
     } else {
@@ -3602,24 +3146,20 @@ function useGame() {
     if (game.drawPile.length > 0 || game.remainingFlips === 0) {
       return;
     }
-
     const commit = undoStack.record(game);
     game.remainingFlips--;
-
     while (game.discardPile.length > 0) {
       game.undrawCard();
       rerender();
       commit();
       yield 10;
     }
-
     saveGame();
   });
   const drawPileDraw = enqueueAction(function* () {
     const activeElement = document.activeElement;
     activeElement.blur();
     const commit = undoStack.record(game);
-
     if (game.drawPile.length > 0) {
       game.drawCard();
       rerender();
@@ -3634,14 +3174,11 @@ function useGame() {
   const playableTap = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(pointer => {
     const activeElement = document.activeElement;
     const activeCard = (0,_shared_get_context__WEBPACK_IMPORTED_MODULE_6__.getCard)(activeElement);
-
     if (activeCard != null && game.canClearCards(activeCard, pointer.card)) {
       doClearCards(activeCard, pointer.card);
       return;
     }
-
     activeElement.blur();
-
     if (pointer.dragCards != null) {
       pointer.card.meta.elem?.focus();
     }
@@ -3665,17 +3202,13 @@ function useGame() {
     redo
   };
 }
-
 const renderPyramid = (cards, handlers) => () => {
   const results = [];
-
   for (let i = 0, j = 0; j < cards.length; i++, j += i) {
     const rowSize = i + 1;
     const startX = 3 - i / 2;
-
     for (let k = 0; k < rowSize; k++) {
       const card = cards[j + k];
-
       if (card != null) {
         results.push({
           card,
@@ -3689,7 +3222,6 @@ const renderPyramid = (cards, handlers) => () => {
       }
     }
   }
-
   return results;
 };
 const Board = (0,_shared_sizerator__WEBPACK_IMPORTED_MODULE_7__.sizerated)(7, 5, function Board() {
@@ -3753,7 +3285,8 @@ const Board = (0,_shared_sizerator__WEBPACK_IMPORTED_MODULE_7__.sizerated)(7, 5,
         x: 6,
         y: 4
       }, game.completed)]
-    }), newGame.showModal && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_newgame_modal__WEBPACK_IMPORTED_MODULE_11__.NewgameModal, { ...newGame
+    }), newGame.showModal && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_newgame_modal__WEBPACK_IMPORTED_MODULE_11__.NewgameModal, {
+      ...newGame
     })]
   });
 });
@@ -3864,29 +3397,25 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 
 
- // sort of a stripped down, barebones react router clone
 
 
+// sort of a stripped down, barebones react router clone
 
 function useHistory() {
   const routes = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => new Set(), []);
   const rerender = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(() => routes.forEach(r => r()), []);
-
   if (history.state == null) {
     history.replaceState({
       crumb: ["/"]
     }, "", "/");
   }
-
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     window.onpopstate = rerender;
   }, []);
-
   const go = route => {
     const historyState = history.state;
     const crumb = historyState.crumb;
     const index = crumb.indexOf(route);
-
     if (index >= 0) {
       history.go(index - crumb.length);
     } else {
@@ -3894,21 +3423,17 @@ function useHistory() {
         crumb: historyState.crumb.concat(route)
       }, "", "/");
     }
-
     rerender();
   };
-
   const back = () => {
     history.back();
     rerender();
   };
-
   const home = () => {
     const historyState = history.state;
     history.go(-(historyState.crumb.length - 1));
     rerender();
   };
-
   return (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => ({
     useRoute: route => (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
       routes.add(route);
@@ -3923,7 +3448,6 @@ function useHistory() {
     }
   }), []);
 }
-
 const routerContext = /*#__PURE__*/(0,react__WEBPACK_IMPORTED_MODULE_0__.createContext)(null);
 function AppRouter({
   children
@@ -3944,7 +3468,6 @@ function Route({
   const crumb = historyState.crumb;
   const urlPath = new URL(crumb[crumb.length - 1], location.href).pathname;
   const defPath = new URL(path, location.href).pathname;
-
   if (exact ?? false) {
     if (defPath !== urlPath) {
       return null;
@@ -3952,14 +3475,12 @@ function Route({
   } else {
     const defParts = defPath.split("/");
     const urlParts = urlPath.split("/");
-
     for (let i = 0; i < defParts.length; i++) {
       if (defParts[i] !== urlParts[i]) {
         return null;
       }
     }
   }
-
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(Component, {});
 }
 function useRouter() {
@@ -4022,7 +3543,6 @@ function useGameCore(Game, key) {
   const useSetup = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(start => (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     void (async () => {
       const save = await (0,_logic_game_db__WEBPACK_IMPORTED_MODULE_2__.get)(_logic_game_db__WEBPACK_IMPORTED_MODULE_2__.saveGameTable, key);
-
       if (save != null) {
         Game.deserialize(save.game, game);
         _logic_undo_stack__WEBPACK_IMPORTED_MODULE_1__.UndoStack.deserialize(save.undoStack, undoStack);
@@ -4039,42 +3559,33 @@ function useGameCore(Game, key) {
       void (0,_logic_game_db__WEBPACK_IMPORTED_MODULE_2__.remove)(_logic_game_db__WEBPACK_IMPORTED_MODULE_2__.saveGameTable, key);
       return true;
     }
-
     return false;
   }, []);
   const undo = enqueueAction(function* () {
     const deltas = undoStack.undo();
-
     if (deltas == null) {
       return;
     }
-
     undoStack.lock = true;
-
     while (deltas.length > 0) {
       Game.deserialize(deltas.pop(), game);
       rerender();
       yield 10;
     }
-
     saveGame();
     undoStack.lock = false;
   });
   const redo = enqueueAction(function* () {
     const deltas = undoStack.redo();
-
     if (deltas == null) {
       return;
     }
-
     undoStack.lock = true;
-
     while (deltas.length > 0) {
       Game.deserialize(deltas.pop(), game);
       rerender();
       yield 10;
     }
-
     saveGame();
     undoStack.lock = false;
   });
@@ -4111,7 +3622,6 @@ function BoardCore({
     }), rest]
   });
 }
-
 BoardCore.Background = function ({
   children
 }) {
@@ -4154,7 +3664,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const hats = [(_images_faces_jack_hat_svg__WEBPACK_IMPORTED_MODULE_1___default()), (_images_faces_queen_hat_svg__WEBPACK_IMPORTED_MODULE_2___default()), (_images_faces_king_hat_svg__WEBPACK_IMPORTED_MODULE_3___default())];
-
 function renderFaceCard(Icon, value, smallCard) {
   const className = `${_card_face_css__WEBPACK_IMPORTED_MODULE_6__["default"].cardFace} ${_card_face_css__WEBPACK_IMPORTED_MODULE_6__["default"][`c${value}`]}`;
   const HatIcon = hats[value - 11];
@@ -4165,21 +3674,17 @@ function renderFaceCard(Icon, value, smallCard) {
     })]
   });
 }
-
 function renderNumberCard(Icon, value) {
   const icons = [];
-
   for (let i = 0; i < value; i++) {
     icons.push( /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(Icon, {}, i));
   }
-
   const className = `${_card_face_css__WEBPACK_IMPORTED_MODULE_6__["default"].cardFace} ${_card_face_css__WEBPACK_IMPORTED_MODULE_6__["default"][`c${value}`]}`;
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
     className: className,
     children: icons
   });
 }
-
 function CardFace({
   Icon,
   value
@@ -4192,7 +3697,6 @@ function CardFace({
     if (value > 10) {
       return renderFaceCard(Icon, value, smallCard);
     }
-
     return renderNumberCard(Icon, smallCard ? 1 : value);
   }, [Icon, value, smallCard]);
   return output;
@@ -4222,13 +3726,14 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
- // in order for css animations and transitions to work, the cards
+
+
+// in order for css animations and transitions to work, the cards
 // must stay within the same parent. Additionally, for react to match up
 // the card element to the previous render, it needs them all in the same array.
 // so, to keep things moderately react-y, we have to fiddle around with how
 // we render the various parts of the board, using "subcomponents", aka functions
 // which return arrays of elements, which we concat together and render.
-
 
 
 function CardRenderer({
@@ -4269,12 +3774,13 @@ function CardRenderer({
       }))
     })
   });
-} // common board layout components
+}
+
+// common board layout components
 
 function showOffset(showCount, cardCount, i) {
   return Math.max(Math.min(showCount, cardCount) - (cardCount - i), 0);
 }
-
 const renderPile = (slot, cards, handlers, showCount = 1) => ({
   cardWidth
 }) => cards.map((card, i) => ({
@@ -4303,15 +3809,12 @@ const renderStack = (slot, cards, handlers) => ({
   });
   const maxHeight = (cardHeight + margins) * 3;
   const endHeight = result[result.length - 1]?.offsetY;
-
   if (endHeight > maxHeight) {
     const factor = maxHeight / endHeight;
-
     for (const def of result) {
       def.offsetY *= factor;
     }
   }
-
   return result;
 };
 
@@ -4372,20 +3875,15 @@ const suitColors = {
   [_logic_deck__WEBPACK_IMPORTED_MODULE_8__.Suit.Clubs]: _card_css__WEBPACK_IMPORTED_MODULE_11__["default"].black,
   [_logic_deck__WEBPACK_IMPORTED_MODULE_8__.Suit.Hearts]: _card_css__WEBPACK_IMPORTED_MODULE_11__["default"].red
 };
-
 const trueMod = (v, m) => (v % m + m) % m;
-
 function usePosition(card, pos) {
   const moved = (0,_util_use_value_changed__WEBPACK_IMPORTED_MODULE_6__.useValueChanged)(card.meta.context);
   const [moving, setMoving] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
-
   if (moved) {
     setMoving(true);
   }
-
   const style = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => {
     const styles = {};
-
     if (card.meta.dragPos != null) {
       const dragPos = card.meta.dragPos;
       styles.left = dragPos.x;
@@ -4397,7 +3895,6 @@ function usePosition(card, pos) {
       styles.left = pos.x;
       styles.top = pos.y;
     }
-
     return styles;
   }, [card.meta.dragPos, pos.x, pos.y, pos.z]);
   const onTransitionEnd = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(event => {
@@ -4411,13 +3908,11 @@ function usePosition(card, pos) {
     onTransitionEnd
   };
 }
-
 function useFlip(card, pos) {
   const flipped = (0,_util_use_value_changed__WEBPACK_IMPORTED_MODULE_6__.useValueChanged)(card.faceUp);
   const [state, setState] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({
     faceUp: card.faceUp
   });
-
   if (flipped) {
     if (card.faceUp === state.faceUp) {
       setState({
@@ -4439,20 +3934,15 @@ function useFlip(card, pos) {
       });
     }
   }
-
   return state;
 }
-
 function useDropShadow(card) {
   if (card.meta.grabPos != null) {
     return _card_css__WEBPACK_IMPORTED_MODULE_11__["default"].dropShadow;
   }
-
   return null;
 }
-
 const cns = (...names) => names.filter(x => x).join(" ");
-
 function Card({
   card,
   pos,
@@ -4475,7 +3965,6 @@ function Card({
   } = useFlip(card, pos);
   const shadowClass = useDropShadow(card);
   const zIndex = style.zIndex ?? (z ?? pos.z) + (moving ? 2000 : 0);
-
   if (!faceUp) {
     const className = cns(_card_css__WEBPACK_IMPORTED_MODULE_11__["default"].cardBack, flipClass, shadowClass);
     return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)("div", {
@@ -4483,14 +3972,14 @@ function Card({
       onPointerDown: onPointerDown,
       onAnimationEnd: animationEnd,
       ...positionProps,
-      style: { ...style,
+      style: {
+        ...style,
         zIndex
       },
       ref: elem => card.meta.elem = elem,
       children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)((_images_backs_brown_svg__WEBPACK_IMPORTED_MODULE_1___default()), {})
     });
   }
-
   const className = cns(_card_css__WEBPACK_IMPORTED_MODULE_11__["default"].cardFront, suitColors[card.suit], flipClass, shadowClass);
   const SuitSvg = suitSvgs[card.suit];
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)("div", {
@@ -4498,7 +3987,8 @@ function Card({
     onPointerDown: onPointerDown,
     onAnimationEnd: animationEnd,
     ...positionProps,
-    style: { ...style,
+    style: {
+      ...style,
       zIndex
     },
     tabIndex: -1,
@@ -4664,43 +4154,33 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
 function getComponentFiber(elem, acceptTypes) {
   let fiber = Object.entries(elem).find(([k]) => k.startsWith("__reactFiber$"))?.[1];
-
   while (fiber != null) {
     if (acceptTypes.includes(fiber.type)) {
       return fiber;
     }
-
     fiber = fiber.return;
   }
-
   return null;
 }
-
 function getCard(elem) {
   const fiber = getComponentFiber(elem, [_card__WEBPACK_IMPORTED_MODULE_1__.Card]);
-
   if (fiber != null) {
     return fiber.memoizedProps.card;
   }
-
   return null;
 }
 function getContextAndCard(elem) {
   const fiber = getComponentFiber(elem, [_card__WEBPACK_IMPORTED_MODULE_1__.Card, _empty_zone__WEBPACK_IMPORTED_MODULE_2__.EmptyZone]);
-
   if (fiber?.type === _card__WEBPACK_IMPORTED_MODULE_1__.Card) {
     const props = fiber.memoizedProps;
     return [props.card.meta.context, props.card];
   }
-
   if (fiber?.type === _empty_zone__WEBPACK_IMPORTED_MODULE_2__.EmptyZone) {
     const props = fiber.memoizedProps;
     return [props.context];
   }
-
   return [];
 }
 
@@ -4730,16 +4210,13 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
 function takeWhere(array, predicate) {
   const index = array.findIndex(predicate);
   return index >= 0 ? array.splice(index, 1)[0] : null;
 }
-
 function typeIs(node, Type) {
   return node?.type === Type;
 }
-
 function Modal({
   children
 }) {
@@ -4787,7 +4264,6 @@ function ModalButton(props) {
     ...props
   });
 }
-
 function RadioButton({
   label,
   isSelected,
@@ -4801,7 +4277,6 @@ function RadioButton({
     }), label]
   });
 }
-
 function ModalRadio({
   options,
   selected,
@@ -4814,9 +4289,11 @@ function ModalRadio({
     label: label,
     isSelected: key === selected,
     onClick: () => onSelection(key)
-  }, `${key}`) // the type system does not seem to know that this is ok
+  }, `${key}`)
+  // the type system does not seem to know that this is ok
   );
 }
+
 function ModalDisclaimer({
   children
 }) {
@@ -4848,7 +4325,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
 function getContextAtPoint(pointer) {
   const cardElem = pointer.card.meta.elem;
   const {
@@ -4860,7 +4336,6 @@ function getContextAtPoint(pointer) {
   const elem = document.elementFromPoint(left + width / 2, top + height / 2);
   return (0,_get_context__WEBPACK_IMPORTED_MODULE_2__.getContextAndCard)(elem);
 }
-
 const pointerContext = /*#__PURE__*/(0,react__WEBPACK_IMPORTED_MODULE_0__.createContext)({});
 function PointerManager({
   onDrop,
@@ -4870,13 +4345,10 @@ function PointerManager({
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useLayoutEffect)(() => {
     const pointerMove = event => {
       event.preventDefault();
-
       if (event.pointerId !== pointers.current?.id || pointers.current.dragCards == null) {
         return;
       }
-
       const timeSince = event.timeStamp - pointers.current.timeStamp;
-
       for (const dragCard of pointers.current.dragCards) {
         const origin = dragCard.origin;
         const newPos = {
@@ -4884,7 +4356,6 @@ function PointerManager({
           y: event.pageY - dragCard.offset.y
         };
         const distSqr = (newPos.x - origin.x) ** 2 + (newPos.y - origin.y) ** 2;
-
         if (distSqr > 25 ** 2 || timeSince > 250) {
           pointers.current.dragging = true;
           dragCard.card.meta.dragPos = newPos;
@@ -4892,52 +4363,42 @@ function PointerManager({
         }
       }
     };
-
     document.addEventListener("pointermove", pointerMove);
     return () => document.removeEventListener("pointermove", pointerMove);
   }, []);
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useLayoutEffect)(() => {
     const pointerUp = event => {
       event.preventDefault();
-
       if (event.pointerId !== pointers.current?.id) {
         return;
       }
-
       const {
         current,
         previous
       } = pointers;
       pointers.current = null;
       pointers.previous = null;
-
       if (current.dragging) {
         onDrop(current, ...getContextAtPoint(current));
-
         for (const dragCard of current.dragCards ?? []) {
           dragCard.card.meta.dragPos = null;
           dragCard.card.meta.rerender();
         }
-
         return;
       }
-
       if (event.timeStamp - current.timeStamp < 250) {
         if (current.onDoubleTap != null) {
           if (current.card === previous?.card && current.timeStamp - previous.timeStamp < 500) {
             current.onDoubleTap(current);
             return;
           }
-
           pointers.previous = current;
         }
-
         if (current.onTap != null) {
           current.onTap(current);
         }
       }
     };
-
     document.addEventListener("pointerup", pointerUp);
     document.addEventListener("pointercancel", pointerUp);
     return () => {
@@ -4954,7 +4415,6 @@ function usePointers(card, onTap, onDoubleTap, getDragCards) {
   const pointers = (0,react__WEBPACK_IMPORTED_MODULE_0__.useContext)(pointerContext);
   return (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(event => {
     event.preventDefault();
-
     if (pointers.current == null) {
       pointers.current = {
         id: event.pointerId,
@@ -4990,6 +4450,7 @@ function usePointers(card, onTap, onDoubleTap, getDragCards) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "SizeContextFORTESTINGPURPOSESONLY": () => (/* binding */ SizeContextFORTESTINGPURPOSESONLY),
 /* harmony export */   "sizerated": () => (/* binding */ sizerated),
 /* harmony export */   "useSizes": () => (/* binding */ useSizes)
 /* harmony export */ });
@@ -5041,7 +4502,6 @@ function sizerated(cardsAcross, cardsTall, Component) {
     const [sizes, setSizes] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(computeSizes);
     (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
       const resize = () => setSizes(computeSizes());
-
       window.addEventListener("resize", resize);
       return () => window.removeEventListener("resize", resize);
     }, []);
@@ -5058,7 +4518,8 @@ function sizerated(cardsAcross, cardsTall, Component) {
           "--board-width": `${sizes.boardWidth}px`,
           "--bar-height": `${sizes.barHeight}px`
         },
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(Component, { ...props
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(Component, {
+          ...props
         })
       })
     });
@@ -5067,6 +4528,7 @@ function sizerated(cardsAcross, cardsTall, Component) {
 function useSizes() {
   return (0,react__WEBPACK_IMPORTED_MODULE_0__.useContext)(SizeContext);
 }
+const SizeContextFORTESTINGPURPOSESONLY = SizeContext;
 
 /***/ }),
 
@@ -5106,7 +4568,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
 function useGame() {
   const {
     game,
@@ -5128,26 +4589,22 @@ function useGame() {
     if (game.canCompleteStack(deck)) {
       const foundation = new _logic_deck__WEBPACK_IMPORTED_MODULE_1__.Deck();
       game.foundation.push(foundation);
-
       for (let i = 0; i < 13; i++) {
         game.moveCards(deck.draw(1), foundation);
         rerender();
         commit();
         yield 10;
       }
-
       if (game.tryFlipCard(deck)) {
         rerender();
         commit();
       }
-
       if (!tryFinish()) {
         saveGame();
       } else {
-        setAnimation(new _animations_card_ring__WEBPACK_IMPORTED_MODULE_9__.CardRingAnimation(...game.foundation));
+        setAnimation(new _animations_card_ring__WEBPACK_IMPORTED_MODULE_9__.CardRingAnimation(...[...game.foundation].reverse()));
         rerender();
       }
-
       yield 100;
     }
   });
@@ -5158,13 +4615,11 @@ function useGame() {
     game.transferCards(card, targetContext);
     rerender();
     commit();
-
     if (game.tryFlipCard(originDeck)) {
       yield 10;
       rerender();
       commit();
     }
-
     saveGame();
     tryCompleteStack(targetContext, commit);
     yield 100;
@@ -5177,10 +4632,8 @@ function useGame() {
   const drawPileTap = enqueueAction(function* () {
     const activeElement = document.activeElement;
     activeElement.blur();
-
     if (game.tableau.every(d => d.length > 0)) {
       const commit = undoStack.record(game);
-
       for (let i = 0; i < 10; i++) {
         game.moveCards(game.drawPile.draw(1), game.tableau[i]);
         game.tableau[i].fromTop().faceUp = true;
@@ -5189,7 +4642,6 @@ function useGame() {
         yield 10;
         tryCompleteStack(game.tableau[i], commit);
       }
-
       yield 100;
     }
   });
@@ -5197,22 +4649,18 @@ function useGame() {
   const targetTap = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(targetContext => {
     const activeElement = document.activeElement;
     const activeCard = (0,_shared_get_context__WEBPACK_IMPORTED_MODULE_5__.getCard)(activeElement);
-
     if (activeCard != null && game.canMoveCards(activeCard, targetContext)) {
       doMoveCards(activeCard, targetContext);
       return true;
     }
-
     activeElement.blur();
     return false;
   }, []);
   const playableTap = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(pointer => {
     const targetContext = pointer.card.meta.context;
-
     if (targetTap(targetContext)) {
       return;
     }
-
     if (pointer.dragCards != null) {
       pointer.card.meta.elem?.focus();
     }
@@ -5220,7 +4668,6 @@ function useGame() {
   const playableDoubleTap = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(pointer => {
     if (pointer.dragCards != null) {
       const target = game.tryGetMoveTarget(pointer.card);
-
       if (game.canMoveCards(pointer.card, target)) {
         doMoveCards(pointer.card, target);
       }
@@ -5240,7 +4687,6 @@ function useGame() {
     redo
   };
 }
-
 const Board = (0,_shared_sizerator__WEBPACK_IMPORTED_MODULE_6__.sizerated)(10, 5, function Board() {
   const {
     game,
@@ -5288,7 +4734,8 @@ const Board = (0,_shared_sizerator__WEBPACK_IMPORTED_MODULE_6__.sizerated)(10, 5
         y: 4,
         z: -1000 + i * 100
       }, deck, {}))]
-    }), newGame.showModal && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)(_newgame_modal__WEBPACK_IMPORTED_MODULE_10__.NewgameModal, { ...newGame
+    }), newGame.showModal && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)(_newgame_modal__WEBPACK_IMPORTED_MODULE_10__.NewgameModal, {
+      ...newGame
     })]
   });
 });
@@ -5418,7 +4865,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
 function useGame() {
   const {
     game,
@@ -5438,16 +4884,13 @@ function useGame() {
   useSetup(newGame.openModal);
   const doClearCards = enqueueAction(function* (...cards) {
     const commit = undoStack.record(game);
-
     for (const card of cards) {
       game.clearCard(card);
       card.meta.elem?.blur();
     }
-
     rerender();
     commit();
     yield 100;
-
     if (!tryFinish()) {
       saveGame();
     } else {
@@ -5464,14 +4907,11 @@ function useGame() {
   const playableTap = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(pointer => {
     const activeElement = document.activeElement;
     const activeCard = (0,_shared_get_context__WEBPACK_IMPORTED_MODULE_5__.getCard)(activeElement);
-
     if (activeCard != null && game.canClearCards(activeCard, pointer.card)) {
       doClearCards(activeCard, pointer.card);
       return;
     }
-
     activeElement.blur();
-
     if (pointer.dragCards != null) {
       pointer.card.meta.elem?.focus();
     }
@@ -5487,7 +4927,6 @@ function useGame() {
     redo
   };
 }
-
 const Board = (0,_shared_sizerator__WEBPACK_IMPORTED_MODULE_6__.sizerated)(8, 5, function Board() {
   const {
     game,
@@ -5524,7 +4963,8 @@ const Board = (0,_shared_sizerator__WEBPACK_IMPORTED_MODULE_6__.sizerated)(8, 5,
         x: 3.5,
         y: 4
       }, game.completed)]
-    }), newGame.showModal && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)(_newgame_modal__WEBPACK_IMPORTED_MODULE_10__.NewgameModal, { ...newGame
+    }), newGame.showModal && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)(_newgame_modal__WEBPACK_IMPORTED_MODULE_10__.NewgameModal, {
+      ...newGame
     })]
   });
 });
@@ -5633,7 +5073,6 @@ let deferredPrompt = null;
 window.addEventListener("beforeinstallprompt", event => {
   event.preventDefault();
   deferredPrompt = event;
-
   for (const listener of listeners) {
     listener(true);
   }
@@ -5650,11 +5089,9 @@ function useInstallPrompt() {
     void deferredPrompt?.prompt();
     void deferredPrompt?.userChoice.then(choiceResult => {
       deferredPrompt = null;
-
       for (const listener of listeners) {
         listener(false);
       }
-
       return choiceResult.outcome === "accepted";
     });
   }, [deferredPrompt]);
@@ -5704,33 +5141,26 @@ function useActionQueue() {
         working.current = null;
       }
     }
-
     function perform(gen, token) {
       if (working.current !== token) return;
       const result = gen.next();
       if (working.current !== token) return;
-
       if (result.done ?? false) {
         setTimeout(() => begin(), result.value);
         return;
       }
-
       setTimeout(() => perform(gen, token), result.value);
     }
-
     const make = generatorFunc => (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)((...args) => {
       queue.push([generatorFunc, args, Symbol("unique token")]);
-
       if (!working.current) {
         begin();
       }
     }, []);
-
     make.reset = () => {
       queue.splice(0, queue.length);
       working.current = null;
     };
-
     return make;
   }, []);
   return enqueuedAction;
@@ -5753,9 +5183,7 @@ __webpack_require__.r(__webpack_exports__);
 
 function useRerender() {
   const [, toggle] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
-
   const toggler = t => !t;
-
   return (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(() => toggle(toggler), []);
 }
 
@@ -5776,12 +5204,10 @@ __webpack_require__.r(__webpack_exports__);
 
 function useValueChanged(...values) {
   const store = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(values);
-
   if (values.length !== store.current.length || values.some((v, i) => v !== store.current[i])) {
     store.current = values;
     return true;
   }
-
   return false;
 }
 
@@ -37093,9 +36519,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
- // register service worker
 
 
+// register service worker
 
 
 if ("serviceWorker" in navigator) {
@@ -37105,7 +36531,6 @@ if ("serviceWorker" in navigator) {
     once: true
   });
 }
-
 function App() {
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("div", {
     className: _main_css__WEBPACK_IMPORTED_MODULE_8__["default"].app,
@@ -37133,7 +36558,6 @@ function App() {
     })
   });
 }
-
 (0,react_dom__WEBPACK_IMPORTED_MODULE_0__.render)( /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(App, {}), document.getElementById("react-root"));
 })();
 

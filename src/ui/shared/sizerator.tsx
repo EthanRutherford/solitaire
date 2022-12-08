@@ -8,8 +8,13 @@ const SizeContext = createContext({
 
 const cardRatio = 1.5;
 
-export function sizerated(cardsAcross: number, cardsTall: number, Component: ComponentType) {
-	return function Sizerator(props: Record<string, unknown>) {
+export function sizerated<C extends ComponentType<any>>(
+	cardsAcross: number,
+	cardsTall:
+	number,
+	Component: C,
+) {
+	return function Sizerator(props: any) {
 		const computeSizes = useCallback(() => {
 			const {clientWidth: width, clientHeight: height} = document.documentElement;
 			const margins = width < 600 ? 5 : 10;
@@ -40,9 +45,7 @@ export function sizerated(cardsAcross: number, cardsTall: number, Component: Com
 		}, []);
 
 		return (
-			<SizeContext.Provider
-				value={sizes}
-			>
+			<SizeContext.Provider value={sizes}>
 				<div
 					style={{
 						width: "100%",
@@ -65,3 +68,5 @@ export function sizerated(cardsAcross: number, cardsTall: number, Component: Com
 export function useSizes() {
 	return useContext(SizeContext);
 }
+
+export const SizeContextFORTESTINGPURPOSESONLY = SizeContext;

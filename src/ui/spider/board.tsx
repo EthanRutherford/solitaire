@@ -47,7 +47,7 @@ function useGame() {
 			if (!tryFinish()) {
 				saveGame();
 			} else {
-				setAnimation(new CardRingAnimation(...game.foundation));
+				setAnimation(new CardRingAnimation(...[...game.foundation].reverse()));
 				rerender();
 			}
 

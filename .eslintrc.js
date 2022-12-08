@@ -1,5 +1,5 @@
 module.exports = {
-	extends: "@rutherford",
+	extends: ["@rutherford", "plugin:storybook/recommended"],
 	parserOptions: {
 		tsconfigRootDir: __dirname,
 		project: ["./tsconfig.json"],

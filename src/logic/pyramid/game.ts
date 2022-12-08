@@ -92,7 +92,6 @@ export class Game {
 
 		this.completed.push(card);
 		card.meta.context = this.completed;
-		card.faceUp = false;
 	}
 	isPlayable(card: Card) {
 		if (card.meta.context === this.completed) {
