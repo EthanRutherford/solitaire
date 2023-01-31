@@ -56,7 +56,11 @@ function useGame() {
 	const playableGetCards = useCallback((card: Card) => game.getMovableCards(card), []);
 
 	const playableTap = useCallback((pointer: Pointer) => {
-		const activeElement = document.activeElement as HTMLElement;
+		const activeElement = document.activeElement;
+		if (!(activeElement instanceof HTMLElement)) {
+			return;
+		}
+
 		const activeCard = getCard(activeElement);
 		if (activeCard != null && game.canClearCards(activeCard, pointer.card)) {
 			doClearCards(activeCard, pointer.card);

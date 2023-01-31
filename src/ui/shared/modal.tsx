@@ -7,11 +7,19 @@ function takeWhere<T>(array: T[], predicate: (x: T) => boolean) {
 }
 
 function typeIs(node: ReactNode, Type: FC<any>) {
-	return (node as {type?: FC} | null)?.type === Type;
+	return node != null && typeof node === "object" && "type" in node && node.type === Type;
+}
+
+function arrayWrap<T>(v: T | T[]) {
+	if (v instanceof Array) {
+		return [...v];
+	}
+
+	return [v];
 }
 
 export function Modal({children}: {children: ReactNode}) {
-	const wrapped = children instanceof Array ? [...children as ReactNode[]] : [children];
+	const wrapped = arrayWrap(children);
 	const header = takeWhere(wrapped, (c) => typeIs(c, ModalHeader));
 	const footer = takeWhere(wrapped, (c) => typeIs(c, ModalFooter));
 

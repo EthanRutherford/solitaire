@@ -1,5 +1,7 @@
 import {ComponentType, createContext, useCallback, useContext, useEffect, useState} from "react";
 
+type PropsOf<C> = C extends ComponentType<infer P> ? P extends object ? P : {} : never;
+
 const SizeContext = createContext({
 	margins: 0, cardWidth: 0, cardHeight: 0,
 	cardOffsetX: 0, cardOffsetY: 0,
@@ -14,7 +16,7 @@ export function sizerated<C extends ComponentType<any>>(
 	number,
 	Component: C,
 ) {
-	return function Sizerator(props: any) {
+	return function Sizerator(props: PropsOf<C>) {
 		const computeSizes = useCallback(() => {
 			const {clientWidth: width, clientHeight: height} = document.documentElement;
 			const margins = width < 600 ? 5 : 10;

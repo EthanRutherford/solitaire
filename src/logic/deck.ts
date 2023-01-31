@@ -8,7 +8,8 @@ export enum Suit {
 	Hearts = 3,
 }
 
-export type CardValue = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13;
+const cardValues = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13] as const;
+export type CardValue = (typeof cardValues)[number];
 
 const faces = [
 	"NIL",
@@ -124,13 +125,13 @@ export class Deck<T> extends Array<T> {
 		const deck = new Deck<Card>(52);
 		let i = 0;
 		for (const suit of [Suit.Spades, Suit.Diamonds]) {
-			for (let v = 1; v <= 13; v++) {
-				deck[i++] = new Card(suit, v as CardValue);
+			for (const v of cardValues) {
+				deck[i++] = new Card(suit, v);
 			}
 		}
 		for (const suit of [Suit.Clubs, Suit.Hearts]) {
-			for (let v = 13; v > 0; v--) {
-				deck[i++] = new Card(suit, v as CardValue);
+			for (const v of [...cardValues].reverse()) {
+				deck[i++] = new Card(suit, v);
 			}
 		}
 
@@ -138,8 +139,8 @@ export class Deck<T> extends Array<T> {
 	}
 	static ofSuit(suit: Suit) {
 		const deck = new Deck<Card>(13);
-		for (let v = 1; v <= 13; v++) {
-			deck[v - 1] = new Card(suit, v as CardValue);
+		for (const v of cardValues) {
+			deck[v - 1] = new Card(suit, v);
 		}
 
 		return deck;

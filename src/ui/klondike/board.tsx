@@ -100,7 +100,10 @@ function useGame() {
 	});
 
 	const drawPileTap = enqueueAction(function*(pointer: Pointer) {
-		(document.activeElement as HTMLElement).blur();
+		if (document.activeElement instanceof HTMLElement) {
+			document.activeElement.blur();
+		}
+
 		const context = pointer.card.meta.context as Deck<Card>;
 		if (pointer.card === context.fromTop()) {
 			const commit = undoStack.record(game);
