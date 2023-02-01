@@ -13,17 +13,55 @@ export default {
 			options: ["Spade", "Diamond", "Club", "Heart"],
 			mapping: {Spade, Diamond, Club, Heart},
 		},
+		value: {table: {disable: true}},
 	},
 } satisfies ComponentMeta<typeof CardFace>;
 
 const Template: ComponentStory<typeof CardFace> = (args) => (
-	<div style={{position: "relative", width: 100, height: 150}}>
-		<CardFace {...args} />
+	<div style={{display: "flex", flexWrap: "wrap"}}>
+		<div style={{position: "relative", width: 100, height: 150}}>
+			<CardFace {...args} value={1} />
+		</div>
+		<div style={{position: "relative", width: 100, height: 150}}>
+			<CardFace {...args} value={2} />
+		</div>
+		<div style={{position: "relative", width: 100, height: 150}}>
+			<CardFace {...args} value={3} />
+		</div>
+		<div style={{position: "relative", width: 100, height: 150}}>
+			<CardFace {...args} value={4} />
+		</div>
+		<div style={{position: "relative", width: 100, height: 150}}>
+			<CardFace {...args} value={5} />
+		</div>
+		<div style={{position: "relative", width: 100, height: 150}}>
+			<CardFace {...args} value={6} />
+		</div>
+		<div style={{position: "relative", width: 100, height: 150}}>
+			<CardFace {...args} value={7} />
+		</div>
+		<div style={{position: "relative", width: 100, height: 150}}>
+			<CardFace {...args} value={8} />
+		</div>
+		<div style={{position: "relative", width: 100, height: 150}}>
+			<CardFace {...args} value={9} />
+		</div>
+		<div style={{position: "relative", width: 100, height: 150}}>
+			<CardFace {...args} value={10} />
+		</div>
+		<div style={{position: "relative", width: 100, height: 150}}>
+			<CardFace {...args} value={11} />
+		</div>
+		<div style={{position: "relative", width: 100, height: 150}}>
+			<CardFace {...args} value={12} />
+		</div>
+		<div style={{position: "relative", width: 100, height: 150}}>
+			<CardFace {...args} value={13} />
+		</div>
 	</div>
 );
 
 export const Default = Template.bind({});
 Default.args = {
 	Icon: Spade,
-	value: 1,
 };

@@ -341,7 +341,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "Deck": () => (/* binding */ Deck),
 /* harmony export */   "Suit": () => (/* binding */ Suit)
 /* harmony export */ });
-/* harmony import */ var _undo_stack__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./undo-stack */ "./src/logic/undo-stack.ts");
+/* harmony import */ var _util_random__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../util/random */ "./src/util/random.ts");
+/* harmony import */ var _undo_stack__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./undo-stack */ "./src/logic/undo-stack.ts");
+
 
 let Suit;
 (function (Suit) {
@@ -374,7 +376,7 @@ class Card {
     return this.suit % 2;
   }
   meta = {};
-  static deserialize = (0,_undo_stack__WEBPACK_IMPORTED_MODULE_0__.validatedDelta)((input, card) => {
+  static deserialize = (0,_undo_stack__WEBPACK_IMPORTED_MODULE_1__.validatedDelta)((input, card) => {
     card ??= new Card(0, 1);
     card.suit = input.s ?? card.suit;
     card.value = input.v ?? card.value;
@@ -383,7 +385,7 @@ class Card {
     return card;
   });
 }
-const coreDeckDeserialize = (0,_undo_stack__WEBPACK_IMPORTED_MODULE_0__.validatedDelta)((input, deck) => {
+const coreDeckDeserialize = (0,_undo_stack__WEBPACK_IMPORTED_MODULE_1__.validatedDelta)((input, deck) => {
   const {
     length,
     ...rest
@@ -402,8 +404,7 @@ class Deck extends Array {
   shuffle() {
     const copy = [...this];
     for (let i = 0; i < this.length; i++) {
-      const card = Math.floor(Math.random() * copy.length);
-      this[i] = copy.splice(card, 1)[0];
+      this[i] = _util_random__WEBPACK_IMPORTED_MODULE_0__.random.takeItem(copy);
     }
     return this;
   }
@@ -1011,20 +1012,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "randomShuffle": () => (/* binding */ randomShuffle),
 /* harmony export */   "reverseGame": () => (/* binding */ reverseGame)
 /* harmony export */ });
-/* harmony import */ var _deck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../deck */ "./src/logic/deck.ts");
-/* harmony import */ var _game__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./game */ "./src/logic/klondike/game.ts");
+/* harmony import */ var _util_random__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../util/random */ "./src/util/random.ts");
+/* harmony import */ var _deck__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../deck */ "./src/logic/deck.ts");
+/* harmony import */ var _game__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./game */ "./src/logic/klondike/game.ts");
+
 
 
 function randomShuffle(game, drawCount) {
   game.drawCount = drawCount;
-  game.drawPile.splice(0, game.drawPile.length, ..._deck__WEBPACK_IMPORTED_MODULE_0__.Deck.full().shuffle());
+  game.drawPile.splice(0, game.drawPile.length, ..._deck__WEBPACK_IMPORTED_MODULE_1__.Deck.full().shuffle());
   game.discardPile.splice(0, game.discardPile.length);
   game.tableau.splice(0, game.tableau.length);
   for (let i = 0; i < 7; i++) {
     game.tableau.push(game.drawPile.draw(i + 1));
   }
-  for (const k of [_deck__WEBPACK_IMPORTED_MODULE_0__.Suit.Spades, _deck__WEBPACK_IMPORTED_MODULE_0__.Suit.Diamonds, _deck__WEBPACK_IMPORTED_MODULE_0__.Suit.Clubs, _deck__WEBPACK_IMPORTED_MODULE_0__.Suit.Hearts]) {
-    game.foundations[k] = new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck();
+  for (const k of [_deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Spades, _deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Diamonds, _deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Clubs, _deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Hearts]) {
+    game.foundations[k] = new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck();
   }
   for (const deck of game.tableau) {
     deck.fromTop().faceUp = true;
@@ -1040,27 +1043,27 @@ function reverseGame(game, drawCount) {
   game.discardPile.splice(0, game.discardPile.length);
   game.tableau.splice(0, game.tableau.length);
   for (let i = 0; i < 7; i++) {
-    game.tableau.push(new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck());
+    game.tableau.push(new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck());
   }
-  for (const k of [_deck__WEBPACK_IMPORTED_MODULE_0__.Suit.Spades, _deck__WEBPACK_IMPORTED_MODULE_0__.Suit.Diamonds, _deck__WEBPACK_IMPORTED_MODULE_0__.Suit.Clubs, _deck__WEBPACK_IMPORTED_MODULE_0__.Suit.Hearts]) {
-    game.foundations[k] = new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck();
+  for (const k of [_deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Spades, _deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Diamonds, _deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Clubs, _deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Hearts]) {
+    game.foundations[k] = new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck();
   }
 
   // build a "completed" game
   const completeSuits = [];
   for (let i = 0; i < 4; i++) {
-    completeSuits[i] = _deck__WEBPACK_IMPORTED_MODULE_0__.Deck.ofSuit(i).reverse();
+    completeSuits[i] = _deck__WEBPACK_IMPORTED_MODULE_1__.Deck.ofSuit(i).reverse();
   }
-  const completeStacks = [new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck()];
+  const completeStacks = [new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck()];
   for (let i = 0; i < 13; i++) {
     const sets = [[0, 2], [1, 3]];
     if (i % 2 === 1) {
       sets.reverse();
     }
-    if (Math.random() < .5) {
+    if (_util_random__WEBPACK_IMPORTED_MODULE_0__.random.chance(.5)) {
       sets[0].reverse();
     }
-    if (Math.random() < .5) {
+    if (_util_random__WEBPACK_IMPORTED_MODULE_0__.random.chance(.5)) {
       sets[1].reverse();
     }
     const plan = [sets[0][0], sets[1][0], sets[0][1], sets[1][1]];
@@ -1072,14 +1075,14 @@ function reverseGame(game, drawCount) {
   // move cards from our completed state into the game decks
   const notFullTableauDecks = [0, 1, 2, 3, 4, 5, 6];
   while (completeStacks.length > 0) {
-    const stackIndex = Math.floor(Math.random() * completeStacks.length);
+    const stackIndex = _util_random__WEBPACK_IMPORTED_MODULE_0__.random.index(completeStacks);
     const card = completeStacks[stackIndex].pop();
     if (completeStacks[stackIndex].length === 0) {
       completeStacks.splice(stackIndex, 1);
     }
-    if (notFullTableauDecks.length > 0 && Math.random() < .5) {
+    if (notFullTableauDecks.length > 0 && _util_random__WEBPACK_IMPORTED_MODULE_0__.random.chance(.5)) {
       // move the card to an available spot in the tableau
-      const notFullIndex = Math.floor(Math.random() * notFullTableauDecks.length);
+      const notFullIndex = _util_random__WEBPACK_IMPORTED_MODULE_0__.random.index(notFullTableauDecks);
       const tableauIndex = notFullTableauDecks[notFullIndex];
       game.tableau[tableauIndex].push(card);
       if (game.tableau[tableauIndex].length === tableauIndex + 1) {
@@ -1099,7 +1102,7 @@ function reverseGame(game, drawCount) {
     while (foundation.length > 0) {
       const card = foundation.pop();
       if (notFullTableauDecks.length > 0) {
-        const notFullIndex = Math.floor(Math.random() * notFullTableauDecks.length);
+        const notFullIndex = _util_random__WEBPACK_IMPORTED_MODULE_0__.random.index(notFullTableauDecks);
         const tableauIndex = notFullTableauDecks[notFullIndex];
         game.tableau[tableauIndex].push(card);
         if (game.tableau[tableauIndex].length === tableauIndex + 1) {
@@ -1112,7 +1115,7 @@ function reverseGame(game, drawCount) {
   }
   game.drawPile.shuffle();
   while (notFullTableauDecks.length > 0) {
-    const notFullIndex = Math.floor(Math.random() * notFullTableauDecks.length);
+    const notFullIndex = _util_random__WEBPACK_IMPORTED_MODULE_0__.random.index(notFullTableauDecks);
     const tableauIndex = notFullTableauDecks[notFullIndex];
     game.tableau[tableauIndex].push(game.drawPile.pop());
     if (game.tableau[tableauIndex].length === tableauIndex + 1) {
@@ -1274,14 +1277,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "reverseGame": () => (/* binding */ reverseGame),
 /* harmony export */   "validatedShuffle": () => (/* binding */ validatedShuffle)
 /* harmony export */ });
-/* harmony import */ var _deck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../deck */ "./src/logic/deck.ts");
-/* harmony import */ var _game__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./game */ "./src/logic/pyramid/game.ts");
+/* harmony import */ var _util_random__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../util/random */ "./src/util/random.ts");
+/* harmony import */ var _deck__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../deck */ "./src/logic/deck.ts");
+/* harmony import */ var _game__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./game */ "./src/logic/pyramid/game.ts");
+
 
 
 
 // shuffles a deck and deals cards onto the pyramid
 function randomShuffle(game) {
-  game.drawPile.splice(0, game.drawPile.length, ..._deck__WEBPACK_IMPORTED_MODULE_0__.Deck.full().shuffle());
+  game.drawPile.splice(0, game.drawPile.length, ..._deck__WEBPACK_IMPORTED_MODULE_1__.Deck.full().shuffle());
   for (const card of game.drawPile) {
     card.faceUp = true;
   }
@@ -1295,7 +1300,7 @@ function isAncestorOf(indexA, indexB) {
   if (indexA > indexB) {
     return false;
   }
-  const children = (0,_game__WEBPACK_IMPORTED_MODULE_1__.getChildIndices)(indexA);
+  const children = (0,_game__WEBPACK_IMPORTED_MODULE_2__.getChildIndices)(indexA);
   for (const index of children) {
     if (index === indexB || isAncestorOf(index, indexB)) {
       return true;
@@ -1403,7 +1408,7 @@ function canPlace(game, index, value) {
 // NOTE: in hindsight, this method did not prevent *every* kind of impossible game
 function validatedShuffle(game) {
   // clear and initialize the game
-  game.drawPile.splice(0, game.drawPile.length, ..._deck__WEBPACK_IMPORTED_MODULE_0__.Deck.full().shuffle());
+  game.drawPile.splice(0, game.drawPile.length, ..._deck__WEBPACK_IMPORTED_MODULE_1__.Deck.full().shuffle());
   game.discardPile.splice(0, game.discardPile.length);
   game.completed.splice(0, game.completed.length);
   game.tree.splice(0, game.tree.length);
@@ -1434,7 +1439,7 @@ function reverseGame(game) {
     0: []
   };
   for (let i = 0; i < 21; i++) {
-    const children = (0,_game__WEBPACK_IMPORTED_MODULE_1__.getChildIndices)(i);
+    const children = (0,_game__WEBPACK_IMPORTED_MODULE_2__.getChildIndices)(i);
     for (const child of children) {
       parentMap[child] ??= [];
       parentMap[child].push(i);
@@ -1442,8 +1447,8 @@ function reverseGame(game) {
   }
 
   // pair-off all cards in a shuffled deck
-  const deck = _deck__WEBPACK_IMPORTED_MODULE_0__.Deck.full().shuffle();
-  const pairs = new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck();
+  const deck = _deck__WEBPACK_IMPORTED_MODULE_1__.Deck.full().shuffle();
+  const pairs = new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck();
   while (deck.length > 0) {
     const cardA = deck.pop();
     cardA.faceUp = true;
@@ -1475,16 +1480,16 @@ function reverseGame(game) {
         available.push(i);
       }
     }
-    const leafA = available.splice(Math.random() * available.length, 1)[0] ?? 0;
+    const leafA = _util_random__WEBPACK_IMPORTED_MODULE_0__.random.takeItem(available.length === 0 ? [0] : available);
     add(leafA, pair[0]);
     if (pair.length === 1) {
       continue;
     }
-    if (available.length === 0 || Math.random() < .5) {
+    if (available.length === 0 || _util_random__WEBPACK_IMPORTED_MODULE_0__.random.chance(.5)) {
       game.drawPile.push(pair[1]);
       continue;
     }
-    const leafB = available.splice(Math.random() * available.length, 1)[0];
+    const leafB = _util_random__WEBPACK_IMPORTED_MODULE_0__.random.takeItem(available);
     add(leafB, pair[1]);
   }
   while (pairs.length > 0) {
@@ -1962,14 +1967,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "randomShuffle": () => (/* binding */ randomShuffle),
 /* harmony export */   "reverseGame": () => (/* binding */ reverseGame)
 /* harmony export */ });
-/* harmony import */ var _deck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../deck */ "./src/logic/deck.ts");
-/* harmony import */ var _game__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./game */ "./src/logic/wish/game.ts");
+/* harmony import */ var _util_random__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../util/random */ "./src/util/random.ts");
+/* harmony import */ var _deck__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../deck */ "./src/logic/deck.ts");
+/* harmony import */ var _game__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./game */ "./src/logic/wish/game.ts");
+
 
 
 function randomShuffle(game) {
   game.tableau.splice(0, game.tableau.length);
   game.completed.splice(0, game.completed.length);
-  const deck = _deck__WEBPACK_IMPORTED_MODULE_0__.Deck.full().shuffle().filter(c => c.value < 2 || c.value > 6);
+  const deck = _deck__WEBPACK_IMPORTED_MODULE_1__.Deck.full().shuffle().filter(c => c.value < 2 || c.value > 6);
   for (let i = 0; i < 8; i++) {
     game.tableau.push(deck.draw(4));
     game.tableau[i].fromTop().faceUp = true;
@@ -1980,12 +1987,12 @@ function reverseGame(game) {
   game.tableau.splice(0, game.tableau.length);
   game.completed.splice(0, game.completed.length);
   for (let i = 0; i < 8; i++) {
-    game.tableau.push(new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck());
+    game.tableau.push(new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck());
   }
 
   // pair-off all cards in a shuffled deck
-  const deck = _deck__WEBPACK_IMPORTED_MODULE_0__.Deck.full().shuffle().filter(c => c.value < 2 || c.value > 6);
-  const pairs = new _deck__WEBPACK_IMPORTED_MODULE_0__.Deck();
+  const deck = _deck__WEBPACK_IMPORTED_MODULE_1__.Deck.full().shuffle().filter(c => c.value < 2 || c.value > 6);
+  const pairs = new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck();
   while (deck.length > 0) {
     const cardA = deck.pop();
     const index = deck.findIndex(c => c.value === cardA.value);
@@ -2008,7 +2015,7 @@ function reverseGame(game) {
     const decks = game.tableau.filter(d => d.length < 4);
     let deckCount = decks.length;
     while (true) {
-      const deckA = decks.splice(Math.random() * decks.length, 1)[0];
+      const deckA = _util_random__WEBPACK_IMPORTED_MODULE_0__.random.takeItem(decks);
       const completedDecks = deckA.length === 3 ? 1 : 0;
       const remainingDecks = deckCount - completedDecks;
       if (pairs.length > 4 || remainingDecks > illegalDeckCount) {
@@ -2018,7 +2025,7 @@ function reverseGame(game) {
       }
     }
     while (true) {
-      const deckB = decks.splice(Math.random() * decks.length, 1)[0];
+      const deckB = _util_random__WEBPACK_IMPORTED_MODULE_0__.random.takeItem(decks);
       if (pairs.length === 3 && decks.some(d => d.length === 0)) {
         continue;
       }
@@ -5100,6 +5107,67 @@ function useInstallPrompt() {
     promptForInstall
   };
 }
+
+/***/ }),
+
+/***/ "./src/util/random.ts":
+/*!****************************!*\
+  !*** ./src/util/random.ts ***!
+  \****************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "random": () => (/* binding */ random),
+/* harmony export */   "seedRandom": () => (/* binding */ seedRandom)
+/* harmony export */ });
+// https://github.com/bryc/code/blob/master/jshash/PRNGs.md
+
+function xmur3(str) {
+  let h = 1779033703 ^ str.length;
+  for (let i = 0; i < str.length; i++) {
+    h = Math.imul(h ^ str.charCodeAt(i), 3432918353);
+    h = h << 13 | h >>> 19;
+  }
+  return () => {
+    h = Math.imul(h ^ h >>> 16, 2246822507);
+    h = Math.imul(h ^ h >>> 13, 3266489909);
+    return (h ^= h >>> 16) >>> 0;
+  };
+}
+function sfc32(a, b, c, d) {
+  return function () {
+    a |= 0;
+    b |= 0;
+    c |= 0;
+    d |= 0;
+    const t = (a + b | 0) + d | 0;
+    d = d + 1 | 0;
+    a = b ^ b >>> 9;
+    b = c + (c << 3) | 0;
+    c = c << 21 | c >>> 11;
+    c = c + t | 0;
+    return (t >>> 0) / 4294967296;
+  };
+}
+function makeSeeded(seed) {
+  const hash = xmur3(seed);
+  return sfc32(hash(), hash(), hash(), hash());
+}
+
+// use a random string as initial seed
+let prng = makeSeeded(crypto.randomUUID());
+const seedRandom = seed => {
+  prng = makeSeeded(seed);
+};
+const random = () => prng();
+random.float = random;
+random.integer = (min, max) => min + prng() * (max - min);
+random.chance = n => prng() > n;
+random.index = a => random.integer(0, a.length);
+random.item = a => a[random.index(a)];
+random.takeItem = a => a.splice(random.index(a), 1)[0];
 
 /***/ }),
 
