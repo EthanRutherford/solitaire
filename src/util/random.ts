@@ -32,8 +32,10 @@ function makeSeeded(seed: string) {
 	return sfc32(hash(), hash(), hash(), hash());
 }
 
-// the chromatic build doesn't have access to crypto
-const defaultSeed = "crypto" in globalThis ? crypto.randomUUID() : Date.now().toString();
+// if randomUUID isn't available, fallback to current datetime
+const defaultSeed = "crypto" in globalThis && "randomUUID" in crypto ?
+	crypto.randomUUID() :
+	Date.now().toString();
 let prng = makeSeeded(defaultSeed);
 
 export const seedRandom = (seed: string) => {prng = makeSeeded(seed);};
