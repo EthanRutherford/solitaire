@@ -5156,8 +5156,9 @@ function makeSeeded(seed) {
   return sfc32(hash(), hash(), hash(), hash());
 }
 
-// use a random string as initial seed
-let prng = makeSeeded(crypto.randomUUID());
+// the chromatic build doesn't have access to crypto
+const defaultSeed = "crypto" in globalThis ? crypto.randomUUID() : Date.now().toString();
+let prng = makeSeeded(defaultSeed);
 const seedRandom = seed => {
   prng = makeSeeded(seed);
 };
