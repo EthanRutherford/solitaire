@@ -39,3 +39,10 @@ export const Default = Template.bind({});
 Default.args = {
 	pos: {x: 0, y: 0, z: 0},
 };
+
+export const Back = Template.bind({});
+Back.args = {
+	pos: {x: 0, y: 0, z: 0},
+	// @ts-expect-error
+	"card.faceUp": false,
+};

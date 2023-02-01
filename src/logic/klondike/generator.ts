@@ -1,3 +1,4 @@
+import {random} from "../../util/random";
 import {Card, Deck, Suit} from "../deck";
 import {Game} from "./game";
 
@@ -46,10 +47,10 @@ export function reverseGame(game: Game, drawCount: 1 | 3) {
 		if (i % 2 === 1) {
 			sets.reverse();
 		}
-		if (Math.random() < .5) {
+		if (random.chance(.5)) {
 			sets[0].reverse();
 		}
-		if (Math.random() < .5) {
+		if (random.chance(.5)) {
 			sets[1].reverse();
 		}
 
@@ -62,15 +63,15 @@ export function reverseGame(game: Game, drawCount: 1 | 3) {
 	// move cards from our completed state into the game decks
 	const notFullTableauDecks = [0, 1, 2, 3, 4, 5, 6];
 	while (completeStacks.length > 0) {
-		const stackIndex = Math.floor(Math.random() * completeStacks.length);
+		const stackIndex = random.index(completeStacks);
 		const card = completeStacks[stackIndex].pop()!;
 		if (completeStacks[stackIndex].length === 0) {
 			completeStacks.splice(stackIndex, 1);
 		}
 
-		if (notFullTableauDecks.length > 0 && Math.random() < .5) {
+		if (notFullTableauDecks.length > 0 && random.chance(.5)) {
 			// move the card to an available spot in the tableau
-			const notFullIndex = Math.floor(Math.random() * notFullTableauDecks.length);
+			const notFullIndex = random.index(notFullTableauDecks);
 			const tableauIndex = notFullTableauDecks[notFullIndex];
 			game.tableau[tableauIndex].push(card);
 			if (game.tableau[tableauIndex].length === tableauIndex + 1) {
@@ -91,7 +92,7 @@ export function reverseGame(game: Game, drawCount: 1 | 3) {
 		while (foundation.length > 0) {
 			const card = foundation.pop()!;
 			if (notFullTableauDecks.length > 0) {
-				const notFullIndex = Math.floor(Math.random() * notFullTableauDecks.length);
+				const notFullIndex = random.index(notFullTableauDecks);
 				const tableauIndex = notFullTableauDecks[notFullIndex];
 				game.tableau[tableauIndex].push(card);
 				if (game.tableau[tableauIndex].length === tableauIndex + 1) {
@@ -105,7 +106,7 @@ export function reverseGame(game: Game, drawCount: 1 | 3) {
 
 	game.drawPile.shuffle();
 	while (notFullTableauDecks.length > 0) {
-		const notFullIndex = Math.floor(Math.random() * notFullTableauDecks.length);
+		const notFullIndex = random.index(notFullTableauDecks);
 		const tableauIndex = notFullTableauDecks[notFullIndex];
 		game.tableau[tableauIndex].push(game.drawPile.pop()!);
 		if (game.tableau[tableauIndex].length === tableauIndex + 1) {

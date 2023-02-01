@@ -1,5 +1,8 @@
 import {ComponentStory, ComponentMeta} from "@storybook/react";
+import {seedRandom} from "../../util/random";
 import {Board} from "./board";
+
+seedRandom("storybook");
 
 export default {
 	title: "Free Cell",

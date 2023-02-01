@@ -1,3 +1,4 @@
+import {random} from "../../util/random";
 import {Card, Deck} from "../deck";
 import {Game, getChildIndices} from "./game";
 
@@ -210,19 +211,19 @@ export function reverseGame(game: Game) {
 			}
 		}
 
-		const leafA = available.splice(Math.random() * available.length, 1)[0] ?? 0;
+		const leafA = random.takeItem(available.length === 0 ? [0] : available);
 		add(leafA, pair[0]);
 
 		if (pair.length === 1) {
 			continue;
 		}
 
-		if (available.length === 0 || Math.random() < .5) {
+		if (available.length === 0 || random.chance(.5)) {
 			game.drawPile.push(pair[1]);
 			continue;
 		}
 
-		const leafB = available.splice(Math.random() * available.length, 1)[0];
+		const leafB = random.takeItem(available);
 		add(leafB, pair[1]);
 	}
 

@@ -1,3 +1,4 @@
+import {random} from "../util/random";
 import {SerializedArray, validatedDelta} from "./undo-stack";
 
 export enum Suit {
@@ -84,8 +85,7 @@ export class Deck<T> extends Array<T> {
 	shuffle() {
 		const copy = [...this];
 		for (let i = 0; i < this.length; i++) {
-			const card = Math.floor(Math.random() * copy.length);
-			this[i] = copy.splice(card, 1)[0];
+			this[i] = random.takeItem(copy);
 		}
 
 		return this;

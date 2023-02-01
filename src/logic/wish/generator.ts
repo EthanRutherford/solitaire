@@ -1,3 +1,4 @@
+import {random} from "../../util/random";
 import {Card, Deck} from "../deck";
 import {Game} from "./game";
 
@@ -48,7 +49,7 @@ export function reverseGame(game: Game) {
 		const decks = game.tableau.filter((d) => d.length < 4);
 		let deckCount = decks.length;
 		while (true) {
-			const deckA = decks.splice(Math.random() * decks.length, 1)[0];
+			const deckA = random.takeItem(decks);
 			const completedDecks = deckA.length === 3 ? 1 : 0;
 			const remainingDecks = deckCount - completedDecks;
 			if (pairs.length > 4 || remainingDecks > illegalDeckCount) {
@@ -59,7 +60,7 @@ export function reverseGame(game: Game) {
 		}
 
 		while (true) {
-			const deckB = decks.splice(Math.random() * decks.length, 1)[0];
+			const deckB = random.takeItem(decks);
 			if (pairs.length === 3 && decks.some((d) => d.length === 0)) {
 				continue;
 			}
