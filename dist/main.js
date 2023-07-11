@@ -5189,7 +5189,7 @@ const seedRandom = seed => {
 };
 const random = () => prng();
 random.float = random;
-random.integer = (min, max) => min + prng() * (max - min);
+random.integer = (min, max) => Math.floor(min + prng() * (max - min));
 random.chance = n => prng() > n;
 random.index = a => random.integer(0, a.length);
 random.item = a => a[random.index(a)];

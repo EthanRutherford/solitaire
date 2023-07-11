@@ -41,7 +41,7 @@ let prng = makeSeeded(defaultSeed);
 export const seedRandom = (seed: string) => {prng = makeSeeded(seed);};
 export const random = () => prng();
 random.float = random;
-random.integer = (min: number, max: number) => min + (prng() * (max - min));
+random.integer = (min: number, max: number) => Math.floor(min + (prng() * (max - min)));
 random.chance = (n: number) => prng() > n;
 random.index = <T>(a: T[]) => random.integer(0, a.length);
 random.item = <T>(a: T[]) => a[random.index(a)];
