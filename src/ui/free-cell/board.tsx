@@ -71,7 +71,11 @@ function useGame() {
 	}, []);
 
 	const targetTap = useCallback((targetContext: Deck<Card>) => {
-		const activeElement = document.activeElement as HTMLElement;
+		const activeElement = document.activeElement;
+		if (!(activeElement instanceof HTMLElement)) {
+			return false;
+		}
+
 		const activeCard = getCard(activeElement);
 		if (activeCard != null && game.canMoveCards(activeCard, targetContext)) {
 			doMoveCards(activeCard, targetContext);

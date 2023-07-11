@@ -32,14 +32,18 @@ export function getCard(elem: Element) {
 	return null;
 }
 
+function isType<T extends FC<any>>(fiber: Fiber<any> | null, type: T): fiber is Fiber<T> {
+	return fiber?.type === type;
+}
+
 export function getContextAndCard(elem: Element) {
 	const fiber = getComponentFiber(elem, [Card, EmptyZone]);
-	if (fiber?.type === Card) {
-		const props = fiber.memoizedProps as ExtractPropTypes<typeof Card>;
+	if (isType(fiber, Card)) {
+		const props = fiber.memoizedProps;
 		return [props.card.meta.context, props.card] as const;
 	}
-	if (fiber?.type === EmptyZone) {
-		const props = fiber.memoizedProps as ExtractPropTypes<typeof EmptyZone>;
+	if (isType(fiber, EmptyZone)) {
+		const props = fiber.memoizedProps;
 		return [props.context] as const;
 	}
 

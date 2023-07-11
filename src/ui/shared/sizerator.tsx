@@ -8,13 +8,13 @@ const SizeContext = createContext({
 
 const cardRatio = 1.5;
 
-export function sizerated<C extends ComponentType<any>>(
+export function sizerated<P extends {}>(
 	cardsAcross: number,
 	cardsTall:
 	number,
-	Component: C,
+	Component: ComponentType<P>,
 ) {
-	return function Sizerator(props: any) {
+	return function Sizerator(props: P) {
 		const computeSizes = useCallback(() => {
 			const {clientWidth: width, clientHeight: height} = document.documentElement;
 			const margins = width < 600 ? 5 : 10;

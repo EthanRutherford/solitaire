@@ -59,9 +59,9 @@ function useGame() {
 		}
 	});
 
-	const onDrop = useCallback((pointer: Pointer, _: unknown, targetCard: unknown) => {
-		if (targetCard != null && game.canClearCards(pointer.card, targetCard as Card)) {
-			doClearCards(pointer.card, targetCard as Card);
+	const onDrop = useCallback((pointer: Pointer, _: unknown, targetCard: Card | undefined) => {
+		if (targetCard != null && game.canClearCards(pointer.card, targetCard)) {
+			doClearCards(pointer.card, targetCard);
 		}
 	}, []);
 
@@ -83,8 +83,10 @@ function useGame() {
 	});
 
 	const drawPileDraw = enqueueAction(function*() {
-		const activeElement = document.activeElement as HTMLElement;
-		activeElement.blur();
+		if (document.activeElement instanceof HTMLElement) {
+			document.activeElement.blur();
+		}
+
 		const commit = undoStack.record(game);
 		if (game.drawPile.length > 0) {
 			game.drawCard();
@@ -100,7 +102,11 @@ function useGame() {
 	const playableGetCards = useCallback((card: Card) => game.getMovableCards(card), []);
 
 	const playableTap = useCallback((pointer: Pointer) => {
-		const activeElement = document.activeElement as HTMLElement;
+		const activeElement = document.activeElement;
+		if (!(activeElement instanceof HTMLElement)) {
+			return;
+		}
+
 		const activeCard = getCard(activeElement);
 		if (activeCard != null && game.canClearCards(activeCard, pointer.card)) {
 			doClearCards(activeCard, pointer.card);
