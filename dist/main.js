@@ -352,6 +352,7 @@ let Suit;
   Suit[Suit["Clubs"] = 2] = "Clubs";
   Suit[Suit["Hearts"] = 3] = "Hearts";
 })(Suit || (Suit = {}));
+const cardValues = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
 const faces = ["NIL", "A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
 let nextId = 0;
 class Card {
@@ -436,12 +437,12 @@ class Deck extends Array {
     const deck = new Deck(52);
     let i = 0;
     for (const suit of [Suit.Spades, Suit.Diamonds]) {
-      for (let v = 1; v <= 13; v++) {
+      for (const v of cardValues) {
         deck[i++] = new Card(suit, v);
       }
     }
     for (const suit of [Suit.Clubs, Suit.Hearts]) {
-      for (let v = 13; v > 0; v--) {
+      for (const v of [...cardValues].reverse()) {
         deck[i++] = new Card(suit, v);
       }
     }
@@ -449,7 +450,7 @@ class Deck extends Array {
   }
   static ofSuit(suit) {
     const deck = new Deck(13);
-    for (let v = 1; v <= 13; v++) {
+    for (const v of cardValues) {
       deck[v - 1] = new Card(suit, v);
     }
     return deck;
@@ -1726,14 +1727,10 @@ class Delta {
   static compute(prevState, nextState) {
     const from = prevState == null ? null : {};
     const to = nextState == null ? null : {};
-
-    // cast to record so typescript doesn't complain about string indexes
-    const prevRecord = prevState;
-    const nextRecord = nextState;
     const allKeys = new Set(Object.getOwnPropertyNames(prevState ?? {}).concat(Object.getOwnPropertyNames(nextState ?? {})));
     for (const key of allKeys) {
-      const prev = prevRecord?.[key] ?? null;
-      const next = nextRecord?.[key] ?? null;
+      const prev = prevState?.[key] ?? null;
+      const next = nextState?.[key] ?? null;
       if (prev === next) {
         continue;
       }
@@ -2435,6 +2432,9 @@ function useGame() {
   }, []);
   const targetTap = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(targetContext => {
     const activeElement = document.activeElement;
+    if (!(activeElement instanceof HTMLElement)) {
+      return false;
+    }
     const activeCard = (0,_shared_get_context__WEBPACK_IMPORTED_MODULE_9__.getCard)(activeElement);
     if (activeCard != null && game.canMoveCards(activeCard, targetContext)) {
       doMoveCards(activeCard, targetContext);
@@ -2711,7 +2711,9 @@ function useGame() {
     }
   });
   const drawPileTap = enqueueAction(function* (pointer) {
-    document.activeElement.blur();
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
     const context = pointer.card.meta.context;
     if (pointer.card === context.fromTop()) {
       const commit = undoStack.record(game);
@@ -2728,6 +2730,9 @@ function useGame() {
   const playableGetCards = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(card => game.getMovableCards(card), []);
   const targetTap = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(targetContext => {
     const activeElement = document.activeElement;
+    if (!(activeElement instanceof HTMLElement)) {
+      return false;
+    }
     const activeCard = (0,_shared_get_context__WEBPACK_IMPORTED_MODULE_10__.getCard)(activeElement);
     if (activeCard != null && game.canMoveCards(activeCard, targetContext)) {
       doMoveCards(activeCard, targetContext);
@@ -3164,8 +3169,9 @@ function useGame() {
     saveGame();
   });
   const drawPileDraw = enqueueAction(function* () {
-    const activeElement = document.activeElement;
-    activeElement.blur();
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
     const commit = undoStack.record(game);
     if (game.drawPile.length > 0) {
       game.drawCard();
@@ -3180,6 +3186,9 @@ function useGame() {
   const playableGetCards = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(card => game.getMovableCards(card), []);
   const playableTap = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(pointer => {
     const activeElement = document.activeElement;
+    if (!(activeElement instanceof HTMLElement)) {
+      return;
+    }
     const activeCard = (0,_shared_get_context__WEBPACK_IMPORTED_MODULE_6__.getCard)(activeElement);
     if (activeCard != null && game.canClearCards(activeCard, pointer.card)) {
       doClearCards(activeCard, pointer.card);
@@ -4178,13 +4187,16 @@ function getCard(elem) {
   }
   return null;
 }
+function isType(fiber, type) {
+  return fiber?.type === type;
+}
 function getContextAndCard(elem) {
   const fiber = getComponentFiber(elem, [_card__WEBPACK_IMPORTED_MODULE_1__.Card, _empty_zone__WEBPACK_IMPORTED_MODULE_2__.EmptyZone]);
-  if (fiber?.type === _card__WEBPACK_IMPORTED_MODULE_1__.Card) {
+  if (isType(fiber, _card__WEBPACK_IMPORTED_MODULE_1__.Card)) {
     const props = fiber.memoizedProps;
     return [props.card.meta.context, props.card];
   }
-  if (fiber?.type === _empty_zone__WEBPACK_IMPORTED_MODULE_2__.EmptyZone) {
+  if (isType(fiber, _empty_zone__WEBPACK_IMPORTED_MODULE_2__.EmptyZone)) {
     const props = fiber.memoizedProps;
     return [props.context];
   }
@@ -4222,12 +4234,18 @@ function takeWhere(array, predicate) {
   return index >= 0 ? array.splice(index, 1)[0] : null;
 }
 function typeIs(node, Type) {
-  return node?.type === Type;
+  return node != null && typeof node === "object" && "type" in node && node.type === Type;
+}
+function arrayWrap(v) {
+  if (v instanceof Array) {
+    return [...v];
+  }
+  return [v];
 }
 function Modal({
   children
 }) {
-  const wrapped = children instanceof Array ? [...children] : [children];
+  const wrapped = arrayWrap(children);
   const header = takeWhere(wrapped, c => typeIs(c, ModalHeader));
   const footer = takeWhere(wrapped, c => typeIs(c, ModalFooter));
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
@@ -4637,8 +4655,9 @@ function useGame() {
     }
   }, []);
   const drawPileTap = enqueueAction(function* () {
-    const activeElement = document.activeElement;
-    activeElement.blur();
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
     if (game.tableau.every(d => d.length > 0)) {
       const commit = undoStack.record(game);
       for (let i = 0; i < 10; i++) {
@@ -4655,6 +4674,9 @@ function useGame() {
   const playableGetCards = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(card => game.getMovableCards(card), []);
   const targetTap = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(targetContext => {
     const activeElement = document.activeElement;
+    if (!(activeElement instanceof HTMLElement)) {
+      return false;
+    }
     const activeCard = (0,_shared_get_context__WEBPACK_IMPORTED_MODULE_5__.getCard)(activeElement);
     if (activeCard != null && game.canMoveCards(activeCard, targetContext)) {
       doMoveCards(activeCard, targetContext);
@@ -4913,6 +4935,9 @@ function useGame() {
   const playableGetCards = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(card => game.getMovableCards(card), []);
   const playableTap = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(pointer => {
     const activeElement = document.activeElement;
+    if (!(activeElement instanceof HTMLElement)) {
+      return;
+    }
     const activeCard = (0,_shared_get_context__WEBPACK_IMPORTED_MODULE_5__.getCard)(activeElement);
     if (activeCard != null && game.canClearCards(activeCard, pointer.card)) {
       doClearCards(activeCard, pointer.card);
@@ -5202,10 +5227,11 @@ function useActionQueue() {
   const working = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
   const enqueuedAction = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => {
     function begin() {
-      if (queue.length > 0) {
-        const [func, args, token] = queue.shift();
+      const action = queue.shift();
+      if (action != null) {
+        const [func, token] = action;
         working.current = token;
-        perform(func(...args), token);
+        perform(func(), token);
       } else {
         working.current = null;
       }
@@ -5215,13 +5241,14 @@ function useActionQueue() {
       const result = gen.next();
       if (working.current !== token) return;
       if (result.done ?? false) {
-        setTimeout(() => begin(), result.value);
+        setTimeout(() => begin(), result.value != null ? result.value : 0);
         return;
       }
       setTimeout(() => perform(gen, token), result.value);
     }
     const make = generatorFunc => (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)((...args) => {
-      queue.push([generatorFunc, args, Symbol("unique token")]);
+      const func = () => generatorFunc(...args);
+      queue.push([func, Symbol("unique token")]);
       if (!working.current) {
         begin();
       }

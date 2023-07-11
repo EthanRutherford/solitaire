@@ -1,5 +1,8 @@
 interface SerializedDelta {f?: unknown; t?: unknown}
-type Collection = Partial<Record<string, unknown>> | unknown[];
+type Collection = Partial<{
+	[x: number | string]: unknown;
+	length?: number;
+}>;
 
 class Delta<T> {
 	constructor(public from: T, public to: T) {}
@@ -13,17 +16,14 @@ class Delta<T> {
 		const from: Collection | null = prevState == null ? null : {};
 		const to: Collection | null = nextState == null ? null : {};
 
-		// cast to record so typescript doesn't complain about string indexes
-		const prevRecord = prevState as Record<string, unknown> | null;
-		const nextRecord = nextState as Record<string, unknown> | null;
 		const allKeys = new Set(
 			Object.getOwnPropertyNames(prevState ?? {})
 				.concat(Object.getOwnPropertyNames(nextState ?? {})),
 		);
 
 		for (const key of allKeys) {
-			const prev = prevRecord?.[key] ?? null;
-			const next = nextRecord?.[key] ?? null;
+			const prev = prevState?.[key] ?? null;
+			const next = nextState?.[key] ?? null;
 
 			if (prev === next) {
 				continue;
