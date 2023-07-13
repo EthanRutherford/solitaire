@@ -7,6 +7,7 @@ import Heart from "../../../images/heart.svg";
 import {useValueChanged} from "../../util/use-value-changed";
 import {useRerender} from "../../util/use-rerender";
 import {Card as CardType, Suit} from "../../logic/deck";
+import {log} from "../../logic/logger";
 import {usePointers, Pointer} from "./pointer-manager";
 import {CardFace} from "./card-face";
 import styles from "./card.css";
@@ -120,6 +121,14 @@ export function Card({card, pos, onTap, onDoubleTap, getDragCards}: CardPropType
 	const {flipClass, faceUp, z, animationEnd} = useFlip(card, pos);
 	const shadowClass = useDropShadow(card);
 	const zIndex = style.zIndex ?? ((z ?? pos.z) + (moving ? 2000 : 0));
+
+	// log changes in zIndex
+	const zIndexChanged = useValueChanged(zIndex);
+	if (zIndexChanged) {
+		void log({
+			msg: `zIndex of card ${Suit[card.suit]} ${card.value} changed to ${zIndex}`,
+		});
+	}
 
 	if (!faceUp) {
 		const className = cns(styles.cardBack, flipClass, shadowClass);
