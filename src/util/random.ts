@@ -15,7 +15,7 @@ function xmur3(str: string) {
 }
 
 function sfc32(a: number, b: number, c: number, d: number) {
-	return function() {
+	const prng = () => {
 		a |= 0; b |= 0; c |= 0; d |= 0;
 		const t = (a + b | 0) + d | 0;
 		d = d + 1 | 0;
@@ -25,6 +25,9 @@ function sfc32(a: number, b: number, c: number, d: number) {
 		c = c + t | 0;
 		return (t >>> 0) / 4294967296;
 	};
+
+	prng.getSeed = () => [a, b, c, d];
+	return prng;
 }
 
 function makeSeeded(seed: string) {
@@ -38,8 +41,16 @@ const defaultSeed = "crypto" in globalThis && "randomUUID" in crypto ?
 	Date.now().toString();
 let prng = makeSeeded(defaultSeed);
 
-export const seedRandom = (seed: string) => {prng = makeSeeded(seed);};
+export const seedRandom = (seed: string | [number, number, number, number]) => {
+	if (typeof seed === "string") {
+		prng = makeSeeded(seed);
+	} else {
+		prng = sfc32(...seed);
+	}
+};
+
 export const random = () => prng();
+random.getSeed = () => prng.getSeed();
 random.float = random;
 random.integer = (min: number, max: number) => Math.floor(min + (prng() * (max - min)));
 random.chance = (n: number) => prng() > n;

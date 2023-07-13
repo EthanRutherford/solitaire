@@ -1,22 +1,23 @@
 export const saveGameTable = "saves";
 export const settingsTable = "settings";
+export const logsTable = "logs";
 
 // opens the database, initializing it if necessary
 async function openDatabase() {
 	return new Promise<IDBDatabase>((resolve, reject) => {
-		const request = indexedDB.open("solitaire", 1);
+		const request = indexedDB.open("solitaire", 2);
 
-		request.onupgradeneeded = function() {
+		request.onupgradeneeded = function({oldVersion}) {
 			const database = this.result;
 
-			// drop existing tables
-			for (const name of database.objectStoreNames) {
-				database.deleteObjectStore(name);
-			}
-
 			// create tables
-			database.createObjectStore(saveGameTable, {keyPath: "key"});
-			database.createObjectStore(settingsTable, {keyPath: "key"});
+			if (oldVersion < 1) {
+				database.createObjectStore(saveGameTable, {keyPath: "key"});
+				database.createObjectStore(settingsTable, {keyPath: "key"});
+			}
+			if (oldVersion < 2) {
+				database.createObjectStore(logsTable, {autoIncrement: true});
+			}
 		};
 
 		void navigator.storage.persist();
@@ -81,6 +82,30 @@ async function deleteCore(objectStore: IDBObjectStore, id: IDBValidKey) {
 		};
 	});
 }
+async function countCore(objectStore: IDBObjectStore) {
+	return new Promise<number>((resolve, reject) => {
+		const request = objectStore.count();
+		request.onerror = reject;
+		request.onsuccess = function() {
+			resolve(this.result);
+		};
+	});
+}
+async function firstIdCore(objectStore: IDBObjectStore) {
+	return new Promise<IDBValidKey>((resolve, reject) => {
+		const request = objectStore.openCursor();
+		request.onerror = reject;
+
+		request.onsuccess = function() {
+			const cursor = this.result;
+			if (cursor) {
+				resolve(cursor.key);
+			} else {
+				reject();
+			}
+		};
+	});
+}
 async function getStore(tableName: string, readwrite = false) {
 	const db = await openDatabase();
 	const transaction = db.transaction([tableName], readwrite ? "readwrite" : "readonly");
@@ -102,4 +127,11 @@ export async function put<T>(tableName: string, object: T, id?: IDBValidKey) {
 }
 export async function remove(tableName: string, id: IDBValidKey) {
 	await deleteCore(await getStore(tableName, true), id);
+}
+export async function limit(tableName: string, length: number) {
+	const store = await getStore(tableName);
+	const count = await countCore(store);
+	if (count > length) {
+		await deleteCore(store, await firstIdCore(store));
+	}
 }

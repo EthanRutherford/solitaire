@@ -135,7 +135,8 @@ function canPlace(game: Game, index: number, value: number) {
 }
 
 // shuffles a deck, but only places cards on the pyramid which do not cause an impossible game
-// NOTE: in hindsight, this method did not prevent *every* kind of impossible game
+// NOTE: in practice, this method did not prevent *every* kind of impossible game
+// this should theoretically still be possible though
 export function validatedShuffle(game: Game) {
 	// clear and initialize the game
 	game.drawPile.splice(0, game.drawPile.length, ...Deck.full().shuffle());
@@ -160,6 +161,11 @@ export function validatedShuffle(game: Game) {
 	return game.setContexts();
 }
 
+// build game backwards from solution
+// NOTE: this method does guarantee solvability, but typically produces pretty easy games.
+// works by only placing cards onto the pyramid in matching pairs, placing the complementary
+// card elsewhere on the pyramid, or in the draw pile. This ensures every card on the pyramid
+// has a match available somewhere, and the game is solvable at each step.
 export function reverseGame(game: Game) {
 	// clear and initialize the game
 	game.drawPile.splice(0, game.drawPile.length);

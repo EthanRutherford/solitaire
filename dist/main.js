@@ -684,7 +684,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "add": () => (/* binding */ add),
 /* harmony export */   "get": () => (/* binding */ get),
+/* harmony export */   "limit": () => (/* binding */ limit),
 /* harmony export */   "list": () => (/* binding */ list),
+/* harmony export */   "logsTable": () => (/* binding */ logsTable),
 /* harmony export */   "put": () => (/* binding */ put),
 /* harmony export */   "remove": () => (/* binding */ remove),
 /* harmony export */   "saveGameTable": () => (/* binding */ saveGameTable),
@@ -692,26 +694,31 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 const saveGameTable = "saves";
 const settingsTable = "settings";
+const logsTable = "logs";
 
 // opens the database, initializing it if necessary
 async function openDatabase() {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open("solitaire", 1);
-    request.onupgradeneeded = function () {
+    const request = indexedDB.open("solitaire", 2);
+    request.onupgradeneeded = function ({
+      oldVersion
+    }) {
       const database = this.result;
 
-      // drop existing tables
-      for (const name of database.objectStoreNames) {
-        database.deleteObjectStore(name);
-      }
-
       // create tables
-      database.createObjectStore(saveGameTable, {
-        keyPath: "key"
-      });
-      database.createObjectStore(settingsTable, {
-        keyPath: "key"
-      });
+      if (oldVersion < 1) {
+        database.createObjectStore(saveGameTable, {
+          keyPath: "key"
+        });
+        database.createObjectStore(settingsTable, {
+          keyPath: "key"
+        });
+      }
+      if (oldVersion < 2) {
+        database.createObjectStore(logsTable, {
+          autoIncrement: true
+        });
+      }
     };
     void navigator.storage.persist();
     request.onerror = reject;
@@ -777,6 +784,29 @@ async function deleteCore(objectStore, id) {
     };
   });
 }
+async function countCore(objectStore) {
+  return new Promise((resolve, reject) => {
+    const request = objectStore.count();
+    request.onerror = reject;
+    request.onsuccess = function () {
+      resolve(this.result);
+    };
+  });
+}
+async function firstIdCore(objectStore) {
+  return new Promise((resolve, reject) => {
+    const request = objectStore.openCursor();
+    request.onerror = reject;
+    request.onsuccess = function () {
+      const cursor = this.result;
+      if (cursor) {
+        resolve(cursor.key);
+      } else {
+        reject();
+      }
+    };
+  });
+}
 async function getStore(tableName, readwrite = false) {
   const db = await openDatabase();
   const transaction = db.transaction([tableName], readwrite ? "readwrite" : "readonly");
@@ -798,6 +828,13 @@ async function put(tableName, object, id) {
 }
 async function remove(tableName, id) {
   await deleteCore(await getStore(tableName, true), id);
+}
+async function limit(tableName, length) {
+  const store = await getStore(tableName);
+  const count = await countCore(store);
+  if (count > length) {
+    await deleteCore(store, await firstIdCore(store));
+  }
 }
 
 /***/ }),
@@ -1015,21 +1052,30 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _util_random__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../util/random */ "./src/util/random.ts");
 /* harmony import */ var _deck__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../deck */ "./src/logic/deck.ts");
-/* harmony import */ var _game__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./game */ "./src/logic/klondike/game.ts");
+/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../logger */ "./src/logic/logger.ts");
+/* harmony import */ var _game__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./game */ "./src/logic/klondike/game.ts");
 
 
 
+
+
+// random shuffle and deal, may result in unsolvable games
 function randomShuffle(game, drawCount) {
+  // reset game state to default, shuffle draw pile
   game.drawCount = drawCount;
   game.drawPile.splice(0, game.drawPile.length, ..._deck__WEBPACK_IMPORTED_MODULE_1__.Deck.full().shuffle());
   game.discardPile.splice(0, game.discardPile.length);
   game.tableau.splice(0, game.tableau.length);
-  for (let i = 0; i < 7; i++) {
-    game.tableau.push(game.drawPile.draw(i + 1));
-  }
   for (const k of [_deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Spades, _deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Diamonds, _deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Clubs, _deck__WEBPACK_IMPORTED_MODULE_1__.Suit.Hearts]) {
     game.foundations[k] = new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck();
   }
+
+  // deal out cards into the tableau
+  for (let i = 0; i < 7; i++) {
+    game.tableau.push(game.drawPile.draw(i + 1));
+  }
+
+  // flip up top cards
   for (const deck of game.tableau) {
     deck.fromTop().faceUp = true;
   }
@@ -1038,6 +1084,9 @@ function randomShuffle(game, drawCount) {
 
 // builds a game backward from solution
 function reverseGame(game, drawCount) {
+  // get the current random seed, in case we need to log it
+  const randomSeed = _util_random__WEBPACK_IMPORTED_MODULE_0__.random.getSeed();
+
   // clear and initialize the game
   game.drawCount = drawCount;
   game.drawPile.splice(0, game.drawPile.length);
@@ -1055,8 +1104,11 @@ function reverseGame(game, drawCount) {
   for (let i = 0; i < 4; i++) {
     completeSuits[i] = _deck__WEBPACK_IMPORTED_MODULE_1__.Deck.ofSuit(i).reverse();
   }
+
+  // deal suits into complete stacks of alternating color, king to ace
   const completeStacks = [new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck(), new _deck__WEBPACK_IMPORTED_MODULE_1__.Deck()];
   for (let i = 0; i < 13; i++) {
+    // randomize which card goes on which stack
     const sets = [[0, 2], [1, 3]];
     if (i % 2 === 1) {
       sets.reverse();
@@ -1067,20 +1119,25 @@ function reverseGame(game, drawCount) {
     if (_util_random__WEBPACK_IMPORTED_MODULE_0__.random.chance(.5)) {
       sets[1].reverse();
     }
+
+    // draw cards from each suit to place onto stacks
     const plan = [sets[0][0], sets[1][0], sets[0][1], sets[1][1]];
     for (let j = 0; j < 4; j++) {
       completeStacks[j].push(completeSuits[plan[j]].pop());
     }
   }
 
-  // move cards from our completed state into the game decks
+  // move cards from our "completed" state into the game decks
   const notFullTableauDecks = [0, 1, 2, 3, 4, 5, 6];
   while (completeStacks.length > 0) {
+    // pull a random card from a random deck
     const stackIndex = _util_random__WEBPACK_IMPORTED_MODULE_0__.random.index(completeStacks);
     const card = completeStacks[stackIndex].pop();
     if (completeStacks[stackIndex].length === 0) {
       completeStacks.splice(stackIndex, 1);
     }
+
+    // determine whether to move a card to the tableau or draw pile
     if (notFullTableauDecks.length > 0 && _util_random__WEBPACK_IMPORTED_MODULE_0__.random.chance(.5)) {
       // move the card to an available spot in the tableau
       const notFullIndex = _util_random__WEBPACK_IMPORTED_MODULE_0__.random.index(notFullTableauDecks);
@@ -1099,6 +1156,8 @@ function reverseGame(game, drawCount) {
       }
     }
   }
+
+  // place cards moved into foundations into tableau slots or draw pile
   for (const foundation of Object.values(game.foundations)) {
     while (foundation.length > 0) {
       const card = foundation.pop();
@@ -1114,6 +1173,8 @@ function reverseGame(game, drawCount) {
       }
     }
   }
+
+  // shuffle the draw pile, and deal out cards until tableau is full
   game.drawPile.shuffle();
   while (notFullTableauDecks.length > 0) {
     const notFullIndex = _util_random__WEBPACK_IMPORTED_MODULE_0__.random.index(notFullTableauDecks);
@@ -1123,10 +1184,63 @@ function reverseGame(game, drawCount) {
       notFullTableauDecks.splice(notFullIndex, 1);
     }
   }
+
+  // set the top card on each tableau deck to face up
   for (const deck of game.tableau) {
     deck.fromTop().faceUp = true;
   }
+  const cardsInGame = game.drawPile.length + 28;
+  if (cardsInGame !== 52) {
+    void (0,_logger__WEBPACK_IMPORTED_MODULE_2__.error)({
+      msg: `Klondike reverseGame generator finished with only ${cardsInGame} cards in the game`,
+      seed: randomSeed
+    });
+  }
   return game.setContexts();
+}
+
+/***/ }),
+
+/***/ "./src/logic/logger.ts":
+/*!*****************************!*\
+  !*** ./src/logic/logger.ts ***!
+  \*****************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "LogLevel": () => (/* binding */ LogLevel),
+/* harmony export */   "error": () => (/* binding */ error),
+/* harmony export */   "list": () => (/* binding */ list),
+/* harmony export */   "log": () => (/* binding */ log),
+/* harmony export */   "warn": () => (/* binding */ warn)
+/* harmony export */ });
+/* harmony import */ var _logic_game_db__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../logic/game-db */ "./src/logic/game-db.ts");
+
+let LogLevel;
+(function (LogLevel) {
+  LogLevel[LogLevel["Log"] = 0] = "Log";
+  LogLevel[LogLevel["Warn"] = 1] = "Warn";
+  LogLevel[LogLevel["Error"] = 2] = "Error";
+})(LogLevel || (LogLevel = {}));
+async function log(value, level = LogLevel.Log) {
+  const entry = {
+    ...value,
+    level: LogLevel[level],
+    time: Date.now()
+  };
+  await (0,_logic_game_db__WEBPACK_IMPORTED_MODULE_0__.add)(_logic_game_db__WEBPACK_IMPORTED_MODULE_0__.logsTable, entry);
+  await (0,_logic_game_db__WEBPACK_IMPORTED_MODULE_0__.limit)(_logic_game_db__WEBPACK_IMPORTED_MODULE_0__.logsTable, 2 ** 16);
+}
+async function warn(value) {
+  return log(value, LogLevel.Warn);
+}
+async function error(value) {
+  return log(value, LogLevel.Error);
+}
+async function list() {
+  return (0,_logic_game_db__WEBPACK_IMPORTED_MODULE_0__.list)(_logic_game_db__WEBPACK_IMPORTED_MODULE_0__.logsTable);
 }
 
 /***/ }),
@@ -1406,7 +1520,8 @@ function canPlace(game, index, value) {
 }
 
 // shuffles a deck, but only places cards on the pyramid which do not cause an impossible game
-// NOTE: in hindsight, this method did not prevent *every* kind of impossible game
+// NOTE: in practice, this method did not prevent *every* kind of impossible game
+// this should theoretically still be possible though
 function validatedShuffle(game) {
   // clear and initialize the game
   game.drawPile.splice(0, game.drawPile.length, ..._deck__WEBPACK_IMPORTED_MODULE_1__.Deck.full().shuffle());
@@ -1429,6 +1544,12 @@ function validatedShuffle(game) {
   }
   return game.setContexts();
 }
+
+// build game backwards from solution
+// NOTE: this method does guarantee solvability, but typically produces pretty easy games.
+// works by only placing cards onto the pyramid in matching pairs, placing the complementary
+// card elsewhere on the pyramid, or in the draw pile. This ensures every card on the pyramid
+// has a match available somewhere, and the game is solvable at each step.
 function reverseGame(game) {
   // clear and initialize the game
   game.drawPile.splice(0, game.drawPile.length);
@@ -1981,6 +2102,7 @@ function randomShuffle(game) {
   return game.setContexts();
 }
 function reverseGame(game) {
+  // reset game state
   game.tableau.splice(0, game.tableau.length);
   game.completed.splice(0, game.completed.length);
   for (let i = 0; i < 8; i++) {
@@ -2000,7 +2122,7 @@ function reverseGame(game) {
 
   /* rules:
   	1. do not reduce to 1 deck before last pair
-  		this would cause and unsolvable game, since the last pair is placed one atop the other
+  		this would cause an unsolvable game, since the last pair is placed one atop the other
   	2. do not reduce to two or fewer decks before second to last pair
   		this would cause the last few pairs to be placed on the same decks, which is unsatisfying
   	3. do remove empty decks before third to last pair
@@ -2034,6 +2156,8 @@ function reverseGame(game) {
       }
     }
   }
+
+  // flip top cards faceup
   for (const deck of game.tableau) {
     deck.fromTop().faceUp = true;
   }
@@ -3861,10 +3985,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _util_use_value_changed__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../util/use-value-changed */ "./src/util/use-value-changed.ts");
 /* harmony import */ var _util_use_rerender__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../util/use-rerender */ "./src/util/use-rerender.ts");
 /* harmony import */ var _logic_deck__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../logic/deck */ "./src/logic/deck.ts");
-/* harmony import */ var _pointer_manager__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./pointer-manager */ "./src/ui/shared/pointer-manager.tsx");
-/* harmony import */ var _card_face__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./card-face */ "./src/ui/shared/card-face.tsx");
-/* harmony import */ var _card_css__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./card.css */ "./src/ui/shared/card.css");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var _logic_logger__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../logic/logger */ "./src/logic/logger.ts");
+/* harmony import */ var _pointer_manager__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./pointer-manager */ "./src/ui/shared/pointer-manager.tsx");
+/* harmony import */ var _card_face__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./card-face */ "./src/ui/shared/card-face.tsx");
+/* harmony import */ var _card_css__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./card.css */ "./src/ui/shared/card.css");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+
 
 
 
@@ -3886,10 +4012,10 @@ const suitSvgs = {
   [_logic_deck__WEBPACK_IMPORTED_MODULE_8__.Suit.Hearts]: (_images_heart_svg__WEBPACK_IMPORTED_MODULE_5___default())
 };
 const suitColors = {
-  [_logic_deck__WEBPACK_IMPORTED_MODULE_8__.Suit.Spades]: _card_css__WEBPACK_IMPORTED_MODULE_11__["default"].black,
-  [_logic_deck__WEBPACK_IMPORTED_MODULE_8__.Suit.Diamonds]: _card_css__WEBPACK_IMPORTED_MODULE_11__["default"].red,
-  [_logic_deck__WEBPACK_IMPORTED_MODULE_8__.Suit.Clubs]: _card_css__WEBPACK_IMPORTED_MODULE_11__["default"].black,
-  [_logic_deck__WEBPACK_IMPORTED_MODULE_8__.Suit.Hearts]: _card_css__WEBPACK_IMPORTED_MODULE_11__["default"].red
+  [_logic_deck__WEBPACK_IMPORTED_MODULE_8__.Suit.Spades]: _card_css__WEBPACK_IMPORTED_MODULE_12__["default"].black,
+  [_logic_deck__WEBPACK_IMPORTED_MODULE_8__.Suit.Diamonds]: _card_css__WEBPACK_IMPORTED_MODULE_12__["default"].red,
+  [_logic_deck__WEBPACK_IMPORTED_MODULE_8__.Suit.Clubs]: _card_css__WEBPACK_IMPORTED_MODULE_12__["default"].black,
+  [_logic_deck__WEBPACK_IMPORTED_MODULE_8__.Suit.Hearts]: _card_css__WEBPACK_IMPORTED_MODULE_12__["default"].red
 };
 const trueMod = (v, m) => (v % m + m) % m;
 function usePosition(card, pos) {
@@ -3936,11 +4062,11 @@ function useFlip(card, pos) {
       });
     } else {
       setState({
-        flipClass: state.faceUp ? _card_css__WEBPACK_IMPORTED_MODULE_11__["default"].flipRtlA : _card_css__WEBPACK_IMPORTED_MODULE_11__["default"].flipLtrA,
+        flipClass: state.faceUp ? _card_css__WEBPACK_IMPORTED_MODULE_12__["default"].flipRtlA : _card_css__WEBPACK_IMPORTED_MODULE_12__["default"].flipLtrA,
         faceUp: state.faceUp,
         z: 1000 - trueMod(pos.z, 1000),
         animationEnd: () => setState({
-          flipClass: card.faceUp ? _card_css__WEBPACK_IMPORTED_MODULE_11__["default"].flipLtrB : _card_css__WEBPACK_IMPORTED_MODULE_11__["default"].flipRtlB,
+          flipClass: card.faceUp ? _card_css__WEBPACK_IMPORTED_MODULE_12__["default"].flipLtrB : _card_css__WEBPACK_IMPORTED_MODULE_12__["default"].flipRtlB,
           faceUp: card.faceUp,
           z: trueMod(pos.z, 1000),
           animationEnd: () => setState({
@@ -3954,7 +4080,7 @@ function useFlip(card, pos) {
 }
 function useDropShadow(card) {
   if (card.meta.grabPos != null) {
-    return _card_css__WEBPACK_IMPORTED_MODULE_11__["default"].dropShadow;
+    return _card_css__WEBPACK_IMPORTED_MODULE_12__["default"].dropShadow;
   }
   return null;
 }
@@ -3967,7 +4093,7 @@ function Card({
   getDragCards
 }) {
   card.meta.rerender = (0,_util_use_rerender__WEBPACK_IMPORTED_MODULE_7__.useRerender)();
-  const onPointerDown = (0,_pointer_manager__WEBPACK_IMPORTED_MODULE_9__.usePointers)(card, onTap, onDoubleTap, getDragCards);
+  const onPointerDown = (0,_pointer_manager__WEBPACK_IMPORTED_MODULE_10__.usePointers)(card, onTap, onDoubleTap, getDragCards);
   const {
     style,
     moving,
@@ -3981,9 +4107,17 @@ function Card({
   } = useFlip(card, pos);
   const shadowClass = useDropShadow(card);
   const zIndex = style.zIndex ?? (z ?? pos.z) + (moving ? 2000 : 0);
+
+  // log changes in zIndex
+  const zIndexChanged = (0,_util_use_value_changed__WEBPACK_IMPORTED_MODULE_6__.useValueChanged)(zIndex);
+  if (zIndexChanged) {
+    void (0,_logic_logger__WEBPACK_IMPORTED_MODULE_9__.log)({
+      msg: `zIndex of card ${_logic_deck__WEBPACK_IMPORTED_MODULE_8__.Suit[card.suit]} ${card.value} changed to ${zIndex}`
+    });
+  }
   if (!faceUp) {
-    const className = cns(_card_css__WEBPACK_IMPORTED_MODULE_11__["default"].cardBack, flipClass, shadowClass);
-    return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)("div", {
+    const className = cns(_card_css__WEBPACK_IMPORTED_MODULE_12__["default"].cardBack, flipClass, shadowClass);
+    return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)("div", {
       className: className,
       onPointerDown: onPointerDown,
       onAnimationEnd: animationEnd,
@@ -3993,12 +4127,12 @@ function Card({
         zIndex
       },
       ref: elem => card.meta.elem = elem,
-      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)((_images_backs_brown_svg__WEBPACK_IMPORTED_MODULE_1___default()), {})
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)((_images_backs_brown_svg__WEBPACK_IMPORTED_MODULE_1___default()), {})
     });
   }
-  const className = cns(_card_css__WEBPACK_IMPORTED_MODULE_11__["default"].cardFront, suitColors[card.suit], flipClass, shadowClass);
+  const className = cns(_card_css__WEBPACK_IMPORTED_MODULE_12__["default"].cardFront, suitColors[card.suit], flipClass, shadowClass);
   const SuitSvg = suitSvgs[card.suit];
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)("div", {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)("div", {
     className: className,
     onPointerDown: onPointerDown,
     onAnimationEnd: animationEnd,
@@ -4009,22 +4143,22 @@ function Card({
     },
     tabIndex: -1,
     ref: elem => card.meta.elem = elem,
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)("div", {
-      className: _card_css__WEBPACK_IMPORTED_MODULE_11__["default"].topCorner,
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)("div", {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)("div", {
+      className: _card_css__WEBPACK_IMPORTED_MODULE_12__["default"].topCorner,
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)("div", {
         children: card.label
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(SuitSvg, {
-        className: _card_css__WEBPACK_IMPORTED_MODULE_11__["default"].suit
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(SuitSvg, {
+        className: _card_css__WEBPACK_IMPORTED_MODULE_12__["default"].suit
       })]
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_card_face__WEBPACK_IMPORTED_MODULE_10__.CardFace, {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_card_face__WEBPACK_IMPORTED_MODULE_11__.CardFace, {
       Icon: SuitSvg,
       value: card.value
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)("div", {
-      className: _card_css__WEBPACK_IMPORTED_MODULE_11__["default"].bottomCorner,
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)("div", {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)("div", {
+      className: _card_css__WEBPACK_IMPORTED_MODULE_12__["default"].bottomCorner,
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)("div", {
         children: card.label
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(SuitSvg, {
-        className: _card_css__WEBPACK_IMPORTED_MODULE_11__["default"].suit
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(SuitSvg, {
+        className: _card_css__WEBPACK_IMPORTED_MODULE_12__["default"].suit
       })]
     })]
   });
@@ -5162,7 +5296,7 @@ function xmur3(str) {
   };
 }
 function sfc32(a, b, c, d) {
-  return function () {
+  const prng = () => {
     a |= 0;
     b |= 0;
     c |= 0;
@@ -5175,6 +5309,8 @@ function sfc32(a, b, c, d) {
     c = c + t | 0;
     return (t >>> 0) / 4294967296;
   };
+  prng.getSeed = () => [a, b, c, d];
+  return prng;
 }
 function makeSeeded(seed) {
   const hash = xmur3(seed);
@@ -5185,9 +5321,14 @@ function makeSeeded(seed) {
 const defaultSeed = "crypto" in globalThis && "randomUUID" in crypto ? crypto.randomUUID() : Date.now().toString();
 let prng = makeSeeded(defaultSeed);
 const seedRandom = seed => {
-  prng = makeSeeded(seed);
+  if (typeof seed === "string") {
+    prng = makeSeeded(seed);
+  } else {
+    prng = sfc32(...seed);
+  }
 };
 const random = () => prng();
+random.getSeed = () => prng.getSeed();
 random.float = random;
 random.integer = (min, max) => Math.floor(min + prng() * (max - min));
 random.chance = n => prng() > n;

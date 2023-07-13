@@ -16,6 +16,7 @@ export function randomShuffle(game: Game) {
 }
 
 export function reverseGame(game: Game) {
+	// reset game state
 	game.tableau.splice(0, game.tableau.length);
 	game.completed.splice(0, game.completed.length);
 	for (let i = 0; i < 8; i++) {
@@ -36,7 +37,7 @@ export function reverseGame(game: Game) {
 
 	/* rules:
 		1. do not reduce to 1 deck before last pair
-			this would cause and unsolvable game, since the last pair is placed one atop the other
+			this would cause an unsolvable game, since the last pair is placed one atop the other
 		2. do not reduce to two or fewer decks before second to last pair
 			this would cause the last few pairs to be placed on the same decks, which is unsatisfying
 		3. do remove empty decks before third to last pair
@@ -74,6 +75,7 @@ export function reverseGame(game: Game) {
 		}
 	}
 
+	// flip top cards faceup
 	for (const deck of game.tableau) {
 		deck.fromTop()!.faceUp = true;
 	}
